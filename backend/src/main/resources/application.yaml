@@ -1,3 +1,10 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/operations-analytics-dashboard
+    username: postgres
+    password: Mk16914004006425529
+    driver-class-name: org.postgresql.Driver
   application:
     name: dashboard
+  liquibase:
+    change-log: classpath:db/liquibase.xml
