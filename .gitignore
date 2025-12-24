@@ -1,0 +1,121 @@
+# ============================================
+# Root-level shared patterns
+# ============================================
+
+# IDEs and editors
+.idea/
+*.iws
+*.iml
+*.ipr
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vscode/.history/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Root-level build artifacts (if any)
+/tmp
+/coverage
+__screenshots__/
+
+# ============================================
+# Backend (Java/Gradle) patterns
+# ============================================
+
+# Gradle
+backend/.gradle
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+
+# STS (Spring Tool Suite)
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+backend/bin/
+!backend/**/src/main/**/bin/
+!backend/**/src/test/**/bin/
+
+# IntelliJ IDEA (backend-specific)
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+backend/out/
+!backend/**/src/main/**/out/
+!backend/**/src/test/**/out/
+
+# NetBeans (backend-specific)
+backend/nbproject/private/
+backend/nbbuild/
+backend/nbdist/
+backend/.nb-gradle/
+
+# Java build artifacts
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/*.ear
+
+# ============================================
+# Frontend (Angular/Node.js) patterns
+# ============================================
+
+# Node modules
+frontend/node_modules/
+frontend/frontend/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json.backup
+
+# Angular build outputs
+frontend/dist/
+frontend/frontend/dist/
+frontend/.angular/cache
+frontend/frontend/.angular/cache
+frontend/out-tsc/
+frontend/frontend/out-tsc/
+
+# Frontend build artifacts
+frontend/tmp/
+frontend/frontend/tmp/
+frontend/coverage/
+frontend/frontend/coverage/
+frontend/.sass-cache/
+frontend/frontend/.sass-cache/
+frontend/connect.lock
+frontend/frontend/connect.lock
+frontend/libpeerconnection.log
+frontend/frontend/libpeerconnection.log
+frontend/testem.log
+frontend/frontend/testem.log
+frontend/typings/
+frontend/frontend/typings/
+frontend/__screenshots__/
+frontend/frontend/__screenshots__/
+
+# Bazel (if used)
+frontend/bazel-out/
+frontend/frontend/bazel-out/
+
+# ============================================
+# Documentation
+# ============================================
+HELP.md
