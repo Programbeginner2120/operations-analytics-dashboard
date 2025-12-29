@@ -7,4 +7,5 @@ public interface DataSourceConnector {
     ConnectionStatus testConnection(DataSourceConfig config);
     ConnectionStatus connect(DataSourceConfig config);
     ConnectionStatus disconnect(DataSourceConfig config);
+    DataSourceConnection createConnection(DataSourceConfig config);
 }

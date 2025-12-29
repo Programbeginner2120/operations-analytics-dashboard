@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0'
 	implementation 'io.swagger.core.v3:swagger-annotations:2.2.41'
 	implementation 'org.mybatis.generator:mybatis-generator-core:1.4.2'
+	implementation 'com.plaid:plaid-java:39.0.0'
 
 	compileOnly 'org.projectlombok:lombok:1.18.42'
 	annotationProcessor 'org.projectlombok:lombok:1.18.42'

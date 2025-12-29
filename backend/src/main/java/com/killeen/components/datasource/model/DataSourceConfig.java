@@ -2,9 +2,11 @@ package com.killeen.components.datasource.model;
 
 import java.util.Map;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class DataSourceConfig {
     private Long id;
     private String sourceType;

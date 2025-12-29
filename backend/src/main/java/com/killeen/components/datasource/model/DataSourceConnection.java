@@ -5,7 +5,7 @@ import com.killeen.components.datasource.exception.DataSourceException;
 import java.util.List;
 
 import com.killeen.components.datapoint.model.DataPoint;
-import com.killeen.components.dataquery.DataQuery;
+import com.killeen.components.dataquery.model.DataQuery;
 import com.killeen.components.datasource.enums.ConnectionStatus;
 
 public interface DataSourceConnection extends AutoCloseable {

@@ -1,4 +1,4 @@
-package com.killeen.components.dataquery;
+package com.killeen.components.dataquery.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
