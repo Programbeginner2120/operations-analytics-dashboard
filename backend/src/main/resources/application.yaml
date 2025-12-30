@@ -8,3 +8,11 @@ spring:
     name: dashboard
   liquibase:
     change-log: classpath:db/liquibase.xml
+
+logging:
+  level:
+    root: INFO
+    com.killeen: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

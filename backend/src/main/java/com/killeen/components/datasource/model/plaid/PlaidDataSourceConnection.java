@@ -15,8 +15,10 @@ import com.plaid.client.request.PlaidApi;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import retrofit2.Response;
 
+@Slf4j
 @Data
 @Builder
 public class PlaidDataSourceConnection implements DataSourceConnection {
@@ -28,7 +30,9 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     @Override
     public boolean isConnected() {
-        return this.plaidClient != null && connected;
+        boolean connectionStatus = this.plaidClient != null && connected;
+        log.debug("Checking connection status: {}", connectionStatus);
+        return connectionStatus;
     }
 
     @Override
@@ -49,42 +53,56 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     @Override
     public ConnectionStatus healthCheck() {
+        log.debug("Starting health check for Plaid data source");
+        
         if (!isConnected()) {
+            log.warn("Health check failed: Connection is not established");
             return ConnectionStatus.DISCONNECTED;
         }
 
         try {
             String accessToken = this.config.getCredentials().get("accessToken");
             if (accessToken == null || accessToken.isEmpty()) {
+                log.error("Health check failed: Access token is null or empty");
                 return ConnectionStatus.CONNECTION_FAILURE;
             }
 
             Response<AccountsGetResponse> response = executeHealthCheckRequeest(accessToken);
 
             if (response.isSuccessful()) {
+                log.info("Health check successful: Plaid connection is active");
                 return ConnectionStatus.CONNECTED;
             } else {
+                log.warn("Health check failed: Response unsuccessful with code {}", response.code());
                 return ConnectionStatus.CONNECTION_FAILURE;
             }
         } catch (Exception e) {
+            log.error("Health check failed with exception", e);
             return ConnectionStatus.CONNECTION_FAILURE;
         }
     }
 
     @Override
     public void close() throws DataSourceException {
+        log.info("Closing Plaid data source connection");
         this.connected = false;
+        log.debug("Plaid data source connection closed successfully");
     }
 
     private Response<AccountsGetResponse> executeHealthCheckRequeest(String accessToken) {
         if (accessToken == null) {
+            log.warn("Cannot execute health check request: access token is null");
             return null;
         }
 
         try {
+            log.debug("Executing Plaid accounts balance request for health check");
             AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
-            return this.plaidClient.accountsBalanceGet(request).execute();
+            Response<AccountsGetResponse> response = this.plaidClient.accountsBalanceGet(request).execute();
+            log.debug("Health check request executed, response code: {}", response.code());
+            return response;
         } catch (Exception e) {
+            log.error("Failed to execute health check request", e);
             return null;
         }
     }
