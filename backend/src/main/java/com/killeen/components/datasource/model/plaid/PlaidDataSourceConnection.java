@@ -9,10 +9,13 @@ import com.killeen.components.datasource.enums.ConnectionStatus;
 import com.killeen.components.datasource.exception.DataSourceException;
 import com.killeen.components.datasource.model.DataSourceConfig;
 import com.killeen.components.datasource.model.DataSourceConnection;
+import com.plaid.client.model.AccountsBalanceGetRequest;
+import com.plaid.client.model.AccountsGetResponse;
 import com.plaid.client.request.PlaidApi;
 
 import lombok.Builder;
 import lombok.Data;
+import retrofit2.Response;
 
 @Data
 @Builder
@@ -20,11 +23,12 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     private PlaidApi plaidClient;
     private DataSourceConfig config;
+    @Builder.Default
+    private boolean connected = true;
 
     @Override
     public boolean isConnected() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isConnected'");
+        return this.plaidClient != null && connected;
     }
 
     @Override
@@ -35,8 +39,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     @Override
     public DataSourceConfig getConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getConfig'");
+        return this.config;
     }
 
     @Override
@@ -46,14 +49,44 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     @Override
     public ConnectionStatus healthCheck() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'healthCheck'");
+        if (!isConnected()) {
+            return ConnectionStatus.DISCONNECTED;
+        }
+
+        try {
+            String accessToken = this.config.getCredentials().get("accessToken");
+            if (accessToken == null || accessToken.isEmpty()) {
+                return ConnectionStatus.CONNECTION_FAILURE;
+            }
+
+            Response<AccountsGetResponse> response = executeHealthCheckRequeest(accessToken);
+
+            if (response.isSuccessful()) {
+                return ConnectionStatus.CONNECTED;
+            } else {
+                return ConnectionStatus.CONNECTION_FAILURE;
+            }
+        } catch (Exception e) {
+            return ConnectionStatus.CONNECTION_FAILURE;
+        }
     }
 
     @Override
     public void close() throws DataSourceException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'close'");
+        this.connected = false;
+    }
+
+    private Response<AccountsGetResponse> executeHealthCheckRequeest(String accessToken) {
+        if (accessToken == null) {
+            return null;
+        }
+
+        try {
+            AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
+            return this.plaidClient.accountsBalanceGet(request).execute();
+        } catch (Exception e) {
+            return null;
+        }
     }
     
 }

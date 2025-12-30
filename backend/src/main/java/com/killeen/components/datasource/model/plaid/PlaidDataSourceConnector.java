@@ -23,20 +23,29 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
 
     @Override
     public ConnectionStatus testConnection(DataSourceConfig config) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'testConnection'");
+        try {
+            Map<String, String> credentials = config.getCredentials();
+            if (credentials == null || !credentials.containsKey("clientId") || !credentials.containsKey("secret")) {
+                return ConnectionStatus.CONNECTION_FAILURE;
+            }
+
+            createPlaidClient(config);
+
+            return ConnectionStatus.CONNECTED;
+        } catch (Exception e) {
+            return ConnectionStatus.CONNECTION_FAILURE;
+        }
+            
     }
 
     @Override
     public ConnectionStatus connect(DataSourceConfig config) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'connect'");
+        return testConnection(config);
     }
 
     @Override
     public ConnectionStatus disconnect(DataSourceConfig config) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
+        return ConnectionStatus.DISCONNECTED;
     }
 
     @Override
@@ -61,8 +70,7 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
     }
 
     private PlaidApi createPlaidClient(DataSourceConfig config) {
-        DataSourceConfig dataSourceConfig = createDataSourceConfig();
-        Map<String, String> credentials = dataSourceConfig.getCredentials();
+        Map<String, String> credentials = config.getCredentials();
         ApiClient apiClient = new ApiClient(credentials);
         apiClient.setPlaidAdapter(ApiClient.Sandbox);
         return apiClient.createService(PlaidApi.class);
