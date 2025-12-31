@@ -116,6 +116,11 @@ frontend/bazel-out/
 frontend/frontend/bazel-out/
 
 # ============================================
+# Environment-specific configuration
+# ============================================
+backend/src/main/resources/application-local.yaml
+
+# ============================================
 # Documentation
 # ============================================
 HELP.md

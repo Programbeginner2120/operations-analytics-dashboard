@@ -1,4 +1,4 @@
-package com.killeen.components.datasource.exception;
+package com.killeen.dashboard.components.datasource.exception;
 
 public class DataSourceException extends RuntimeException {
     public DataSourceException(String message) {

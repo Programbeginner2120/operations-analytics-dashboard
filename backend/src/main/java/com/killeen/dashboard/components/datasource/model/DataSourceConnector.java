@@ -1,6 +1,6 @@
-package com.killeen.components.datasource.model;
+package com.killeen.dashboard.components.datasource.model;
 
-import com.killeen.components.datasource.enums.ConnectionStatus;
+import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
 
 public interface DataSourceConnector {
     String getSourceType();

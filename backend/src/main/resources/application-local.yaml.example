@@ -1,0 +1,26 @@
+# ============================================
+# Local Environment Configuration Template
+# ============================================
+# 
+# This file serves as a template for local development configuration.
+# To use it:
+#   1. Copy this file to 'application-local.yaml' in the same directory
+#   2. Replace all placeholder values with your actual credentials
+#   3. Activate the 'local' profile by setting spring.profiles.active=local
+#      (via environment variable, IDE configuration, or command line)
+#
+# Note: application-local.yaml is git-ignored and should never be committed
+# ============================================
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/operations-analytics-dashboard
+    username: YOUR_DB_USERNAME
+    password: YOUR_DB_PASSWORD
+
+# Plaid API Configuration
+plaid:
+  client-id: YOUR_PLAID_CLIENT_ID
+  secret: YOUR_PLAID_SECRET
+  environment: sandbox  # Options: sandbox, development, production
+

@@ -1,4 +1,4 @@
-package com.killeen.components.datapoint.model;
+package com.killeen.dashboard.components.datapoint.model;
 
 import java.time.LocalDateTime;
 import java.util.Map;

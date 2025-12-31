@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
-import com.killeen.components.datasource.enums.ConnectionStatus;
-import com.killeen.components.datasource.model.DataSourceConfig;
-import com.killeen.components.datasource.model.plaid.PlaidDataSourceConnection;
-import com.killeen.components.datasource.model.plaid.PlaidDataSourceConnector;
+import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
+import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
+import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnection;
+import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnector;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
 import com.plaid.client.model.Products;
@@ -25,7 +24,6 @@ import retrofit2.Response;
 
 @Slf4j
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.killeen.dashboard", "com.killeen.components"})
 public class DashboardApplication implements CommandLineRunner {
 
 	@Autowired
@@ -39,7 +37,7 @@ public class DashboardApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		DataSourceConfig config = PlaidDataSourceConnector.createDataSourceConfig();
+		DataSourceConfig config = plaidConnector.createDataSourceConfig();
 
 		PlaidDataSourceConnection connection = (PlaidDataSourceConnection) plaidConnector.createConnection(config);
 

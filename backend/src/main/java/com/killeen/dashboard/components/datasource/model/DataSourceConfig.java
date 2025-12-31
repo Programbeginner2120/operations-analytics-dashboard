@@ -1,4 +1,4 @@
-package com.killeen.components.datasource.model;
+package com.killeen.dashboard.components.datasource.model;
 
 import java.util.Map;
 

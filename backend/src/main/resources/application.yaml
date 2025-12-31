@@ -1,13 +1,19 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/operations-analytics-dashboard
-    username: postgres
-    password: Mk16914004006425529
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/operations-analytics-dashboard}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   application:
     name: dashboard
   liquibase:
     change-log: classpath:db/liquibase.xml
+
+# Plaid API Configuration
+plaid:
+  client-id: ${PLAID_CLIENT_ID}
+  secret: ${PLAID_SECRET}
+  environment: ${PLAID_ENVIRONMENT:sandbox}
 
 logging:
   level:

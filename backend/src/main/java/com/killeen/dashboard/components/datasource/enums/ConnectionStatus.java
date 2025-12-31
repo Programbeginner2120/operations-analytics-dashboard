@@ -1,4 +1,4 @@
-package com.killeen.components.datasource.enums;
+package com.killeen.dashboard.components.datasource.enums;
 
 public enum ConnectionStatus {
     CONNECTED,

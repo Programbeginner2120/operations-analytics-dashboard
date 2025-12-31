@@ -1,14 +1,14 @@
-package com.killeen.components.datasource.model.plaid;
+package com.killeen.dashboard.components.plaid.model;
 
 import java.util.List;
 
-import com.killeen.components.datapoint.model.DataPoint;
-import com.killeen.components.dataquery.model.DataQuery;
-import com.killeen.components.datasource.constants.SourceTypes;
-import com.killeen.components.datasource.enums.ConnectionStatus;
-import com.killeen.components.datasource.exception.DataSourceException;
-import com.killeen.components.datasource.model.DataSourceConfig;
-import com.killeen.components.datasource.model.DataSourceConnection;
+import com.killeen.dashboard.components.datapoint.model.DataPoint;
+import com.killeen.dashboard.components.dataquery.model.DataQuery;
+import com.killeen.dashboard.components.datasource.constants.SourceTypes;
+import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
+import com.killeen.dashboard.components.datasource.exception.DataSourceException;
+import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
+import com.killeen.dashboard.components.datasource.model.DataSourceConnection;
 import com.plaid.client.model.AccountsBalanceGetRequest;
 import com.plaid.client.model.AccountsGetResponse;
 import com.plaid.client.request.PlaidApi;
