@@ -1,6 +1,11 @@
 package com.killeen.dashboard.components.plaid.model;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.killeen.dashboard.components.datapoint.model.DataPoint;
 import com.killeen.dashboard.components.dataquery.model.DataQuery;
@@ -9,6 +14,9 @@ import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
 import com.killeen.dashboard.components.datasource.exception.DataSourceException;
 import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnection;
+import com.killeen.dashboard.components.datasource.model.Metric;
+import com.killeen.dashboard.components.plaid.enums.PlaidMetric;
+import com.plaid.client.model.AccountBase;
 import com.plaid.client.model.AccountsBalanceGetRequest;
 import com.plaid.client.model.AccountsGetResponse;
 import com.plaid.client.request.PlaidApi;
@@ -36,9 +44,27 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
     }
 
     @Override
-    public <E> List<DataPoint<E>> fetchData(DataQuery query) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'fetchData'");
+    public List<DataPoint<?>> fetchData(DataQuery query) {
+        if (!isConnected()) {
+            throw new DataSourceException("Not connected to Plaid");
+        }
+
+        List<DataPoint<?>> results = new ArrayList<>();
+
+        for (Metric metric : query.getMetrics()) {
+            if (metric instanceof PlaidMetric) {
+                try {
+                    List<DataPoint<?>> metricResults = fetchMetric((PlaidMetric) metric, query);
+                    results.addAll(metricResults);
+                } catch (Exception e) {
+                    log.error("Failed to fetch metric {}: {}", metric, e.getMessage(), e);
+                }
+            } else {
+                log.warn("Skipping non-Plaid metric: {}", metric);
+            }
+        }
+
+        return results;
     }
 
     @Override
@@ -105,6 +131,69 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
             log.error("Failed to execute health check request", e);
             return null;
         }
+    }
+
+    /**
+     * Routes a specific PlaidMetric to its handler method
+     */
+    private List<DataPoint<?>> fetchMetric(PlaidMetric metric, DataQuery query) {
+        switch (metric) {
+            case ACCOUNT_BALANCE:
+                return new ArrayList<>(fetchAccountBalances(query));
+            default:
+                throw new UnsupportedOperationException(
+                    "Metric not yet implemented: " + metric
+                );
+        }
+    }
+
+    /**
+     * Fetches account balances from Plaid API
+     * Returns DataPoints containing full Plaid Account objects
+     */
+    private List<DataPoint<AccountBase>> fetchAccountBalances(DataQuery query) {
+        String accessToken = config.getCredentials().get("accessToken");
+
+        AccountsBalanceGetRequest request = new AccountsBalanceGetRequest()
+            .accessToken(accessToken);
+
+        try {
+            Response<AccountsGetResponse> response = plaidClient
+                .accountsBalanceGet(request)
+                .execute();
+
+            if (!response.isSuccessful()) {
+                throw new DataSourceException("Failed to fetch account balances: " + response.code());
+            }
+
+            return mapAccountsToDataPoints(response.body(), query);
+        } catch (IOException e) {
+            throw new DataSourceException("Error fetching account balances", e);
+        }
+    }
+
+    private List<DataPoint<AccountBase>> mapAccountsToDataPoints(AccountsGetResponse response, DataQuery query) {
+        List<DataPoint<AccountBase>> dataPoints = new ArrayList<>();
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        for (AccountBase account : response.getAccounts()) {
+            DataPoint<AccountBase> point = new DataPoint<>();
+
+            point.setMetric(PlaidMetric.ACCOUNT_BALANCE);
+            point.setValue(account);
+            point.setTimestamp(timestamp);
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("queryStartDate", query.getStartDate());
+            metadata.put("queryEndDate", query.getEndDate());
+            metadata.put("fetchTimestamp", timestamp);
+            metadata.put("institutionId", response.getItem().getInstitutionId());
+            point.setMetadata(metadata);
+
+            dataPoints.add(point);
+        }
+
+        return dataPoints;
     }
     
 }

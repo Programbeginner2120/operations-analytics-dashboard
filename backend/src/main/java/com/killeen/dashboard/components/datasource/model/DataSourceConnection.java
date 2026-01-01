@@ -11,7 +11,7 @@ public interface DataSourceConnection extends AutoCloseable {
 
     boolean isConnected();
 
-    <E> List<DataPoint<E>> fetchData(DataQuery query);
+    List<DataPoint<?>> fetchData(DataQuery query);
 
     DataSourceConfig getConfig();
 

@@ -2,10 +2,11 @@ package com.killeen.dashboard.components.plaid.enums;
 
 import com.killeen.dashboard.components.datasource.constants.SourceTypes;
 import com.killeen.dashboard.components.datasource.model.Metric;
+import com.plaid.client.model.AccountBase;
 
 public enum PlaidMetric implements Metric {
     // TODO: Add Plaid metrics as you encounter them
-    ACCOUNT_BALANCE(Double.class);
+    ACCOUNT_BALANCE(AccountBase.class);
 
     private final Class<?> responseType;
 

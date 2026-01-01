@@ -14,6 +14,6 @@ import lombok.Data;
 public class DataQuery {
     private List<Metric> metrics;
     private LocalDateTime startDate;
-    private LocalDateTime endData;
+    private LocalDateTime endDate;
     private Map<String, String> filters;
 }
