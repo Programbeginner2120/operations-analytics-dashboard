@@ -93,7 +93,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
                 return ConnectionStatus.CONNECTION_FAILURE;
             }
 
-            Response<AccountsGetResponse> response = executeHealthCheckRequeest(accessToken);
+            Response<AccountsGetResponse> response = executeHealthCheckRequest(accessToken);
 
             if (response.isSuccessful()) {
                 log.info("Health check successful: Plaid connection is active");
@@ -115,7 +115,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
         log.debug("Plaid data source connection closed successfully");
     }
 
-    private Response<AccountsGetResponse> executeHealthCheckRequeest(String accessToken) {
+    private Response<AccountsGetResponse> executeHealthCheckRequest(String accessToken) {
         if (accessToken == null) {
             log.warn("Cannot execute health check request: access token is null");
             return null;
