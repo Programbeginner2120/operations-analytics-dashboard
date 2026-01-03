@@ -216,6 +216,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
             DataPoint<AccountBase> point = new DataPoint<>();
 
             point.setMetric(PlaidMetric.ACCOUNT_BALANCE);
+            point.setSourceType(SourceTypes.PLAID);
             point.setValue(account);
             point.setTimestamp(timestamp);
 
@@ -240,6 +241,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
             DataPoint<Transaction> point = new DataPoint<>();
 
             point.setMetric(PlaidMetric.TRANSACTIONS);
+            point.setSourceType(SourceTypes.PLAID);
             point.setValue(transaction);
             point.setTimestamp(timestamp);
 
