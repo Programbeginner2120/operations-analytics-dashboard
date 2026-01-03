@@ -105,7 +105,12 @@ public class DashboardApplication /* implements CommandLineRunner */ {
 	// 	Response<SandboxPublicTokenCreateResponse> publicTokenResponse = 
 	// 		plaidClient.sandboxPublicTokenCreate(publicTokenRequest).execute();
 
+    //     if (!publicTokenResponse.isSuccessful()) {
+    //         throw new IOException("Failed to create sandbox public token: " + publicTokenResponse.code() + " " + publicTokenResponse.message());
+    //     }
+
 	// 	String publicToken = publicTokenResponse.body().getPublicToken();
+    //     log.debug("Sandbox public token created");
 
 	// 	ItemPublicTokenExchangeRequest exchangeRequest =
 	// 		new ItemPublicTokenExchangeRequest().publicToken(publicToken);
@@ -113,7 +118,14 @@ public class DashboardApplication /* implements CommandLineRunner */ {
 	// 	Response<ItemPublicTokenExchangeResponse> exchangeResponse =
 	// 		plaidClient.itemPublicTokenExchange(exchangeRequest).execute();
 
-	// 	return exchangeResponse.body().getAccessToken();
+    //     if (!exchangeResponse.isSuccessful()) {
+    //         throw new IOException("Failed to exchange sandbox public token: " + exchangeResponse.code() + " " + exchangeResponse.message());
+    //     }
+
+    //     String accessToken = exchangeResponse.body().getAccessToken();
+    //     log.debug("Sandbox access token created");
+
+	// 	return accessToken;
 	// }
 
 }
