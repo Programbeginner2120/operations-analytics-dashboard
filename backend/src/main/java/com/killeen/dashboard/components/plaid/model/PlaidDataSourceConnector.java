@@ -11,7 +11,6 @@ import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnection;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnector;
 import com.killeen.dashboard.components.plaid.config.PlaidProperties;
-import com.plaid.client.ApiClient;
 import com.plaid.client.request.PlaidApi;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PlaidDataSourceConnector implements DataSourceConnector {
 
     private final PlaidProperties plaidProperties;
+    private final PlaidApi plaidApi;
 
     @Override
     public String getSourceType() {
@@ -40,7 +40,7 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
                 return ConnectionStatus.CONNECTION_FAILURE;
             }
 
-            createPlaidClient(config);
+            // PlaidApi bean is already configured and ready to use
             log.info("Plaid connection test successful for: {}", config.getDisplayName());
 
             return ConnectionStatus.CONNECTED;
@@ -70,7 +70,7 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
         log.debug("Creating Plaid data source connection for: {}", config.getDisplayName());
         
         PlaidDataSourceConnection connection = PlaidDataSourceConnection.builder()
-            .plaidClient(createPlaidClient(config))
+            .plaidClient(plaidApi)
             .config(config)
             .build();
         
@@ -95,17 +95,6 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
             .displayName("Plaid Data Source Configuration")
             .credentials(credentials)
             .build();
-    }
-
-    private PlaidApi createPlaidClient(DataSourceConfig config) {
-        log.debug("Creating Plaid API client");
-        
-        Map<String, String> credentials = config.getCredentials();
-        ApiClient apiClient = new ApiClient(credentials);
-        apiClient.setPlaidAdapter(ApiClient.Sandbox);
-        
-        log.debug("Plaid API client created with Sandbox environment");
-        return apiClient.createService(PlaidApi.class);
     }
     
 }
