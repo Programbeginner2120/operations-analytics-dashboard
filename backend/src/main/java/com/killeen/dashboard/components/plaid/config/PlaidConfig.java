@@ -30,7 +30,7 @@ public class PlaidConfig {
         ApiClient apiClient = new ApiClient(credentials);
 
         switch (plaidProperties.getEnvironment()) {
-            case "sandbox": a
+            case "sandbox":
             case "development":
                 // Both sandbox and development use the Plaid Sandbox environment
                 apiClient.setPlaidAdapter(ApiClient.Sandbox);
