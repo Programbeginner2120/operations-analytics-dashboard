@@ -19,6 +19,9 @@ import com.killeen.dashboard.components.plaid.enums.PlaidMetric;
 import com.plaid.client.model.AccountBase;
 import com.plaid.client.model.AccountsBalanceGetRequest;
 import com.plaid.client.model.AccountsGetResponse;
+import com.plaid.client.model.Transaction;
+import com.plaid.client.model.TransactionsGetRequest;
+import com.plaid.client.model.TransactionsGetResponse;
 import com.plaid.client.request.PlaidApi;
 
 import lombok.Builder;
@@ -140,6 +143,8 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
         switch (metric) {
             case ACCOUNT_BALANCE:
                 return new ArrayList<>(fetchAccountBalances(query));
+            case TRANSACTIONS:
+                return new ArrayList<>(fetchTransactions(query));
             default:
                 throw new UnsupportedOperationException(
                     "Metric not yet implemented: " + metric
@@ -163,12 +168,43 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
                 .execute();
 
             if (!response.isSuccessful()) {
+                log.error("Failed to fetch account balances: {}", response.code());
                 throw new DataSourceException("Failed to fetch account balances: " + response.code());
             }
 
             return mapAccountsToDataPoints(response.body(), query);
         } catch (IOException e) {
+            log.error("Error fetching account balances", e);
             throw new DataSourceException("Error fetching account balances", e);
+        }
+    }
+
+    /**
+     * Fetches transactions from Plaid API
+     * Return DataPoints containing full Plaid Transaction objects
+     */
+    private List<DataPoint<Transaction>> fetchTransactions(DataQuery query) {
+        String accessToken = config.getCredentials().get("accessToken");
+
+        TransactionsGetRequest request = new TransactionsGetRequest()
+            .accessToken(accessToken)
+            .startDate(query.getStartDate().toLocalDate())
+            .endDate(query.getEndDate().toLocalDate());
+
+        try {
+            Response<TransactionsGetResponse> response = plaidClient
+                .transactionsGet(request)
+                .execute();
+
+            if (!response.isSuccessful()) {
+                log.error("Failed to fetch transactions: {}", response.code());
+                throw new DataSourceException("Failed to fetch transactions: " + response.code());
+            }
+
+            return mapTransactionsToDataPoints(response.body(), query);
+        } catch (IOException e) {
+            log.error("Error fetching transactions", e);
+            throw new DataSourceException("Error fetching transactions", e);
         }
     }
 
@@ -195,5 +231,30 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
         return dataPoints;
     }
+
+    private List<DataPoint<Transaction>> mapTransactionsToDataPoints(TransactionsGetResponse response, DataQuery query) {
+        List<DataPoint<Transaction>> dataPoints = new ArrayList<>();
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        for (Transaction transaction : response.getTransactions()) {
+            DataPoint<Transaction> point = new DataPoint<>();
+
+            point.setMetric(PlaidMetric.TRANSACTIONS);
+            point.setValue(transaction);
+            point.setTimestamp(timestamp);
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("queryStartDate", query.getStartDate());
+            metadata.put("queryEndDate", query.getEndDate());
+            metadata.put("fetchTimestamp", timestamp);
+            metadata.put("institutionId", response.getItem().getInstitutionId());
+            point.setMetadata(metadata);
+
+            dataPoints.add(point);
+        }
+
+        return dataPoints;
+    }
+
     
 }

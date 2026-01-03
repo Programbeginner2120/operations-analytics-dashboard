@@ -23,6 +23,7 @@ import com.plaid.client.model.ItemPublicTokenExchangeResponse;
 import com.plaid.client.model.Products;
 import com.plaid.client.model.SandboxPublicTokenCreateRequest;
 import com.plaid.client.model.SandboxPublicTokenCreateResponse;
+import com.plaid.client.model.Transaction;
 import com.plaid.client.request.PlaidApi;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class DashboardApplication implements CommandLineRunner {
 
 		// Build multi-metric query
 		DataQuery query = DataQuery.builder()
-			.metrics(Arrays.asList(PlaidMetric.ACCOUNT_BALANCE))
+			.metrics(Arrays.asList(PlaidMetric.ACCOUNT_BALANCE, PlaidMetric.TRANSACTIONS))
 			.startDate(LocalDateTime.now().minusDays(30))
 			.endDate(LocalDateTime.now())
 			.build();
@@ -68,9 +69,30 @@ public class DashboardApplication implements CommandLineRunner {
 
 		// Process results
 		for (DataPoint<?> point : results) {
-			log.info("Metric: {}, Timestamp: {}", point.getMetric().getName(), point.getTimestamp());
-			AccountBase account = (AccountBase) point.getValue();
-			log.info("Account: {} | Balance: {} | Type: {}", account.getName(), account.getBalances().getCurrent(), account.getType().getValue());
+			if (point.getMetric().equals(PlaidMetric.ACCOUNT_BALANCE)) {
+				log.info("Metric: {}, Timestamp: {}", 
+					point.getMetric().getName(), 
+					point.getTimestamp()
+				);
+				AccountBase account = (AccountBase) point.getValue();
+				log.info("Account: {} | Balance: {} | Type: {}", 
+					account.getName(), 
+					account.getBalances().getCurrent(), 
+					account.getType().getValue()
+				);
+			}
+			else if (point.getMetric().equals(PlaidMetric.TRANSACTIONS)) {
+				log.info("Metric: {}, Timestamp: {}", 
+					point.getMetric().getName(), 
+					point.getTimestamp()
+				);
+				Transaction transaction = (Transaction) point.getValue();
+				log.info("Transaction: {} | Amount: {} | Name: {}", 
+					transaction.getTransactionId(), 
+					transaction.getAmount(), 
+					transaction.getName()
+				);
+			}
 		}
 	}
 
