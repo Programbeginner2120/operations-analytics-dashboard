@@ -36,7 +36,7 @@ public class PlaidController {
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
-            .metrics(List.of(PlaidMetric.ACCOUNT_BALANCE))
+            .metric(PlaidMetric.ACCOUNT_BALANCE)
             .build();
         return this.plaidService.fetchData(query)
             .stream()
@@ -53,7 +53,7 @@ public class PlaidController {
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
-            .metrics(List.of(PlaidMetric.TRANSACTIONS))
+            .metric(PlaidMetric.TRANSACTIONS)
             .build();
         return this.plaidService.fetchData(query)
             .stream()

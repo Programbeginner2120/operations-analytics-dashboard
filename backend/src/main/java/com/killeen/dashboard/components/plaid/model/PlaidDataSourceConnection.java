@@ -14,7 +14,6 @@ import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
 import com.killeen.dashboard.components.datasource.exception.DataSourceException;
 import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnection;
-import com.killeen.dashboard.components.datasource.model.Metric;
 import com.killeen.dashboard.components.plaid.enums.PlaidMetric;
 import com.plaid.client.model.AccountBase;
 import com.plaid.client.model.AccountsBalanceGetRequest;
@@ -54,17 +53,11 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
         List<DataPoint<?>> results = new ArrayList<>();
 
-        for (Metric metric : query.getMetrics()) {
-            if (metric instanceof PlaidMetric) {
-                try {
-                    List<DataPoint<?>> metricResults = fetchMetric((PlaidMetric) metric, query);
-                    results.addAll(metricResults);
-                } catch (Exception e) {
-                    log.error("Failed to fetch metric {}: {}", metric, e.getMessage(), e);
-                }
-            } else {
-                log.warn("Skipping non-Plaid metric: {}", metric);
-            }
+        try {
+            List<DataPoint<?>> metricResults = fetchMetric((PlaidMetric)query.getMetric(), query);
+            results.addAll(metricResults);
+        } catch (Exception e) {
+            log.error("Failed to fetch metric {}: {}", query.getMetric(), e.getMessage(), e);
         }
 
         return results;
