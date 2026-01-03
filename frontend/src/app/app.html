@@ -1,1 +1,8 @@
-<div>Frontend Works!</div>
+@if (accountBalances()) {
+    <div>Account Balances:</div>
+    {{ accountBalances() | json }}
+}
+@if (transactions()) {
+    <div>Transactions:</div>
+    {{ transactions() | json }}
+}
