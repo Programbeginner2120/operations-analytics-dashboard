@@ -31,10 +31,10 @@ import retrofit2.Response;
 
 @Slf4j
 @SpringBootApplication
-public class DashboardApplication implements CommandLineRunner {
+public class DashboardApplication /* implements CommandLineRunner */ {
 
-	@Autowired
-	private PlaidDataSourceConnector plaidConnector;
+	// @Autowired
+	// private PlaidDataSourceConnector plaidConnector;
 
 	public static void main(String[] args) {
 		log.info("Starting Operations Analytics Dashboard application");
@@ -42,78 +42,78 @@ public class DashboardApplication implements CommandLineRunner {
 		log.info("Operations Analytics Dashboard application started successfully");
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		DataSourceConfig config = plaidConnector.createDataSourceConfig();
+	// @Override
+	// public void run(String... args) throws Exception {
+	// 	DataSourceConfig config = plaidConnector.createDataSourceConfig();
 
-		PlaidDataSourceConnection connection = (PlaidDataSourceConnection) plaidConnector.createConnection(config);
+	// 	PlaidDataSourceConnection connection = (PlaidDataSourceConnection) plaidConnector.createConnection(config);
 
-		String accessToken = createSandboxAccessToken(connection.getPlaidClient());
+	// 	String accessToken = createSandboxAccessToken(connection.getPlaidClient());
 
-		config.getCredentials().put("accessToken", accessToken);
+	// 	config.getCredentials().put("accessToken", accessToken);
 
-		ConnectionStatus status = connection.healthCheck();
-		log.info("Health check with access token: {}", status);
+	// 	ConnectionStatus status = connection.healthCheck();
+	// 	log.info("Health check with access token: {}", status);
 
-		// Build multi-metric query
-		DataQuery query = DataQuery.builder()
-			.metrics(Arrays.asList(PlaidMetric.ACCOUNT_BALANCE, PlaidMetric.TRANSACTIONS))
-			.startDate(LocalDateTime.now().minusDays(30))
-			.endDate(LocalDateTime.now())
-			.build();
+	// 	// Build multi-metric query
+	// 	DataQuery query = DataQuery.builder()
+	// 		.metrics(Arrays.asList(PlaidMetric.ACCOUNT_BALANCE, PlaidMetric.TRANSACTIONS))
+	// 		.startDate(LocalDateTime.now().minusDays(30))
+	// 		.endDate(LocalDateTime.now())
+	// 		.build();
 
-		// Fetch data
-		log.info("Executing query with {} metrics", query.getMetrics().size());
-		List<DataPoint<?>> results = connection.fetchData(query);
-		log.info("Received {} data points", results.size());
+	// 	// Fetch data
+	// 	log.info("Executing query with {} metrics", query.getMetrics().size());
+	// 	List<DataPoint<?>> results = connection.fetchData(query);
+	// 	log.info("Received {} data points", results.size());
 
-		// Process results
-		for (DataPoint<?> point : results) {
-			if (point.getMetric().equals(PlaidMetric.ACCOUNT_BALANCE)) {
-				log.info("Metric: {}, Timestamp: {}", 
-					point.getMetric().getName(), 
-					point.getTimestamp()
-				);
-				AccountBase account = (AccountBase) point.getValue();
-				log.info("Account: {} | Balance: {} | Type: {}", 
-					account.getName(), 
-					account.getBalances().getCurrent(), 
-					account.getType().getValue()
-				);
-			}
-			else if (point.getMetric().equals(PlaidMetric.TRANSACTIONS)) {
-				log.info("Metric: {}, Timestamp: {}", 
-					point.getMetric().getName(), 
-					point.getTimestamp()
-				);
-				Transaction transaction = (Transaction) point.getValue();
-				log.info("Transaction: {} | Amount: {} | Name: {}", 
-					transaction.getTransactionId(), 
-					transaction.getAmount(), 
-					transaction.getName()
-				);
-			}
-		}
-	}
+	// 	// Process results
+	// 	for (DataPoint<?> point : results) {
+	// 		if (point.getMetric().equals(PlaidMetric.ACCOUNT_BALANCE)) {
+	// 			log.info("Metric: {}, Timestamp: {}", 
+	// 				point.getMetric().getName(), 
+	// 				point.getTimestamp()
+	// 			);
+	// 			AccountBase account = (AccountBase) point.getValue();
+	// 			log.info("Account: {} | Balance: {} | Type: {}", 
+	// 				account.getName(), 
+	// 				account.getBalances().getCurrent(), 
+	// 				account.getType().getValue()
+	// 			);
+	// 		}
+	// 		else if (point.getMetric().equals(PlaidMetric.TRANSACTIONS)) {
+	// 			log.info("Metric: {}, Timestamp: {}", 
+	// 				point.getMetric().getName(), 
+	// 				point.getTimestamp()
+	// 			);
+	// 			Transaction transaction = (Transaction) point.getValue();
+	// 			log.info("Transaction: {} | Amount: {} | Name: {}", 
+	// 				transaction.getTransactionId(), 
+	// 				transaction.getAmount(), 
+	// 				transaction.getName()
+	// 			);
+	// 		}
+	// 	}
+	// }
 
-	private String createSandboxAccessToken(PlaidApi plaidClient) throws IOException {
-		SandboxPublicTokenCreateRequest publicTokenRequest = 
-			new SandboxPublicTokenCreateRequest()
-				.institutionId("ins_109508")
-				.initialProducts(Arrays.asList(Products.TRANSACTIONS));
+	// private String createSandboxAccessToken(PlaidApi plaidClient) throws IOException {
+	// 	SandboxPublicTokenCreateRequest publicTokenRequest = 
+	// 		new SandboxPublicTokenCreateRequest()
+	// 			.institutionId("ins_109508")
+	// 			.initialProducts(Arrays.asList(Products.TRANSACTIONS));
 
-		Response<SandboxPublicTokenCreateResponse> publicTokenResponse = 
-			plaidClient.sandboxPublicTokenCreate(publicTokenRequest).execute();
+	// 	Response<SandboxPublicTokenCreateResponse> publicTokenResponse = 
+	// 		plaidClient.sandboxPublicTokenCreate(publicTokenRequest).execute();
 
-		String publicToken = publicTokenResponse.body().getPublicToken();
+	// 	String publicToken = publicTokenResponse.body().getPublicToken();
 
-		ItemPublicTokenExchangeRequest exchangeRequest =
-			new ItemPublicTokenExchangeRequest().publicToken(publicToken);
+	// 	ItemPublicTokenExchangeRequest exchangeRequest =
+	// 		new ItemPublicTokenExchangeRequest().publicToken(publicToken);
 
-		Response<ItemPublicTokenExchangeResponse> exchangeResponse =
-			plaidClient.itemPublicTokenExchange(exchangeRequest).execute();
+	// 	Response<ItemPublicTokenExchangeResponse> exchangeResponse =
+	// 		plaidClient.itemPublicTokenExchange(exchangeRequest).execute();
 
-		return exchangeResponse.body().getAccessToken();
-	}
+	// 	return exchangeResponse.body().getAccessToken();
+	// }
 
 }

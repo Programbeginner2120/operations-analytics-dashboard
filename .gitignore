@@ -74,6 +74,13 @@ backend/*.jar
 backend/*.war
 backend/*.ear
 
+# VS Code
+.vscode/
+
+# MCPs
+.playwright-mcp/
+
+
 # ============================================
 # Frontend (Angular/Node.js) patterns
 # ============================================
