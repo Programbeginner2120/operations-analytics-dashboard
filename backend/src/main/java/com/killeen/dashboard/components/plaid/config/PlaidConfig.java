@@ -31,13 +31,17 @@ public class PlaidConfig {
 
         switch (plaidProperties.getEnvironment()) {
             case "sandbox":
+            case "development":
+                // Both sandbox and development use the Plaid Sandbox environment
                 apiClient.setPlaidAdapter(ApiClient.Sandbox);
                 break;
             case "production":
                 apiClient.setPlaidAdapter(ApiClient.Production);
+                break;
             default:
                 throw new IllegalArgumentException(
-                    "Invalid Plaid environment: " + plaidProperties.getEnvironment()
+                    "Invalid Plaid environment: " + plaidProperties.getEnvironment() + 
+                    ". Valid values are: sandbox, development, production"
                 );
         }
 
