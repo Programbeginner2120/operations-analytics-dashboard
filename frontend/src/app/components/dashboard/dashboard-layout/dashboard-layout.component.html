@@ -1,0 +1,13 @@
+<div class="dashboard-layout">
+    <div class="dashboard-layout-header">
+        <h1>Dashboard Layout</h1>
+        <button (click)="addCard()">Add Card</button>
+    </div>
+    <div class="dashboard-layout-content">
+        @for (card of cards(); track card.id) {
+            <div class="dashboard-layout-card">
+                {{ card.id }}
+            </div>
+        }
+    </div>
+</div>
