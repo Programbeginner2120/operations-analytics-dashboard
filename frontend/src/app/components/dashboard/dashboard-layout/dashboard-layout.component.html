@@ -6,7 +6,7 @@
     <div class="dashboard-layout-content">
         @for (card of cards(); track card.id) {
             <div class="dashboard-layout-card">
-                {{ card.id }}
+                <app-bar-chart></app-bar-chart>
             </div>
         }
     </div>
