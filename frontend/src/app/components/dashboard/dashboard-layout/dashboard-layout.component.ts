@@ -1,8 +1,6 @@
-import { Component, computed, signal, WritableSignal } from "@angular/core";
-
-export interface DashboardCard {
-    id: number;
-}
+import { Component, computed, inject, Signal, signal, WritableSignal } from "@angular/core";
+import { DashboardCard } from "../../../interfaces/dashboard.interface";
+import { DashboardService } from "../../../services/dashboard.service";
 
 @Component({
     selector: 'app-dashboard-layout',
@@ -10,12 +8,15 @@ export interface DashboardCard {
     styleUrls: ['./dashboard-layout.component.scss']
 })
 export class DashboardLayoutComponent {
-    // signals
-    cards: WritableSignal<DashboardCard[]> = signal([]);
+    
+    readonly dashboardService = inject(DashboardService);
 
-    numCards = computed(() => this.cards().length);
+    get cards(): Signal<DashboardCard[]> {
+        return this.dashboardService.cards;
+    }
 
     addCard() {
-        this.cards.update(cards => [...cards, { id: this.numCards() + 1 }]);
+        this.dashboardService.addCard();
     }
+
 }
