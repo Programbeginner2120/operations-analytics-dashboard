@@ -1,0 +1,14 @@
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.dashboard-card {
+    border: 1px solid black;
+}
+
+.dashboard-card-header {
+    display: flex;
+    justify-content: space-between;
+}

@@ -2,9 +2,7 @@
     <app-dashboard-header></app-dashboard-header>
     <div class="dashboard-layout-content">
         @for (card of cards(); track card.id) {
-            <div class="dashboard-layout-card">
-                <app-bar-chart></app-bar-chart>
-            </div>
+            <app-dashboard-card [card]="card"></app-dashboard-card>
         }
     </div>
 </div>
