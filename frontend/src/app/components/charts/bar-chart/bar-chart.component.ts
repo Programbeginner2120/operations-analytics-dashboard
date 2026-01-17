@@ -30,7 +30,7 @@ export class BarChartComponent {
         ],
         chart: {
           type: "bar",
-          height: 350
+          height: 300
         },
         xaxis: {
           categories: this.data().xAxisData,

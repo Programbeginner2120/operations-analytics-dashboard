@@ -7,8 +7,8 @@ export type PieChartOptions = {
     chart: ApexChart;
     labels: string[];
     title: ApexTitleSubtitle;
-    dataLabels: ApexDataLabels;
     legend: ApexLegend;
+    dataLabels: ApexDataLabels;
     plotOptions: ApexPlotOptions;
 }
 
@@ -26,15 +26,14 @@ export class PieChartComponent {
             series: this.data().values,
             chart: {
                 type: 'pie',
-                height: 350
+                height: 315
             },
             labels: this.data().labels,
             title: {
                 text: this.data().title
             },
             dataLabels: {
-                enabled: true,
-                formatter: this.data().formatter ?? ((value: number) => value),
+                enabled: false
             },
             legend: {
                 position: 'bottom',
