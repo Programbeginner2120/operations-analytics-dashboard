@@ -1,7 +1,6 @@
-import { Component, effect, HostListener, inject } from '@angular/core';
+import { Component, effect, HostListener, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
-import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -11,8 +10,11 @@ import { ModalService } from '../../services/modal.service';
   standalone: true
 })
 export class ModalComponent {
-  // Dependency injection using inject()
-  readonly modalService = inject(ModalService);
+  // Input signal for open state (controlled by parent)
+  isOpen = input.required<boolean>();
+  
+  // Output for close event
+  close = output<void>();
 
   // Icons
   readonly xIcon = X;
@@ -20,7 +22,7 @@ export class ModalComponent {
   constructor() {
     // Body scroll lock effect
     effect(() => {
-      if (this.modalService.isOpen()) {
+      if (this.isOpen()) {
         // Lock body scroll when modal is open
         document.body.style.overflow = 'hidden';
       } else {
@@ -36,7 +38,7 @@ export class ModalComponent {
   onBackdropClick(event: MouseEvent): void {
     // Only close if clicking backdrop, not modal content
     if (event.target === event.currentTarget) {
-      this.modalService.close();
+      this.close.emit();
     }
   }
 
@@ -44,7 +46,7 @@ export class ModalComponent {
    * Closes the modal via the close button
    */
   closeModal(): void {
-    this.modalService.close();
+    this.close.emit();
   }
 
   /**
@@ -52,8 +54,8 @@ export class ModalComponent {
    */
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
-    if (this.modalService.isOpen()) {
-      this.modalService.close();
+    if (this.isOpen()) {
+      this.close.emit();
     }
   }
 }

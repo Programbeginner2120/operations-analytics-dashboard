@@ -21,9 +21,21 @@
 }
 
 .config-modal-footer {
+    margin-top: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.config-modal-footer-buttons-container-1 {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.config-modal-footer-buttons-container-2 {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
+    gap: var(--space-3);
 }
 
 .config-form {

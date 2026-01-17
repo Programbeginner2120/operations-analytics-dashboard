@@ -1,4 +1,4 @@
-@if (modalService.isOpen()) {
+@if (isOpen()) {
   <div 
     class="modal-backdrop"
     animate.enter="backdrop-enter"
@@ -25,9 +25,9 @@
         <ng-content select="[modal-header]"></ng-content>
       </div>
 
-      <!-- Body slot (default content) -->
+      <!-- Body slot -->
       <div class="modal-body">
-        <ng-content></ng-content>
+        <ng-content select="[modal-body]"></ng-content>
       </div>
 
       <!-- Footer slot -->

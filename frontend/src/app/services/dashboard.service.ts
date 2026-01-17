@@ -46,4 +46,20 @@ export class DashboardService {
         });
     }
 
+    updateCard(id: number, card: DashboardCard) {
+        this._cards.update(cards => {
+            const visualizationType: DashboardVisualizationType = card.visualizationType;
+            if (visualizationType === DashboardVisualizationType.BAR_CHART) {
+                card.data = this.transactions() ?? [];
+            } else if (visualizationType === DashboardVisualizationType.PIE_CHART) {
+                card.data = this.accountBalances() ?? [];
+            }
+            return cards.map(c => c.id === id ? card : c);
+        });
+    }
+
+    removeCard(id: number) {
+        this._cards.update(cards => cards.filter(c => c.id !== id));
+    }
+
 }

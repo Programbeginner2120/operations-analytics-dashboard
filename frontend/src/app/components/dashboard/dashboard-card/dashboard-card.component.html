@@ -14,19 +14,19 @@
     </div>
 </div>
 
-<app-modal class="config-modal">
+<app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
     <div class="config-modal-header" modal-header>
         <h2>Configure Dashboard Card</h2>
     </div>
 
     <div class="config-modal-body" modal-body>
         <form class="config-form">
-            <!-- Card Title Input -->
+            <!-- Card Title Input - bind to editable signal -->
             <app-input
                 label="Card Title"
                 type="text"
                 placeholder="Enter card title"
-                [(value)]="cardTitle"
+                [(value)]="editableTitle"
                 [iconBefore]="typeIcon"
                 helperText="This will appear at the top of your dashboard card"
                 [required]="true"
@@ -34,26 +34,31 @@
                 size="medium">
             </app-input>
 
-            <!-- Data Source Select -->
+            <!-- Data Source Select - bind to editable signal -->
             <app-select
                 label="Data Source"
                 [options]="dataSourceOptions"
-                [(value)]="dataSourceType"
+                [(value)]="editableDataSourceType"
                 placeholder="Select a data source">
             </app-select>
 
-            <!-- Visualization Type Select -->
+            <!-- Visualization Type Select - bind to editable signal -->
             <app-select
                 label="Visualization Type"
                 [options]="visualizationOptions"
-                [(value)]="visualizationType"
+                [(value)]="editableVisualizationType"
                 placeholder="Select a visualization type">
             </app-select>
         </form>
     </div>
 
     <div class="config-modal-footer" modal-footer>
-        <app-button [variant]="'primary'" (click)="saveConfig()">Save Changes</app-button>
-        <app-button [variant]="'secondary'" (click)="modalService.close()">Cancel</app-button>
+        <div class="config-modal-footer-buttons-container-1">
+            <app-button [variant]="'destructive'" [size]="'small'" (click)="removeCard()">Delete Card</app-button>
+        </div>
+        <div class="config-modal-footer-buttons-container-2">
+            <app-button [variant]="'primary'" [size]="'small'" (click)="saveConfig()">Save Changes</app-button>
+            <app-button [variant]="'secondary'" [size]="'small'" (click)="closeModal()">Cancel</app-button>
+        </div>
     </div>
 </app-modal>

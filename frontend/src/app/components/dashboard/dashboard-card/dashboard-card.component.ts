@@ -5,7 +5,6 @@ import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
 import { PieChartComponent } from "../../charts/pie-chart/pie-chart.component";
 import { ModalComponent } from "../../../shared/components/modal/modal.component";
-import { ModalService } from "../../../shared/services/modal.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
@@ -30,14 +29,16 @@ export class DashboardCardComponent {
     card = input.required<DashboardCard>();
 
     readonly dashboardService = inject(DashboardService);
-    readonly modalService = inject(ModalService);
 
     readonly settings = Settings;
 
-    // Form signals for config modal
-    cardTitle = signal<string>('');
-    dataSourceType = signal<string | number | null>(null);
-    visualizationType = signal<string | number | null>(null);
+    // Local editable state - writable signals for form fields
+    readonly editableTitle = signal<string>('');
+    readonly editableDataSourceType = signal<DashboardDataSourceType | null>(null);
+    readonly editableVisualizationType = signal<DashboardVisualizationType | null>(null);
+    
+    // Local modal state specific to this card instance
+    readonly isModalOpen = signal<boolean>(false);
 
     // Select options
     readonly dataSourceOptions: SelectOption[] = [
@@ -53,9 +54,9 @@ export class DashboardCardComponent {
         if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
             return {
                 title: 'Transactions',
-                xAxisData: this.card().data.map(t => t.value.date).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [],
+                xAxisData: this.card().data?.map(t => t.value.date).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [],
                 xAxisLabel: 'Date',
-                yAxisData: this.card().data.map(t => t.value.amount).sort((a, b) => a - b) ?? [],
+                yAxisData: this.card().data?.map(t => t.value.amount).sort((a, b) => a - b) ?? [],
                 yAxisLabel: 'Amount',
                 formatter: (value: number) => "$" + value.toFixed(2)
             }
@@ -67,8 +68,8 @@ export class DashboardCardComponent {
         if (this.card().visualizationType === DashboardVisualizationType.PIE_CHART) {
             return {
                 title: 'Account Balances',
-                labels: this.card().data.map(a => a.value.name) ?? [],
-                values: this.card().data.map(a => a.value.balances.current ?? 0) ?? [],
+                labels: this.card().data?.map(a => a.value.name) ?? [],
+                values: this.card().data?.map(a => a.value.balances.current ?? 0) ?? [],
                 formatter: (value: number) => value.toFixed(2)
             }
         }
@@ -76,34 +77,52 @@ export class DashboardCardComponent {
     });
 
     /**
-     * Opens the configuration modal
+     * Opens the configuration modal and initializes editable fields
      */
     openConfigModal(): void {
-        // Pre-populate form with current card values
-        this.cardTitle.set(this.card().title);
-        this.dataSourceType.set(this.card().dataSourceType);
-        this.visualizationType.set(this.card().visualizationType);
-        this.modalService.open();
+        // Initialize editable fields with current card values
+        this.editableTitle.set(this.card().title);
+        this.editableDataSourceType.set(this.card().dataSourceType);
+        this.editableVisualizationType.set(this.card().visualizationType);
+        
+        // Open this specific card's modal
+        this.isModalOpen.set(true);
     }
 
     /**
      * Saves the card configuration
      */
     saveConfig(): void {
-        // Update card with new values
+        // Update card with edited values
         console.log('Saving card configuration...', {
-            title: this.cardTitle(),
-            dataSourceType: this.dataSourceType(),
-            visualizationType: this.visualizationType()
+            title: this.editableTitle(),
+            dataSourceType: this.editableDataSourceType(),
+            visualizationType: this.editableVisualizationType()
         });
         
-        // TODO: Call service to update card
-        // this.dashboardService.updateCard(this.card().id, {
-        //     title: this.cardTitle(),
-        //     dataSourceType: this.dataSourceType() as DashboardDataSourceType,
-        //     visualizationType: this.visualizationType() as DashboardVisualizationType
-        // });
+        // Call service to update card with edited values
+        this.dashboardService.updateCard(this.card().id, {
+            ...this.card(),
+            title: this.editableTitle(),
+            dataSourceType: this.editableDataSourceType(),
+            visualizationType: this.editableVisualizationType()
+        } as DashboardCard);
         
-        this.modalService.close();
+        this.closeModal();
+    }
+
+    /**
+     * Closes the modal without saving changes
+     */
+    closeModal(): void {
+        this.isModalOpen.set(false);
+    }
+
+    /**
+     * Removes the card from the dashboard
+     */
+    removeCard(): void {
+        this.dashboardService.removeCard(this.card().id);
+        this.closeModal();
     }
 }
