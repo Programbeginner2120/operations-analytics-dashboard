@@ -1,11 +1,14 @@
-import { Component } from "@angular/core";
-import { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTitleSubtitle, NgApexchartsModule } from "ng-apexcharts"
+import { Component, computed, input, Signal } from "@angular/core";
+import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexXAxis, ApexTitleSubtitle, ApexYAxis, NgApexchartsModule } from "ng-apexcharts"
+import { BarChartData } from "../../../interfaces/data.interface";
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
     chart: ApexChart;
     xaxis: ApexXAxis;
+    yaxis: ApexYAxis;
     title: ApexTitleSubtitle;
+    dataLabels: ApexDataLabels;
 }
 
 @Component({
@@ -15,27 +18,51 @@ export type ChartOptions = {
     imports: [NgApexchartsModule]
 })
 export class BarChartComponent {
-    public chartOptions: ChartOptions;
+    data = input.required<BarChartData>();
     
-    constructor() {
-        this.chartOptions = {
-          series: [
-            {
-              name: "Sales",
-              data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-            }
-          ],
-          chart: {
-            type: "bar",
-            height: 350
-          },
-          xaxis: {
-            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-          },
-          title: {
-            text: "Monthly Sales"
+    readonly chartOptions: Signal<ChartOptions> = computed(() => {
+      return {
+        series: [
+          {
+            name: this.data().title,
+            data: this.data().yAxisData
           }
-        };
-      }
-
-    }
+        ],
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        xaxis: {
+          categories: this.data().xAxisData
+        },
+        yaxis: {
+          title: {
+            text: this.data().yAxisLabel
+          }
+        },
+        title: {
+          text: this.data().title
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: (value: number) => {
+            return "$" + value.toFixed(2);
+          },
+          style: {
+            fontSize: '8px',
+            fontWeight: 'bold',
+            colors: ['#333']
+          },
+          offsetY: -20,
+          background: {
+            enabled: true,
+            foreColor: '#fff',
+            padding: 2,
+            borderRadius: 2,
+            borderWidth: 1,
+            borderColor: '#ccc'
+          }
+        }
+      };
+    });
+  }

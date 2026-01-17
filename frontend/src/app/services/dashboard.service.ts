@@ -2,6 +2,8 @@ import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@a
 import { DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
 import { PlaidService } from "./plaid.service";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { BarChartData, DataPoint } from "../interfaces/data.interface";
+import { PlaidAccount, PlaidTransaction } from "../interfaces/plaid.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -11,8 +13,8 @@ export class DashboardService {
     readonly plaidService = inject(PlaidService);
 
     // past 7 days
-    readonly transactions = toSignal(this.plaidService.loadTransactions(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()));
-    readonly accountBalances = toSignal(this.plaidService.loadAccountBalances(new Date(), new Date()));
+    readonly transactions: Signal<DataPoint<PlaidTransaction>[]> = toSignal(this.plaidService.loadTransactions(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()), { initialValue: [] });
+    readonly accountBalances: Signal<DataPoint<PlaidAccount>[]> = toSignal(this.plaidService.loadAccountBalances(new Date(), new Date()), { initialValue: [] });
     
     private _cards: WritableSignal<DashboardCard[]> = signal([]);
 
@@ -31,6 +33,16 @@ export class DashboardService {
                 visualizationType: DashboardVisualizationType.BAR_CHART,
                 data: this.transactions() ?? []
             }];
+        });
+    }
+
+    get transactionBarChartData(): Signal<BarChartData> {
+        return signal<BarChartData>({
+            title: 'Transactions',
+            xAxisData: this.transactions()?.map(t => t.value.date).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [],
+            xAxisLabel: 'Date',
+            yAxisData: this.transactions()?.map(t => t.value.amount).sort((a, b) => a - b) ?? [],
+            yAxisLabel: 'Amount'
         });
     }
 

@@ -5,10 +5,12 @@
 }
 
 .dashboard-card {
-    border: 1px solid black;
+    border: 1px solid lightgray;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background-color: var(--color-bg-secondary);
 }
 
 .dashboard-card-header {

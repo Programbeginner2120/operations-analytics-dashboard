@@ -1,7 +1,8 @@
-import { Component, input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { DashboardCard } from "../../../interfaces/dashboard.interface";
 import { LucideAngularModule, Settings } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
+import { DashboardService } from "../../../services/dashboard.service";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -12,5 +13,9 @@ import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 export class DashboardCardComponent {
     card = input.required<DashboardCard>();
 
+    readonly dashboardService = inject(DashboardService);
+
     readonly settings = Settings;
+
+    readonly barChartData = computed(() => this.dashboardService.transactionBarChartData());
 }
