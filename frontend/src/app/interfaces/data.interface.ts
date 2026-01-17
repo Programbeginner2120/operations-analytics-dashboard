@@ -12,4 +12,5 @@ export interface BarChartData {
     xAxisLabel: string;
     yAxisData: number[];
     yAxisLabel: string;
+    formatter?: (value: number) => string;
 }

@@ -42,7 +42,8 @@ export class DashboardService {
             xAxisData: this.transactions()?.map(t => t.value.date).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [],
             xAxisLabel: 'Date',
             yAxisData: this.transactions()?.map(t => t.value.amount).sort((a, b) => a - b) ?? [],
-            yAxisLabel: 'Amount'
+            yAxisLabel: 'Amount',
+            formatter: (value: number) => "$" + value.toFixed(2)
         });
     }
 

@@ -33,7 +33,10 @@ export class BarChartComponent {
           height: 350
         },
         xaxis: {
-          categories: this.data().xAxisData
+          categories: this.data().xAxisData,
+          title: {
+            text: this.data().xAxisLabel
+          }
         },
         yaxis: {
           title: {
@@ -45,9 +48,7 @@ export class BarChartComponent {
         },
         dataLabels: {
           enabled: true,
-          formatter: (value: number) => {
-            return "$" + value.toFixed(2);
-          },
+          formatter: this.data().formatter ?? ((value: number) => value),
           style: {
             fontSize: '8px',
             fontWeight: 'bold',
