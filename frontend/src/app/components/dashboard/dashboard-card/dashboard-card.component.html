@@ -6,6 +6,10 @@
         </button>
     </div>
     <div class="dashboard-card-content">
-        <app-bar-chart [data]="barChartData()"></app-bar-chart>
+        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART) {
+            <app-bar-chart [data]="barChartData()!"></app-bar-chart>
+        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART) {
+            <app-pie-chart [data]="pieChartData()!"></app-pie-chart>
+        }
     </div>
 </div>

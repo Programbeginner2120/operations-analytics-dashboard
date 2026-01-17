@@ -14,3 +14,10 @@ export interface BarChartData {
     yAxisLabel: string;
     formatter?: (value: number) => string;
 }
+
+export interface PieChartData {
+    title: string;
+    labels: string[];
+    values: number[];
+    formatter?: (value: number) => string;
+}
