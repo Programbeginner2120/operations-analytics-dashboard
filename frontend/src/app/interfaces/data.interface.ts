@@ -5,3 +5,11 @@ export interface DataPoint<T> {
     metadata: Record<string, any>;
     sourceType: string;
 }
+
+export interface BarChartData {
+    title: string;
+    xAxisData: string[];
+    xAxisLabel: string;
+    yAxisData: number[];
+    yAxisLabel: string;
+}
