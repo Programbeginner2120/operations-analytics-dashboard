@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@a
 import { DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
 import { PlaidService } from "./plaid.service";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { BarChartData, DataPoint } from "../interfaces/data.interface";
+import { BarChartData, DataPoint, PieChartData } from "../interfaces/data.interface";
 import { PlaidAccount, PlaidTransaction } from "../interfaces/plaid.interface";
 
 @Injectable({
@@ -26,24 +26,23 @@ export class DashboardService {
 
     addCard() {
         this._cards.update(cards => {
-            return [...cards, { 
-                id: this.numCards() + 1,
-                title: 'New Card',
-                dataSourceType: DashboardDataSourceType.PLAID,
-                visualizationType: DashboardVisualizationType.BAR_CHART,
-                data: this.transactions() ?? []
-            }];
-        });
-    }
-
-    get transactionBarChartData(): Signal<BarChartData> {
-        return signal<BarChartData>({
-            title: 'Transactions',
-            xAxisData: this.transactions()?.map(t => t.value.date).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [],
-            xAxisLabel: 'Date',
-            yAxisData: this.transactions()?.map(t => t.value.amount).sort((a, b) => a - b) ?? [],
-            yAxisLabel: 'Amount',
-            formatter: (value: number) => "$" + value.toFixed(2)
+            if (this.numCards() % 2 === 0) {
+                return [...cards, { 
+                    id: this.numCards() + 1,
+                    title: 'New Card',
+                    dataSourceType: DashboardDataSourceType.PLAID,
+                    visualizationType: DashboardVisualizationType.BAR_CHART,
+                    data: this.transactions() ?? []
+                }];
+            } else {
+                return [...cards, { 
+                    id: this.numCards() + 1,
+                    title: 'New Card',
+                    dataSourceType: DashboardDataSourceType.PLAID,
+                    visualizationType: DashboardVisualizationType.PIE_CHART,
+                    data: this.accountBalances() ?? []
+                }];
+            }
         });
     }
 
