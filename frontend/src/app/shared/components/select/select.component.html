@@ -1,0 +1,55 @@
+<div class="select-container">
+  @if (label()) {
+    <label class="select-label">{{ label() }}</label>
+  }
+  
+  <div 
+    class="select-trigger"
+    [class.select-trigger--open]="isOpen()"
+    [class.select-trigger--disabled]="disabled()"
+    (click)="toggleDropdown($event)"
+    role="combobox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-disabled]="disabled()"
+    [attr.aria-haspopup]="'listbox'"
+    tabindex="0">
+    
+    <span class="select-trigger-text" [class.select-trigger-text--placeholder]="!selectedOption()">
+      {{ displayText() }}
+    </span>
+    
+    <lucide-icon 
+      class="select-trigger-icon" 
+      [class.select-trigger-icon--open]="isOpen()"
+      [img]="chevronDown" 
+      [size]="20">
+    </lucide-icon>
+  </div>
+
+  @if (isOpen()) {
+    <div class="select-dropdown" role="listbox">
+      @for (option of options(); track option.value; let idx = $index) {
+        <div
+          class="select-option"
+          [class.select-option--selected]="option.value === value()"
+          [class.select-option--highlighted]="idx === highlightedIndex()"
+          [class.select-option--disabled]="option.disabled"
+          [attr.role]="'option'"
+          [attr.aria-selected]="option.value === value()"
+          [attr.aria-disabled]="option.disabled"
+          (click)="selectOption(option, $event)">
+          
+          <span class="select-option-label">{{ option.label }}</span>
+          
+          @if (option.value === value()) {
+            <lucide-icon 
+              class="select-option-check" 
+              [img]="check" 
+              [size]="20">
+            </lucide-icon>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

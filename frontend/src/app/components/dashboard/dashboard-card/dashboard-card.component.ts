@@ -1,10 +1,9 @@
-import { Component, computed, inject, input } from "@angular/core";
+import { Component, computed, inject, input, Signal } from "@angular/core";
 import { DashboardCard, DashboardVisualizationType } from "../../../interfaces/dashboard.interface";
 import { LucideAngularModule, Settings } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
 import { PieChartComponent } from "../../charts/pie-chart/pie-chart.component";
-import { PlaidTransaction } from "../../../interfaces/plaid.interface";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -45,5 +44,5 @@ export class DashboardCardComponent {
             }
         }
         return null;
-    })
+    });
 }
