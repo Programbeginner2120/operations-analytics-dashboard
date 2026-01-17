@@ -1,9 +1,13 @@
 @if (modalService.isOpen()) {
   <div 
-    class="modal-backdrop" 
+    class="modal-backdrop"
+    animate.enter="backdrop-enter"
+    animate.leave="backdrop-leave"
     (click)="onBackdropClick($event)">
     <div 
       class="modal-dialog"
+      animate.enter="dialog-enter"
+      animate.leave="dialog-leave"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title">

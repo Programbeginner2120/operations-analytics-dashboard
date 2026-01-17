@@ -14,7 +14,6 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.2s ease;
 
   [data-theme="dark"] & {
     background-color: rgba(0, 0, 0, 0.7);
@@ -33,7 +32,6 @@
   border-radius: var(--radius-xl);
   padding: var(--space-8);
   box-shadow: var(--shadow-modal);
-  animation: slideIn 0.25s ease;
 }
 
 // Close button
@@ -163,8 +161,24 @@
   }
 }
 
-// Animations
-@keyframes fadeIn {
+// Angular 20 animations using CSS classes
+.backdrop-enter {
+  animation: backdropFadeIn 200ms ease;
+}
+
+.backdrop-leave {
+  animation: backdropFadeOut 200ms ease;
+}
+
+.dialog-enter {
+  animation: dialogSlideIn 250ms ease;
+}
+
+.dialog-leave {
+  animation: dialogSlideOut 250ms ease;
+}
+
+@keyframes backdropFadeIn {
   from {
     opacity: 0;
   }
@@ -173,7 +187,16 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialogSlideIn {
   from {
     opacity: 0;
     transform: scale(0.95) translateY(-20px);
@@ -181,6 +204,17 @@
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dialogSlideOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
   }
 }
 
