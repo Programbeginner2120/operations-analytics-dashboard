@@ -1,14 +1,14 @@
 <div class="dashboard-card">
     <div class="dashboard-card-header">
         <h3 class="dashboard-card-title">{{ card().title }}</h3>
-        <button class="manage-dashboard-card-button" (click)="openConfigModal()">
-            <lucide-icon [img]="settings" [size]="20"></lucide-icon>
-        </button>
+        <div class="manage-dashboard-card-button">
+            <lucide-icon class="manage-dashboard-card-button-icon" (click)="openConfigModal()" [img]="ellipsisIcon" [size]="25"></lucide-icon>
+        </div>
     </div>
     <div class="dashboard-card-content">
-        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART) {
+        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART && barChartData()) {
             <app-bar-chart [data]="barChartData()!"></app-bar-chart>
-        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART) {
+        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART && pieChartData()) {
             <app-pie-chart [data]="pieChartData()!"></app-pie-chart>
         }
     </div>

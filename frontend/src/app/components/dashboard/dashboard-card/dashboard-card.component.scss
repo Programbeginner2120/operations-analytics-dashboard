@@ -15,9 +15,12 @@
 
 .dashboard-card-header {
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 16px;
+    justify-content: space-between;
+    margin: 16px 8px;
+}
+
+.manage-dashboard-card-button {
+    cursor: pointer;
 }
 
 .config-modal-footer {
@@ -35,7 +38,6 @@
 .config-modal-footer-buttons-container-2 {
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-3);
 }
 
 .config-form {

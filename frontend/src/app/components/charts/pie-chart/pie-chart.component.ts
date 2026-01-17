@@ -1,6 +1,7 @@
-import { Component, computed, input, Signal } from "@angular/core";
-import { ApexChart, ApexDataLabels, ApexLegend, ApexNonAxisChartSeries, ApexPlotOptions, ApexTitleSubtitle, NgApexchartsModule } from "ng-apexcharts";
+import { Component, computed, inject, input, Signal } from "@angular/core";
+import { ApexChart, ApexDataLabels, ApexLegend, ApexNonAxisChartSeries, ApexPlotOptions, ApexTitleSubtitle, NgApexchartsModule, ApexTheme } from "ng-apexcharts";
 import { PieChartData } from "../../../interfaces/data.interface";
+import { ThemeService } from "../../../services/theme.service";
 
 export type PieChartOptions = {
     series: ApexNonAxisChartSeries;
@@ -10,6 +11,7 @@ export type PieChartOptions = {
     legend: ApexLegend;
     dataLabels: ApexDataLabels;
     plotOptions: ApexPlotOptions;
+    theme: ApexTheme;
 }
 
 @Component({
@@ -20,17 +22,28 @@ export type PieChartOptions = {
 })
 export class PieChartComponent {
     data = input.required<PieChartData>();
+    private themeService = inject(ThemeService);
 
     readonly chartOptions: Signal<PieChartOptions> = computed(() => {
+        const isDark = this.themeService.theme() === 'dark';
+        
         return {
             series: this.data().values,
             chart: {
                 type: 'pie',
-                height: 315
+                height: 315,
+                foreColor: isDark ? '#CBD5E1' : '#1F2937',
+                background: 'transparent'
+            },
+            theme: {
+                mode: isDark ? 'dark' : 'light',
             },
             labels: this.data().labels,
             title: {
-                text: this.data().title
+                text: this.data().title,
+                style: {
+                    color: isDark ? '#F8FAFC' : '#1F2937'
+                }
             },
             dataLabels: {
                 enabled: false
@@ -38,6 +51,9 @@ export class PieChartComponent {
             legend: {
                 position: 'bottom',
                 horizontalAlign: 'center',
+                labels: {
+                    colors: isDark ? '#CBD5E1' : '#6B7280'
+                }
             },
             plotOptions: {
                 pie: {
