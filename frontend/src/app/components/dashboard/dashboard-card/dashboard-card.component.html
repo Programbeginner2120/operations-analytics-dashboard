@@ -20,11 +20,36 @@
     </div>
 
     <div class="config-modal-body" modal-body>
-        <p>Configure your dashboard card settings here.</p>
-        <p style="margin-top: 16px; color: var(--color-text-secondary);">
-            This is a test modal demonstrating the modal component functionality.
-            You can add select dropdowns, forms, or any other content here.
-        </p>
+        <form class="config-form">
+            <!-- Card Title Input -->
+            <app-input
+                label="Card Title"
+                type="text"
+                placeholder="Enter card title"
+                [(value)]="cardTitle"
+                [iconBefore]="typeIcon"
+                helperText="This will appear at the top of your dashboard card"
+                [required]="true"
+                [maxLength]="50"
+                size="medium">
+            </app-input>
+
+            <!-- Data Source Select -->
+            <app-select
+                label="Data Source"
+                [options]="dataSourceOptions"
+                [(value)]="dataSourceType"
+                placeholder="Select a data source">
+            </app-select>
+
+            <!-- Visualization Type Select -->
+            <app-select
+                label="Visualization Type"
+                [options]="visualizationOptions"
+                [(value)]="visualizationType"
+                placeholder="Select a visualization type">
+            </app-select>
+        </form>
     </div>
 
     <div class="config-modal-footer" modal-footer>

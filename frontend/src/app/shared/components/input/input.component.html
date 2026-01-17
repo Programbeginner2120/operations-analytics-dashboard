@@ -1,0 +1,68 @@
+<div class="input-container">
+  @if (label()) {
+    <label [for]="id()" class="input-label">
+      {{ label() }}
+      @if (required()) {
+        <span class="input-label-required" aria-label="required">*</span>
+      }
+    </label>
+  }
+  
+  <div [class]="wrapperClasses()">
+    @if (iconBefore()) {
+      <lucide-icon 
+        class="input-icon input-icon--before" 
+        [img]="iconBefore()!" 
+        [size]="20">
+      </lucide-icon>
+    }
+    
+    <input
+      [id]="id()"
+      [name]="name()"
+      [type]="type()"
+      [class]="inputClasses()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.maxlength]="maxLength()"
+      [value]="value()"
+      [attr.aria-label]="ariaLabel()"
+      [attr.aria-describedby]="ariaDescribedBy()"
+      [attr.aria-invalid]="ariaInvalid()"
+      [attr.aria-required]="required()"
+      [attr.autocomplete]="autocomplete()"
+      (input)="onInput($event)"
+      (focus)="onFocus($event)"
+      (blur)="onBlur($event)">
+    
+    @if (iconAfter()) {
+      <lucide-icon 
+        class="input-icon input-icon--after" 
+        [img]="iconAfter()!" 
+        [size]="20">
+      </lucide-icon>
+    }
+  </div>
+
+  <div class="input-footer">
+    @if (showError()) {
+      <p [id]="(id() || 'input') + '-error'" class="input-error-text" role="alert">
+        {{ errorMessage() }}
+      </p>
+    } @else if (showHelper()) {
+      <p [id]="(id() || 'input') + '-helper'" class="input-helper-text">
+        {{ helperText() }}
+      </p>
+    }
+    
+    @if (showCharacterCount()) {
+      <p 
+        [id]="(id() || 'input') + '-count'" 
+        class="input-character-count"
+        [class.input-character-count--over]="isOverLimit()">
+        {{ characterCount() }}
+      </p>
+    }
+  </div>
+</div>
