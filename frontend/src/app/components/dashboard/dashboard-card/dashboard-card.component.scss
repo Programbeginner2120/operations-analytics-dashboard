@@ -6,9 +6,14 @@
 
 .dashboard-card {
     border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .dashboard-card-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
 }
