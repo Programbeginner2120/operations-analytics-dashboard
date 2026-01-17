@@ -1,15 +1,64 @@
 <div class="dashboard-card">
     <div class="dashboard-card-header">
         <h3 class="dashboard-card-title">{{ card().title }}</h3>
-        <button class="manage-dashboard-card-button">
-            <lucide-icon [img]="settings" [size]="20"></lucide-icon>
-        </button>
+        <div class="manage-dashboard-card-button">
+            <lucide-icon class="manage-dashboard-card-button-icon" (click)="openConfigModal()" [img]="ellipsisIcon" [size]="25"></lucide-icon>
+        </div>
     </div>
     <div class="dashboard-card-content">
-        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART) {
+        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART && barChartData()) {
             <app-bar-chart [data]="barChartData()!"></app-bar-chart>
-        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART) {
+        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART && pieChartData()) {
             <app-pie-chart [data]="pieChartData()!"></app-pie-chart>
         }
     </div>
 </div>
+
+<app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
+    <div class="config-modal-header" modal-header>
+        <h2>Configure Dashboard Card</h2>
+    </div>
+
+    <div class="config-modal-body" modal-body>
+        <form class="config-form">
+            <!-- Card Title Input - bind to editable signal -->
+            <app-input
+                label="Card Title"
+                type="text"
+                placeholder="Enter card title"
+                [(value)]="editableTitle"
+                [iconBefore]="typeIcon"
+                helperText="This will appear at the top of your dashboard card"
+                [required]="true"
+                [maxLength]="50"
+                size="medium">
+            </app-input>
+
+            <!-- Data Source Select - bind to editable signal -->
+            <app-select
+                label="Data Source"
+                [options]="dataSourceOptions"
+                [(value)]="editableDataSourceType"
+                placeholder="Select a data source">
+            </app-select>
+
+            <!-- Visualization Type Select - bind to editable signal -->
+            <app-select
+                label="Visualization Type"
+                [options]="visualizationOptions"
+                [(value)]="editableVisualizationType"
+                placeholder="Select a visualization type">
+            </app-select>
+        </form>
+    </div>
+
+    <div class="config-modal-footer" modal-footer>
+        <div class="config-modal-footer-buttons-container-1">
+            <app-button [variant]="'destructive'" [size]="'small'" (click)="removeCard()">Delete Card</app-button>
+        </div>
+        <div class="config-modal-footer-buttons-container-2">
+            <app-button [variant]="'primary'" [size]="'small'" (click)="saveConfig()">Save Changes</app-button>
+            <app-button [variant]="'secondary'" [size]="'small'" (click)="closeModal()">Cancel</app-button>
+        </div>
+    </div>
+</app-modal>

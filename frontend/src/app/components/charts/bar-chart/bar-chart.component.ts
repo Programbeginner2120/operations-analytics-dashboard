@@ -1,6 +1,7 @@
-import { Component, computed, input, Signal } from "@angular/core";
-import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexXAxis, ApexTitleSubtitle, ApexYAxis, NgApexchartsModule } from "ng-apexcharts"
+import { Component, computed, inject, input, Signal } from "@angular/core";
+import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexXAxis, ApexTitleSubtitle, ApexYAxis, NgApexchartsModule, ApexTheme } from "ng-apexcharts"
 import { BarChartData } from "../../../interfaces/data.interface";
+import { ThemeService } from "../../../services/theme.service";
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -9,6 +10,7 @@ export type ChartOptions = {
     yaxis: ApexYAxis;
     title: ApexTitleSubtitle;
     dataLabels: ApexDataLabels;
+    theme: ApexTheme;
 }
 
 @Component({
@@ -19,8 +21,11 @@ export type ChartOptions = {
 })
 export class BarChartComponent {
     data = input.required<BarChartData>();
+    private themeService = inject(ThemeService);
     
     readonly chartOptions: Signal<ChartOptions> = computed(() => {
+      const isDark = this.themeService.theme() === 'dark';
+      
       return {
         series: [
           {
@@ -30,21 +35,45 @@ export class BarChartComponent {
         ],
         chart: {
           type: "bar",
-          height: 350
+          height: 300,
+          foreColor: isDark ? '#CBD5E1' : '#1F2937',
+          background: 'transparent'
+        },
+        theme: {
+          mode: isDark ? 'dark' : 'light',
         },
         xaxis: {
           categories: this.data().xAxisData,
           title: {
-            text: this.data().xAxisLabel
+            text: this.data().xAxisLabel,
+            style: {
+              color: isDark ? '#CBD5E1' : '#1F2937'
+            }
+          },
+          labels: {
+            style: {
+              colors: isDark ? '#CBD5E1' : '#6B7280'
+            }
           }
         },
         yaxis: {
           title: {
-            text: this.data().yAxisLabel
+            text: this.data().yAxisLabel,
+            style: {
+              color: isDark ? '#CBD5E1' : '#1F2937'
+            }
+          },
+          labels: {
+            style: {
+              colors: isDark ? '#CBD5E1' : '#6B7280'
+            }
           }
         },
         title: {
-          text: this.data().title
+          text: this.data().title,
+          style: {
+            color: isDark ? '#F8FAFC' : '#1F2937'
+          }
         },
         dataLabels: {
           enabled: true,
@@ -52,16 +81,16 @@ export class BarChartComponent {
           style: {
             fontSize: '8px',
             fontWeight: 'bold',
-            colors: ['#333']
+            colors: [isDark ? '#F8FAFC' : '#1F2937']
           },
           offsetY: -20,
           background: {
             enabled: true,
-            foreColor: '#fff',
+            foreColor: isDark ? '#1E293B' : '#FFFFFF',
             padding: 2,
             borderRadius: 2,
             borderWidth: 1,
-            borderColor: '#ccc'
+            borderColor: isDark ? '#475569' : '#E5E7EB'
           }
         }
       };

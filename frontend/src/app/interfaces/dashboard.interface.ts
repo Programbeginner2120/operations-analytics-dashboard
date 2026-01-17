@@ -12,5 +12,5 @@ export interface DashboardCard {
     title: string;
     dataSourceType: DashboardDataSourceType;
     visualizationType: DashboardVisualizationType;
-    data: any[];
+    data?: any[];
 }

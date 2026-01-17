@@ -15,7 +15,33 @@
 
 .dashboard-card-header {
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 16px;
+    justify-content: space-between;
+    margin: 16px 8px;
+}
+
+.manage-dashboard-card-button {
+    cursor: pointer;
+}
+
+.config-modal-footer {
+    margin-top: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.config-modal-footer-buttons-container-1 {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.config-modal-footer-buttons-container-2 {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); // 20px gap between form fields
 }

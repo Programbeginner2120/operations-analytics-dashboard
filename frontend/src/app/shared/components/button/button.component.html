@@ -1,0 +1,24 @@
+<button
+  [type]="type()"
+  [class]="buttonClasses()"
+  [disabled]="isDisabled()"
+  [attr.aria-busy]="ariaBusy()"
+  [attr.aria-label]="ariaLabel()"
+  (click)="onClick($event)">
+  
+  @if (loading()) {
+    <lucide-icon [img]="loaderIcon" [size]="20" class="btn-loader"></lucide-icon>
+  }
+  
+  @if (iconBefore() && !loading()) {
+    <lucide-icon [img]="iconBefore()!" [size]="20" class="btn-icon-before"></lucide-icon>
+  }
+  
+  <span class="btn-content">
+    <ng-content></ng-content>
+  </span>
+  
+  @if (iconAfter() && !loading()) {
+    <lucide-icon [img]="iconAfter()!" [size]="20" class="btn-icon-after"></lucide-icon>
+  }
+</button>
