@@ -4,12 +4,14 @@ import { LucideAngularModule, Settings } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
 import { PieChartComponent } from "../../charts/pie-chart/pie-chart.component";
+import { ModalComponent } from "../../../shared/components/modal/modal.component";
+import { ModalService } from "../../../shared/services/modal.service";
 
 @Component({
     selector: 'app-dashboard-card',
     templateUrl: './dashboard-card.component.html',
     styleUrls: ['./dashboard-card.component.scss'],
-    imports: [LucideAngularModule, BarChartComponent, PieChartComponent]
+    imports: [LucideAngularModule, BarChartComponent, PieChartComponent, ModalComponent]
 })
 export class DashboardCardComponent {
     readonly DashboardVisualizationType = DashboardVisualizationType;
@@ -17,6 +19,7 @@ export class DashboardCardComponent {
     card = input.required<DashboardCard>();
 
     readonly dashboardService = inject(DashboardService);
+    readonly modalService = inject(ModalService);
 
     readonly settings = Settings;
 
@@ -45,4 +48,20 @@ export class DashboardCardComponent {
         }
         return null;
     });
+
+    /**
+     * Opens the configuration modal
+     */
+    openConfigModal(): void {
+        this.modalService.open();
+    }
+
+    /**
+     * Saves the card configuration
+     */
+    saveConfig(): void {
+        // TODO: Implement card configuration save logic
+        console.log('Saving card configuration...');
+        this.modalService.close();
+    }
 }
