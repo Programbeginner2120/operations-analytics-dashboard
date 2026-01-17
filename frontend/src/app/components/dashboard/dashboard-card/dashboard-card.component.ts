@@ -1,19 +1,23 @@
 import { Component, computed, inject, input, Signal } from "@angular/core";
 import { DashboardCard, DashboardVisualizationType } from "../../../interfaces/dashboard.interface";
-import { LucideAngularModule, Settings } from "lucide-angular";
+import { LucideAngularModule, Save, Settings, X } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
 import { PieChartComponent } from "../../charts/pie-chart/pie-chart.component";
 import { ModalComponent } from "../../../shared/components/modal/modal.component";
 import { ModalService } from "../../../shared/services/modal.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 @Component({
     selector: 'app-dashboard-card',
     templateUrl: './dashboard-card.component.html',
     styleUrls: ['./dashboard-card.component.scss'],
-    imports: [LucideAngularModule, BarChartComponent, PieChartComponent, ModalComponent]
+    imports: [LucideAngularModule, BarChartComponent, PieChartComponent, ModalComponent, ButtonComponent]
 })
 export class DashboardCardComponent {
+    readonly saveIcon = Save;
+    readonly cancelIcon = X;
+
     readonly DashboardVisualizationType = DashboardVisualizationType;
 
     card = input.required<DashboardCard>();

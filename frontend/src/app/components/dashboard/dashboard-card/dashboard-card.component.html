@@ -14,12 +14,12 @@
     </div>
 </div>
 
-<app-modal>
-    <div modal-header>
+<app-modal class="config-modal">
+    <div class="config-modal-header" modal-header>
         <h2>Configure Dashboard Card</h2>
     </div>
 
-    <div modal-body>
+    <div class="config-modal-body" modal-body>
         <p>Configure your dashboard card settings here.</p>
         <p style="margin-top: 16px; color: var(--color-text-secondary);">
             This is a test modal demonstrating the modal component functionality.
@@ -27,8 +27,8 @@
         </p>
     </div>
 
-    <div modal-footer>
-        <button class="btn-secondary" (click)="modalService.close()">Cancel</button>
-        <button class="btn-primary" (click)="saveConfig()">Save Changes</button>
+    <div class="config-modal-footer" modal-footer>
+        <app-button [variant]="'primary'" (click)="saveConfig()">Save Changes</app-button>
+        <app-button [variant]="'secondary'" (click)="modalService.close()">Cancel</app-button>
     </div>
 </app-modal>
