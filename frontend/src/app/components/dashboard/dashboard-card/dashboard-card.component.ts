@@ -10,7 +10,7 @@ import { InputComponent } from "../../../shared/components/input/input.component
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
 import { PlaidAccount, PlaidTransaction } from "../../../interfaces/plaid.interface";
-import { DataPoint } from "../../../interfaces/data.interface";
+import { BarChartData, DataPoint, PieChartData } from "../../../interfaces/data.interface";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -51,7 +51,7 @@ export class DashboardCardComponent {
      * Pass through the already-transformed data
      * Component knows nothing about data sources or transformations
      */
-    readonly visualizationData = computed(() => this.card().transformedData);
+    readonly visualizationData = computed(() => this.card().transformedData as BarChartData | PieChartData | undefined);
 
     /**
      * Opens the configuration modal and initializes editable fields

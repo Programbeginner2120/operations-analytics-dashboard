@@ -18,7 +18,7 @@ export class DashboardLayoutComponent {
         return this.dashboardService.cards;
     }
 
-    addCard() {
+    addCard(): void {
         this.dashboardService.addCard();
     }
 
