@@ -6,14 +6,17 @@
         </div>
     </div>
     <div class="dashboard-card-content">
-        @if (visualizationData()) {
-            @if (card().visualizationType === DashboardVisualizationType.BAR_CHART) {
-                <app-bar-chart [data]="visualizationData()!"></app-bar-chart>
-            } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART) {
-                <app-pie-chart [data]="visualizationData()!"></app-pie-chart>
-            }
+        @if (card().visualizationType === DashboardVisualizationType.BAR_CHART && barChartData()) {
+            <app-bar-chart [data]="barChartData()!"></app-bar-chart>
+        } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART && pieChartData()) {
+            <app-pie-chart [data]="pieChartData()!"></app-pie-chart>
         } @else {
-            <div class="loading-state">Loading data...</div>
+            <div class="loading-state">
+                <div class="skeleton-chart">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-body"></div>
+                </div>
+            </div>
         }
     </div>
 </div>

@@ -48,10 +48,24 @@ export class DashboardCardComponent {
     ];
 
     /**
-     * Pass through the already-transformed data
-     * Component knows nothing about data sources or transformations
+     * Bar chart data - only returns data when visualization type is BAR_CHART
      */
-    readonly visualizationData = computed(() => this.card().transformedData as BarChartData | PieChartData | undefined);
+    readonly barChartData = computed(() => {
+        if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
+            return this.card().transformedData as BarChartData | undefined;
+        }
+        return undefined;
+    });
+
+    /**
+     * Pie chart data - only returns data when visualization type is PIE_CHART
+     */
+    readonly pieChartData = computed(() => {
+        if (this.card().visualizationType === DashboardVisualizationType.PIE_CHART) {
+            return this.card().transformedData as PieChartData | undefined;
+        }
+        return undefined;
+    });
 
     /**
      * Opens the configuration modal and initializes editable fields
