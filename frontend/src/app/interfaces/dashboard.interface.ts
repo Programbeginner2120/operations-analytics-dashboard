@@ -22,8 +22,8 @@ export interface DataTransformConfig {
  * Taking in a start date and end date for now, will expand later
  */
 export interface DataQueryConfig {
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
 }
 
 /**

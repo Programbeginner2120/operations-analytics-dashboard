@@ -3,20 +3,24 @@ import { DashboardCard, DashboardDataSourceType, DashboardVisualizationType } fr
 import { PlaidService } from "./plaid.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { BarChartData, DataPoint, PieChartData } from "../interfaces/data.interface";
-import { PlaidAccount, PlaidTransaction } from "../interfaces/plaid.interface";
+import { PlaidAccount, PlaidDataTransformConfig, PlaidTransaction } from "../interfaces/plaid.interface";
+import { DataSourceRegistryService } from "./data-source-registry.service";
+import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
+import { catchError, of } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class DashboardService {
+    private readonly registry = inject(DataSourceRegistryService);
+    private readonly plaidStrategy = inject(PlaidDataSourceStrategyService);
 
-    readonly plaidService = inject(PlaidService);
+    private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
 
-    // past 7 days
-    readonly transactions: Signal<DataPoint<PlaidTransaction>[]> = toSignal(this.plaidService.loadTransactions(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()), { initialValue: [] });
-    readonly accountBalances: Signal<DataPoint<PlaidAccount>[]> = toSignal(this.plaidService.loadAccountBalances(new Date(), new Date()), { initialValue: [] });
-    
-    private _cards: WritableSignal<DashboardCard[]> = signal([]);
+    constructor() {
+        // Register all available strategies
+        this.registry.register(this.plaidStrategy);
+    }
 
     get cards(): Signal<DashboardCard[]> {
         return this._cards;
@@ -24,42 +28,91 @@ export class DashboardService {
 
     readonly numCards = computed(() => this._cards().length);
 
-    addCard() {
-        this._cards.update(cards => {
-            if (this.numCards() % 2 === 0) {
-                return [...cards, { 
-                    id: this.numCards() + 1,
-                    title: 'New Card',
-                    dataSourceType: DashboardDataSourceType.PLAID,
-                    visualizationType: DashboardVisualizationType.BAR_CHART,
-                    data: this.transactions() ?? []
-                }];
-            } else {
-                return [...cards, { 
-                    id: this.numCards() + 1,
-                    title: 'New Card',
-                    dataSourceType: DashboardDataSourceType.PLAID,
-                    visualizationType: DashboardVisualizationType.PIE_CHART,
-                    data: this.accountBalances() ?? []
-                }];
-            }
-        });
-    }
+   /**
+    * Add a new card with default configuration
+    */
+   addCard(): void {
+    const newId: number = this.numCards() + 1;
+    
+    const newCard: DashboardCard = {
+        id: newId,
+        title: 'New Transactions Bar Chart Card',
+        dataSourceType: DashboardDataSourceType.PLAID,
+        visualizationType: DashboardVisualizationType.BAR_CHART,
+        queryConfig: {
+            startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            endDate: new Date()
+        },
+        transformConfig: {
+            method: 'transactionsByDate'
+        } as PlaidDataTransformConfig
+    };
 
-    updateCard(id: number, card: DashboardCard) {
-        this._cards.update(cards => {
-            const visualizationType: DashboardVisualizationType = card.visualizationType;
-            if (visualizationType === DashboardVisualizationType.BAR_CHART) {
-                card.data = this.transactions() ?? [];
-            } else if (visualizationType === DashboardVisualizationType.PIE_CHART) {
-                card.data = this.accountBalances() ?? [];
-            }
-            return cards.map(c => c.id === id ? card : c);
-        });
-    }
+    // Add card and trigger data fetch
+    this._cards.update(cards => [...cards, newCard]);
+    this.refreshCardData(newCard.id);
+   }
 
-    removeCard(id: number) {
-        this._cards.update(cards => cards.filter(c => c.id !== id));
-    }
+   /**
+    * Update an existing card's configuration
+    * @param id - The id of the card to update
+    * @param updates - The updates to apply to the card
+    */
+   updateCard(id: number, updates: Partial<DashboardCard>): void {
+    this._cards.update(cards => 
+        cards.map(card => {
+            if (card.id === id) {
+                const updatedCard = { ...card, ...updates } as DashboardCard;
+
+                // If config changed, clear transformed data to trigger refresh
+                if (updates.queryConfig || updates.transformConfig || updates.visualizationType) {
+                    updatedCard.transformedData = undefined;
+                }
+
+                return updatedCard;
+            }
+            return card;
+        })
+    );
+   }
+
+   /**
+    * Remove a card
+    * @param id - The id of the card to remove
+    */
+   removeCard(id: number): void {
+    this._cards.update(cards => cards.filter(card => card.id !== id));
+   }
+
+   /**
+    * Refresh data for a specific card using appropriate strategy
+    */
+   refreshCardData(cardId: number): void {
+    const card = this._cards().find(c => c.id === cardId);
+    if (!card) return;
+
+    // Get the appropriate strategy from registry
+    const strategy = this.registry.getStrategy(card.dataSourceType);
+
+    // Fetch and transform using strategy
+    strategy.fetchAndTransform(card).pipe(
+        catchError(error => {
+            console.error(`Error fetching data for card ${cardId}:`, error);
+            return of(null);
+        })
+    ).subscribe(transformedData => {
+        if (transformedData) {
+            this._cards.update(cards => 
+                cards.map(c => c.id === cardId ? { ...c, transformedData } : c))
+        }
+    });
+   }
+
+   /**
+    * Refresh all cards' data
+    */
+   refreshAllCards(): void {
+    this._cards().forEach(card => this.refreshCardData(card.id));
+   }
 
 }

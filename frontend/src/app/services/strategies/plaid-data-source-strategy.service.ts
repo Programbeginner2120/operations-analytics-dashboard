@@ -29,7 +29,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
         // Route to appropriate fetch + transform pipeline based on method
         switch (transformConfig.method) {
             case 'transactionsByDate':
-                return this.plaidService.loadTransactions(new Date(startDate), new Date(endDate)).pipe(
+                return this.plaidService.loadTransactions(startDate, endDate).pipe(
                     map(datapoints => {
                         const transactions = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidTransaction>(dp));
                         return this.transactionTransformer.transactionsByDate(transactions);
@@ -40,7 +40,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                     })
                 );
             case 'accountsByBalance':
-                return this.plaidService.loadAccountBalances(new Date(startDate), new Date(endDate)).pipe(
+                return this.plaidService.loadAccountBalances(startDate, endDate).pipe(
                     map(datapoints => {
                         const accounts = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidAccount>(dp));
                         return this.accountTransformer.accountsByBalance(accounts);
