@@ -84,19 +84,28 @@ export class DashboardCardComponent {
      * Saves the card configuration
      */
     saveConfig(): void {
-        // Update card with edited values
-        console.log('Saving card configuration...', {
+        const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
-            dataSourceType: this.editableDataSourceType(),
-            visualizationType: this.editableVisualizationType()
-        });
+            dataSourceType: this.editableDataSourceType() ?? undefined,
+            visualizationType: this.editableVisualizationType() ?? undefined
+        };
+        
+        // Update transformConfig.method when visualization type changes
+        const newVizType = this.editableVisualizationType();
+        if (newVizType && newVizType !== this.card().visualizationType) {
+            // Map visualization type to appropriate transform method for Plaid
+            const transformMethod = newVizType === DashboardVisualizationType.BAR_CHART 
+                ? 'transactionsByDate' 
+                : 'accountsByBalance';
+            
+            updates.transformConfig = { method: transformMethod };
+        }
+        
+        // Update card with edited values
+        console.log('Saving card configuration...', updates);
         
         // Call service to update card with edited values
-        this.dashboardService.updateCard(this.card().id, {
-            title: this.editableTitle(),
-            dataSourceType: this.editableDataSourceType(),
-            visualizationType: this.editableVisualizationType()
-        } as DashboardCard);
+        this.dashboardService.updateCard(this.card().id, updates as DashboardCard);
         
         this.closeModal();
     }

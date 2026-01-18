@@ -59,6 +59,8 @@ export class DashboardService {
     * @param updates - The updates to apply to the card
     */
    updateCard(id: number, updates: Partial<DashboardCard>): void {
+    let needsRefresh = false;
+    
     this._cards.update(cards => 
         cards.map(card => {
             if (card.id === id) {
@@ -67,6 +69,7 @@ export class DashboardService {
                 // If config changed, clear transformed data to trigger refresh
                 if (updates.queryConfig || updates.transformConfig || updates.visualizationType) {
                     updatedCard.transformedData = undefined;
+                    needsRefresh = true;
                 }
 
                 return updatedCard;
@@ -74,6 +77,11 @@ export class DashboardService {
             return card;
         })
     );
+    
+    // Call refreshCardData if config changed
+    if (needsRefresh) {
+        this.refreshCardData(id);
+    }
    }
 
    /**
