@@ -45,3 +45,58 @@
     flex-direction: column;
     gap: var(--space-5); // 20px gap between form fields
 }
+
+.dashboard-card-content {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-state {
+    width: 100%;
+    padding: 16px;
+}
+
+.skeleton-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 40%;
+    background: linear-gradient(
+        90deg,
+        var(--color-bg-tertiary, #e0e0e0) 25%,
+        var(--color-bg-secondary, #f0f0f0) 50%,
+        var(--color-bg-tertiary, #e0e0e0) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+.skeleton-body {
+    height: 250px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--color-bg-tertiary, #e0e0e0) 25%,
+        var(--color-bg-secondary, #f0f0f0) 50%,
+        var(--color-bg-tertiary, #e0e0e0) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

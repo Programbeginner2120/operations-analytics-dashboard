@@ -26,7 +26,7 @@
   width: 400px;
   max-width: 90vw;
   max-height: 90vh;
-  overflow-y: auto;
+  // overflow-y: auto;
   z-index: 1000;
   background-color: var(--color-bg-secondary);
   border-radius: var(--radius-xl);
@@ -88,11 +88,39 @@
   > * + * {
     margin-top: var(--space-4);
   }
+
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+// Scrollbar styling for modal body
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--color-border-hover);
+  }
+}
+
+// For Firefox
+.modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 // Modal footer
 .modal-footer {
-  margin-top: var(--space-8);
+  // margin-top: var(--space-8);
   display: flex;
   justify-content: flex-end;
   align-items: center;

@@ -10,7 +10,7 @@ import { InputComponent } from "../../../shared/components/input/input.component
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
 import { PlaidAccount, PlaidTransaction } from "../../../interfaces/plaid.interface";
-import { DataPoint } from "../../../interfaces/data.interface";
+import { BarChartData, DataPoint, PieChartData } from "../../../interfaces/data.interface";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -22,14 +22,12 @@ export class DashboardCardComponent {
     readonly saveIcon = Save;
     readonly cancelIcon = X;
     readonly typeIcon = Type;
+    readonly ellipsisIcon = Ellipsis;
 
     readonly DashboardVisualizationType = DashboardVisualizationType;
 
     card = input.required<DashboardCard>();
-
     readonly dashboardService = inject(DashboardService);
-
-    readonly ellipsisIcon = Ellipsis;
 
     // Local editable state - writable signals for form fields
     readonly editableTitle = signal<string>('');
@@ -49,53 +47,24 @@ export class DashboardCardComponent {
         { value: DashboardVisualizationType.PIE_CHART, label: 'Pie Chart' }
     ];
 
+    /**
+     * Bar chart data - only returns data when visualization type is BAR_CHART
+     */
     readonly barChartData = computed(() => {
         if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
-            // TODO: Fix this shitty conversion lol
-            const data: DataPoint<PlaidTransaction>[] | undefined = this.card().data as unknown as DataPoint<PlaidTransaction>[] | undefined;
-            if (data) {
-                console.log('data', data);
-                // Get unique dates and sort them chronologically
-                const uniqueDates = [...new Set(data.map(t => t.value.date))]
-                    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-                
-                // Calculate spend for each date in order
-                const spendByDate = uniqueDates.map(date => 
-                    data
-                        .map(t => t.value)
-                        .filter((t: PlaidTransaction) => t.date === date)
-                        .reduce((acc: number, t: PlaidTransaction) => acc + t.amount, 0)
-                );
-                
-                return {
-                    title: 'Transactions',
-                    xAxisData: uniqueDates,
-                    xAxisLabel: 'Date',
-                    yAxisData: spendByDate,
-                    yAxisLabel: 'Amount',
-                    formatter: (value: number) => "$" + value.toFixed(2)
-                }
-            }
+            return this.card().transformedData as BarChartData | undefined;
         }
-        return null;
-    })
+        return undefined;
+    });
 
+    /**
+     * Pie chart data - only returns data when visualization type is PIE_CHART
+     */
     readonly pieChartData = computed(() => {
         if (this.card().visualizationType === DashboardVisualizationType.PIE_CHART) {
-            // TODO: Fix this shitty conversion lol
-            const data: DataPoint<PlaidAccount>[] | undefined = this.card().data as unknown as DataPoint<PlaidAccount>[] | undefined;
-            if (data) {
-                // filtering out zero balance accounts, at least for now
-                const filteredData: PlaidAccount[] = data.map(t => t.value).filter((account: PlaidAccount) => account.balances.current != null);
-                return {
-                    title: 'Account Balances',
-                    labels: filteredData.map((account: PlaidAccount) => account.name),
-                    values: filteredData.map((account: PlaidAccount) => account.balances.current ?? 0),
-                    formatter: (value: number) => value.toFixed(2)
-                }
-            }
+            return this.card().transformedData as PieChartData | undefined;
         }
-        return null;
+        return undefined;
     });
 
     /**
@@ -115,20 +84,28 @@ export class DashboardCardComponent {
      * Saves the card configuration
      */
     saveConfig(): void {
-        // Update card with edited values
-        console.log('Saving card configuration...', {
+        const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
-            dataSourceType: this.editableDataSourceType(),
-            visualizationType: this.editableVisualizationType()
-        });
+            dataSourceType: this.editableDataSourceType() ?? undefined,
+            visualizationType: this.editableVisualizationType() ?? undefined
+        };
+        
+        // Update transformConfig.method when visualization type changes
+        const newVizType = this.editableVisualizationType();
+        if (newVizType && newVizType !== this.card().visualizationType) {
+            // Map visualization type to appropriate transform method for Plaid
+            const transformMethod = newVizType === DashboardVisualizationType.BAR_CHART 
+                ? 'transactionsByDate' 
+                : 'accountsByBalance';
+            
+            updates.transformConfig = { method: transformMethod };
+        }
+        
+        // Update card with edited values
+        console.log('Saving card configuration...', updates);
         
         // Call service to update card with edited values
-        this.dashboardService.updateCard(this.card().id, {
-            ...this.card(),
-            title: this.editableTitle(),
-            dataSourceType: this.editableDataSourceType(),
-            visualizationType: this.editableVisualizationType()
-        } as DashboardCard);
+        this.dashboardService.updateCard(this.card().id, updates as DashboardCard);
         
         this.closeModal();
     }

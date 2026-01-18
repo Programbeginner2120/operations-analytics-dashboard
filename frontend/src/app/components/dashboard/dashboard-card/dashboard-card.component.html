@@ -10,6 +10,13 @@
             <app-bar-chart [data]="barChartData()!"></app-bar-chart>
         } @else if (card().visualizationType === DashboardVisualizationType.PIE_CHART && pieChartData()) {
             <app-pie-chart [data]="pieChartData()!"></app-pie-chart>
+        } @else {
+            <div class="loading-state">
+                <div class="skeleton-chart">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-body"></div>
+                </div>
+            </div>
         }
     </div>
 </div>

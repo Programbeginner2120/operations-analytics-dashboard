@@ -1,3 +1,5 @@
+import { DataTransformConfig } from "./dashboard.interface";
+
 // Minimal Account Interface
 export interface PlaidAccountBalance {
   current: number | null;
@@ -26,4 +28,10 @@ export interface PlaidTransaction {
   pending: boolean;
   payment_channel: string;
   iso_currency_code: string | null;
+}
+
+export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance';
+
+export interface PlaidDataTransformConfig extends DataTransformConfig {
+  method: PlaidTransformMethod;
 }
