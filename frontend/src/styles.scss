@@ -103,3 +103,14 @@
     width: 100%;
     overflow: hidden;
   }
+
+  /* Custom component styles */
+
+  /* For fixing the dark / light mode tooltip text color */
+  .apexcharts-tooltip {
+    .apexcharts-tooltip-title,
+    .apexcharts-tooltip-text,
+    .apexcharts-tooltip-y-group {
+      color: black; // Force dark text
+    }
+  }

@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, Signal } from "@angular/core";
-import { ApexChart, ApexDataLabels, ApexLegend, ApexNonAxisChartSeries, ApexPlotOptions, ApexTitleSubtitle, NgApexchartsModule, ApexTheme } from "ng-apexcharts";
+import { ApexChart, ApexDataLabels, ApexLegend, ApexNonAxisChartSeries, ApexPlotOptions, ApexTitleSubtitle, NgApexchartsModule, ApexTheme, ApexTooltip } from "ng-apexcharts";
 import { PieChartData } from "../../../interfaces/data.interface";
 import { ThemeService } from "../../../services/theme.service";
 
@@ -12,6 +12,7 @@ export type PieChartOptions = {
     dataLabels: ApexDataLabels;
     plotOptions: ApexPlotOptions;
     theme: ApexTheme;
+    tooltip: ApexTooltip;
 }
 
 @Component({
@@ -60,6 +61,16 @@ export class PieChartComponent {
                     dataLabels: {
                         offset: -5
                     }
+                }
+            },
+            tooltip: {
+                theme: isDark ? 'light' : 'light',
+                style: {
+                    fontSize: '12px',
+                    fontFamily: undefined
+                },
+                y: {
+                    formatter: (value: number) => "$" + value.toFixed(2)
                 }
             }
         };
