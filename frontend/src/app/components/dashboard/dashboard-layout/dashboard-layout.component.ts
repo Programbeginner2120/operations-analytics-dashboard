@@ -1,14 +1,14 @@
 import { Component, inject, Signal } from "@angular/core";
 import { DashboardCard } from "../../../interfaces/dashboard.interface";
 import { DashboardService } from "../../../services/dashboard.service";
-import { DashboardHeaderComponent } from "../dashboard-header/dashboard-header.component";
+import { HeaderComponent } from "../../header/header.component";
 import { DashboardCardComponent } from "../dashboard-card/dashboard-card.component";
 
 @Component({
     selector: 'app-dashboard-layout',
     templateUrl: './dashboard-layout.component.html',
     styleUrls: ['./dashboard-layout.component.scss'],
-    imports: [DashboardHeaderComponent, DashboardCardComponent]
+    imports: [HeaderComponent, DashboardCardComponent]
 })
 export class DashboardLayoutComponent {
     

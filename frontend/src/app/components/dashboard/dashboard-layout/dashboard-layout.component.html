@@ -1,5 +1,5 @@
 <div class="dashboard-layout">
-    <app-dashboard-header></app-dashboard-header>
+    <app-header [showDashboardSpecificContent]="true"></app-header>
     <div class="dashboard-layout-content">
         @for (card of cards(); track card.id) {
             <app-dashboard-card [card]="card"></app-dashboard-card>
