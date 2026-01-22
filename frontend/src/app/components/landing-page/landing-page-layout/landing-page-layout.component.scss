@@ -1,0 +1,61 @@
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.landing-page-layout {
+    text-align: center;
+    height: 100%;
+}
+
+.landing-page-layout-content {
+    margin-top: 12.5vh; // this is hacky, but it works for now
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 64px;
+}
+
+p {
+    color: lightgray;
+ }
+
+.landing-page-layout-content-description-subtitle {
+    font-size: 14px;
+}
+
+.landing-page-layout-navigation-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.landing-page-layout-navigation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    padding: 32px;
+    background-color: white;
+
+    &.dark-mode {
+        background-color: #050A18;
+    }
+}
+
+
+.landing-page-layout-navigation-card-subtitle {
+    font-size: 12px;
+}
+
+.landing-page-layout-navigation-card-icon {
+    border-radius: 10px;
+    padding: 8px;
+    background-color: var(--color-primary);
+}

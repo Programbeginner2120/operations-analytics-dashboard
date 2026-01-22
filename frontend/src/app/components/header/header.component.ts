@@ -1,17 +1,19 @@
-import { Component, computed, inject, Signal } from "@angular/core";
-import { ThemeService } from "../../../services/theme.service";
-import { DashboardService } from "../../../services/dashboard.service";
+import { Component, computed, inject, input, Signal } from "@angular/core";
+import { ThemeService } from "../../services/theme.service";
+import { DashboardService } from "../../services/dashboard.service";
 import { LucideAngularModule } from "lucide-angular";
 import { LayoutGrid, Moon, Plus, Sun } from "lucide-angular";
-import { Theme } from "../../../interfaces/theme.interface";
+import { Theme } from "../../interfaces/theme.interface";
 
 @Component({
-    selector: 'app-dashboard-header',
-    templateUrl: './dashboard-header.component.html',
-    styleUrls: ['./dashboard-header.component.scss'],
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
     imports: [LucideAngularModule]
 })
-export class DashboardHeaderComponent {
+export class HeaderComponent {
+
+    readonly showDashboardSpecificContent = input<boolean>(false);
 
     readonly layoutGrid = LayoutGrid;
     readonly moon = Moon;

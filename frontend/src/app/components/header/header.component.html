@@ -1,9 +1,11 @@
-<div class="dashboard-header">
+<div class="header">
     <div class="left-section">
-        <lucide-icon class="dashboard-header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
-        <div class="dashboard-header-info">
-            <h4 class="dashboard-header-title">Operations Dashboard</h4>
-            <div class="dashboard-header-subtitle">{{ numCards }} active panels - Real-time analytics</div>
+        <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
+        <div class="header-info">
+            <h4 class="header-title">Operations Dashboard</h4>
+            @if (showDashboardSpecificContent()) {
+                <div class="header-subtitle">{{ numCards }} active panels - Real-time analytics</div>
+            }
         </div>
     </div>
     <div class="right-section">
@@ -14,9 +16,11 @@
                 <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
             }
         </button>
+        @if (showDashboardSpecificContent()) {
         <button class="add-panel-button" (click)="dashboardService.addCard()">
-            <lucide-icon [img]="plus" [size]="20"></lucide-icon>
-            Add Panel
-        </button>
+                <lucide-icon [img]="plus" [size]="20"></lucide-icon>
+                Add Panel
+            </button>
+        }
     </div>
 </div>
