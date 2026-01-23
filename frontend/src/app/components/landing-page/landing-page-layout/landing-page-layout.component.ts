@@ -28,4 +28,8 @@ export class LandingPageLayoutComponent {
         this.router.navigate(['/dashboard']);
     }
 
+    navigateToManageSources(): void {
+        this.router.navigate(['/manage-sources']);
+    }
+
 }

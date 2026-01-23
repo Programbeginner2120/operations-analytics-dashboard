@@ -16,7 +16,7 @@
                 <lucide-icon class="landing-page-layout-navigation-card-icon" [img]="layoutGrid" [size]="30"></lucide-icon>
                 <h3 class="landing-page-layout-navigation-card-title">Connect Data Sources</h3>
                 <p class="landing-page-layout-navigation-card-subtitle">Link your accounts and APIs to unlock insights.</p>
-                <app-button [iconAfter]="rightArrow">Manage Sources</app-button>
+                <app-button [iconAfter]="rightArrow" (click)="navigateToManageSources()">Manage Sources</app-button>
             </div>
         </div>
     </div>

@@ -1,0 +1,25 @@
+<div class="manage-sources-layout">
+    <app-header></app-header>
+    <div class="manage-sources-layout-content">
+        <div class="manage-sources-layout-content-info">
+            <h3 class="manage-sources-layout-content-title">Manage Data Sources</h3>
+            <p class="manage-sources-layout-content-description">Connect your data sources to your dashboard and start visualizing your data.</p>
+        </div>
+        <div class="manage-sources-layout-content-sources">
+            @for (source of sources(); track source.sourceName) {
+                <div class="manage-sources-layout-content-source">
+                    <div class="manage-sources-layout-content-source-top-content">
+                        <lucide-icon class="manage-sources-layout-content-source-top-content-icon" [img]="source.sourceIcon" [size]="25"></lucide-icon>
+                        <div class="manage-sources-layout-content-source-top-content-info">
+                            <h3 class="manage-sources-layout-content-source-top-content-title">{{ source.sourceName }}</h3>
+                            <p class="manage-sources-layout-content-source-top-content-description">{{ source.sourceDescription }}</p>
+                        </div>
+                    </div>
+                    <div class="manage-sources-layout-content-source-bottom-content">
+                        <app-button [size]="'small'" [iconAfter]="rightArrow" (click)="source.routingFn()">Connect Source</app-button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
