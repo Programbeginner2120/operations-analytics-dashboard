@@ -5,6 +5,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { ThemeService } from "../../../services/theme.service";
 import { Theme } from "../../../interfaces/theme.interface";
 import { NgClass } from "@angular/common";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-landing-page-layout',
@@ -20,5 +21,15 @@ export class LandingPageLayoutComponent {
     readonly themeService = inject(ThemeService);
 
     readonly theme: Signal<Theme> = computed(() => this.themeService.theme());
+
+    readonly router = inject(Router);
+
+    navigateToDashboard(): void {
+        this.router.navigate(['/dashboard']);
+    }
+
+    navigateToManageSources(): void {
+        this.router.navigate(['/manage-sources']);
+    }
 
 }

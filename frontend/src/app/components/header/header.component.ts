@@ -1,31 +1,40 @@
 import { Component, computed, inject, input, Signal } from "@angular/core";
 import { ThemeService } from "../../services/theme.service";
 import { DashboardService } from "../../services/dashboard.service";
-import { LucideAngularModule } from "lucide-angular";
+import { ArrowLeft, LucideAngularModule } from "lucide-angular";
 import { LayoutGrid, Moon, Plus, Sun } from "lucide-angular";
 import { Theme } from "../../interfaces/theme.interface";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
-    imports: [LucideAngularModule]
+    imports: [LucideAngularModule, ButtonComponent]
 })
 export class HeaderComponent {
 
     readonly showDashboardSpecificContent = input<boolean>(false);
+    readonly onLandingPage = input<boolean>(false);
 
     readonly layoutGrid = LayoutGrid;
     readonly moon = Moon;
     readonly sun = Sun;
     readonly plus = Plus;
+    readonly arrowLeft = ArrowLeft;
 
     readonly themeService = inject(ThemeService);
     readonly dashboardService = inject(DashboardService);
+    readonly router = inject(Router);
 
     readonly theme: Signal<Theme> = computed(() => this.themeService.theme());
 
     get numCards(): number {
         return this.dashboardService.numCards();
+    }
+
+    navigateToLandingPage(): void {
+        this.router.navigate(['/landing-page']);
     }
 }

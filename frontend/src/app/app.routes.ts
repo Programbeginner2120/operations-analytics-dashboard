@@ -13,5 +13,13 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         loadComponent: () => import('./components/dashboard/dashboard-layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent)
-    }
+    },
+    {
+        path: 'manage-sources',
+        loadComponent: () => import('./components/manage-sources/manage-sources-layout/manage-sources-layout.component').then(m => m.ManageSourcesLayoutComponent)
+    },
+    // {
+    //     path: 'manage-sources/plaid',
+    //     loadComponent: () => import('./components/manage-sources/plaid/plaid-layout/plaid-layout.component').then(m => m.PlaidLayoutComponent)
+    // }
 ];
