@@ -1,5 +1,5 @@
 <div class="landing-page-layout">
-    <app-header></app-header>
+    <app-header [onLandingPage]="true"></app-header>
     <div class="landing-page-layout-content">
         <div class="landing-page-layout-content-description">
             <h1 class="landing-page-layout-content-description-title">Welcome to Operations Dashboard</h1>
@@ -10,7 +10,7 @@
                 <lucide-icon class="landing-page-layout-navigation-card-icon" [img]="layoutGrid" [size]="30"></lucide-icon>
                 <h3 class="landing-page-layout-navigation-card-title">View Dashboard</h3>
                 <p class="landing-page-layout-navigation-card-subtitle">Access your analytics panels and real-time metrics.</p>
-                <app-button [iconAfter]="rightArrow">Enter Dashboard</app-button>
+                <app-button [iconAfter]="rightArrow" (click)="navigateToDashboard()">Enter Dashboard</app-button>
             </div>
             <div class="landing-page-layout-navigation-card" [ngClass]="{'dark-mode': theme() === 'dark'}">
                 <lucide-icon class="landing-page-layout-navigation-card-icon" [img]="layoutGrid" [size]="30"></lucide-icon>
