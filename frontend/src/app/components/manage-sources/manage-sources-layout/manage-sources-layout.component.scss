@@ -2,6 +2,7 @@
     display: block;
     height: 100%;
     width: 100%;
+    overflow: auto;
 }
 
 .manage-sources-layout-content {
@@ -29,6 +30,7 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    margin-bottom: 100px;
 }
 
 .manage-sources-layout-content-source {

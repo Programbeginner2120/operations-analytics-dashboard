@@ -23,7 +23,7 @@ export class ManageSourcesService {
                 sourceDescription: ' Connect your financial institutions to your dashboard.',
                 sourceIcon: Banknote,
                 routingFn: () => this.router.navigate(['/manage-sources/plaid'])
-            }
+            },
         ]
     );
 
