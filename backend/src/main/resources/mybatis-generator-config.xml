@@ -40,7 +40,7 @@
     </javaModelGenerator>
 
     <!-- 2. WHERE TO PUT GENERATED XML MAPPER FILES -->
-    <sqlMapGenerator targetPackage="mapper.generated" 
+    <sqlMapGenerator targetPackage="db.mapper.generated" 
                      targetProject="src/main/resources">
       <property name="enableSubPackages" value="false"/>
     </sqlMapGenerator>
