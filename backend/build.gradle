@@ -54,5 +54,5 @@ task mybatisGenerator(type: JavaExec) {
     dependsOn processResources  // ensures resources are on classpath
     mainClass = 'org.mybatis.generator.api.ShellRunner'
     classpath = sourceSets.main.runtimeClasspath
-    args = ['-configfile', 'src/main/resources/generatorConfig.xml', '-overwrite']
+    args = ['-configfile', 'src/main/resources/mybatis-generator-config.xml', '-overwrite']
 }
