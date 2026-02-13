@@ -1,0 +1,54 @@
+<div class="plaid-layout">
+  <div class="header">
+    <h1>Manage Plaid Connections</h1>
+    <p class="subtitle">Connect your financial institutions to sync transactions and balances</p>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading">
+      Loading...
+    </div>
+  } @else {
+    <div class="connected-accounts">
+      <h2>Connected Accounts</h2>
+
+      @if (connectedItems().length === 0) {
+        <div class="empty-state">
+          <p>No accounts connected yet</p>
+          <p class="empty-subtitle">Click "Add New Account" to get started</p>
+        </div>
+      } @else {
+        <div class="accounts-list">
+          @for (item of connectedItems(); track item.id) {
+            <div class="account-card">
+              <div class="account-info">
+                <h3>{{ item.institutionName || 'Unknown Institution' }}</h3>
+                <p class="account-meta">
+                  <span>Item ID: {{ item.itemId }}</span>
+                  <span>Connected: {{ formatDate(item.createdAt) }}</span>
+                </p>
+              </div>
+              <div class="account-actions">
+                <app-button [variant]="'secondary'" (clicked)="deleteAccount(item)">
+                  Disconnect
+                </app-button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <div class="actions">
+    <app-button [variant]="'primary'" [disabled]="loading()" (clicked)="openPlaidLink()">
+      Add New Account
+    </app-button>
+  </div>
+</div>
