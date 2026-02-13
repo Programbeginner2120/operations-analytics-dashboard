@@ -1,6 +1,7 @@
 package com.killeen.dashboard.components.plaid.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +16,7 @@ import com.killeen.dashboard.components.plaid.config.PlaidProperties;
 import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnection;
 import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnector;
 import com.killeen.dashboard.components.plaid.model.PlaidItem;
-import com.killeen.dashboard.db.mapper.generated.PlaidItemMapper;
-import com.killeen.dashboard.db.model.generated.PlaidItemExample;
+import com.killeen.dashboard.components.plaid.repository.PlaidItemRepository;
 import com.plaid.client.model.CountryCode;
 import com.plaid.client.model.ItemGetRequest;
 import com.plaid.client.model.ItemGetResponse;
@@ -42,7 +42,7 @@ public class PlaidService {
     private final PlaidDataSourceConnector plaidConnector;
     private final PlaidProperties plaidProperties;
     private final PlaidApi plaidClient;
-    private final PlaidItemMapper plaidItemMapper;
+    private final PlaidItemRepository plaidItemRepository;
 
     public String createLinkToken(String userId) {
         try {
@@ -105,17 +105,20 @@ public class PlaidService {
                 institutionId = itemResponse.body().getItem().getInstitutionId();
             }
             
+            LocalDateTime now = LocalDateTime.now();
             PlaidItem plaidItem = PlaidItem.builder()
                 .itemId(itemId)
                 .accessToken(accessToken)
                 .institutionId(institutionId)
                 .institutionName(institutionId)
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
             
-            plaidItemMapper.insert(plaidItem);
-            log.info("Saved PlaidItem with id: {}", plaidItem.getId());
+            PlaidItem savedItem = plaidItemRepository.save(plaidItem);
+            log.info("Saved PlaidItem with id: {}", savedItem.getId());
             
-            return plaidItem;
+            return savedItem;
             
         } catch (IOException e) {
             log.error("Error exchanging public token", e);
@@ -125,14 +128,12 @@ public class PlaidService {
 
     public List<PlaidItem> getAllItems() {
         log.debug("Fetching all connected Plaid items");
-        return plaidItemMapper.selectByExample(new PlaidItemExample());
+        return plaidItemRepository.findAll();
     }
 
     public void deleteItem(String itemId) {
         log.info("Deleting Plaid item: {}", itemId);
-        PlaidItemExample example = new PlaidItemExample();
-        example.createCriteria().andItemIdEqualTo(itemId);
-        int deleted = plaidItemMapper.deleteByExample(example);
+        int deleted = plaidItemRepository.deleteByItemId(itemId);
         if (deleted == 0) {
             log.warn("No item found with itemId: {}", itemId);
             throw new RuntimeException("Item not found: " + itemId);
@@ -141,7 +142,7 @@ public class PlaidService {
     }
 
     public List<DataPoint<?>> fetchData(DataQuery query) {
-        List<PlaidItem> items = plaidItemMapper.selectByExample(new PlaidItemExample());
+        List<PlaidItem> items = plaidItemRepository.findAll();
         
         if (items.isEmpty() && "sandbox".equals(plaidProperties.getEnvironment())) {
             log.info("No items connected, using sandbox auto-generated token");
@@ -177,6 +178,19 @@ public class PlaidService {
     private List<DataPoint<?>> fetchDataWithSandboxToken(DataQuery query) {
         try {
             String sandboxToken = createSandboxAccessToken();
+
+            LocalDateTime now = LocalDateTime.now();
+            PlaidItem sandboxItem = PlaidItem.builder()
+                .itemId("sandbox-item")
+                .accessToken(sandboxToken)
+                .institutionId("ins_109508")
+                .institutionName("Sandbox Institution")
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+            plaidItemRepository.save(sandboxItem);
+            log.info("Persisted sandbox PlaidItem with id: {}", sandboxItem.getId());
+
             return fetchDataForItem(query, sandboxToken);
         } catch (IOException e) {
             throw new RuntimeException("Failed to fetch sandbox data", e);

@@ -12,8 +12,8 @@ spring:
 # MyBatis Configuration
 mybatis:
   mapper-locations:
-    - classpath:mapper/generated/**/*.xml
-    - classpath:mapper/custom/**/*.xml
+    - classpath:db/mapper/generated/**/*.xml
+    - classpath:db/mapper/custom/**/*.xml
   type-aliases-package: com.killeen.dashboard.db.model.generated
   configuration:
     map-underscore-to-camel-case: true

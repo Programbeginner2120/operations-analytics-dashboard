@@ -11,6 +11,9 @@
     <!-- Optional: Plugin for adding @Mapper annotation -->
     <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
     
+    <!-- Overwrite XML mapper files instead of merging -->
+    <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
+    
     <!-- Comment generator settings -->
     <commentGenerator>
       <property name="suppressDate" value="true"/>
@@ -58,7 +61,7 @@
     
     <!-- Plaid Items Table -->
     <table tableName="plaid_items" 
-           domainObjectName="PlaidItem">
+           domainObjectName="PlaidItemDb">
       
       <!-- Specify the primary key for proper key generation -->
       <generatedKey column="id" sqlStatement="JDBC" identity="true"/>

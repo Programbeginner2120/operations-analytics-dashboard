@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaidItemExample {
+public class PlaidItemDbExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public PlaidItemExample() {
+    public PlaidItemDbExample() {
         oredCriteria = new ArrayList<>();
     }
 
