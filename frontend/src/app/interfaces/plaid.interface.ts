@@ -35,3 +35,18 @@ export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance';
 export interface PlaidDataTransformConfig extends DataTransformConfig {
   method: PlaidTransformMethod;
 }
+
+export interface PlaidItem {
+  id: number;
+  itemId: string;
+  accessToken?: string;
+  institutionId: string | null;
+  institutionName: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LinkTokenResponse {
+  linkToken: string;
+  expiration?: string;
+}

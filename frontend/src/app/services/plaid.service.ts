@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { DataPoint } from "../interfaces/data.interface";
-import { PlaidAccount, PlaidTransaction } from "../interfaces/plaid.interface";
+import { LinkTokenResponse, PlaidAccount, PlaidItem, PlaidTransaction } from "../interfaces/plaid.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -29,6 +29,22 @@ export class PlaidService {
                 endDate: this.formatDate(endDate)
             }
         });
+    }
+
+    createLinkToken(): Observable<LinkTokenResponse> {
+        return this.http.post<LinkTokenResponse>(`${this.API_URL}/link-token`, {});
+    }
+
+    exchangePublicToken(publicToken: string): Observable<PlaidItem> {
+        return this.http.post<PlaidItem>(`${this.API_URL}/exchange-token`, { publicToken });
+    }
+
+    getConnectedItems(): Observable<PlaidItem[]> {
+        return this.http.get<PlaidItem[]>(`${this.API_URL}/items`);
+    }
+
+    deleteItem(itemId: string): Observable<void> {
+        return this.http.delete<void>(`${this.API_URL}/items/${itemId}`);
     }
 
     private formatDate(date: Date): string {
