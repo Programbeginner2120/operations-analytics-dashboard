@@ -1,6 +1,6 @@
 package com.killeen.dashboard.db.mapper.generated;
 
-import com.killeen.dashboard.db.model.generated.PlaidItem;
+import com.killeen.dashboard.components.plaid.model.PlaidItem;
 import com.killeen.dashboard.db.model.generated.PlaidItemExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
