@@ -145,11 +145,6 @@ public class PlaidService {
     public List<DataPoint<?>> fetchData(DataQuery query, Long userId) {
         List<PlaidItem> items = plaidItemRepository.findByUserId(userId);
         
-        if (items.isEmpty() && "sandbox".equals(plaidProperties.getEnvironment())) {
-            log.info("No items connected for user {}, using sandbox auto-generated token", userId);
-            return fetchDataWithSandboxToken(query, userId);
-        }
-        
         List<DataPoint<?>> allData = new ArrayList<>();
         for (PlaidItem item : items) {
             try {

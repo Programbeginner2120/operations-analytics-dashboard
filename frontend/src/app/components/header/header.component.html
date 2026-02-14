@@ -23,7 +23,10 @@
             }
         </button>
         @if (showDashboardSpecificContent()) {
-            <button class="add-panel-button" (click)="dashboardService.addCard()">
+            <button class="add-panel-button"
+                    [disabled]="!hasConnectedDataSources()"
+                    [title]="hasConnectedDataSources() ? 'Add a new panel' : 'Connect a data source to add panels'"
+                    (click)="dashboardService.addCard()">
                 <lucide-icon [img]="plus" [size]="20"></lucide-icon>
                 Add Panel
             </button>

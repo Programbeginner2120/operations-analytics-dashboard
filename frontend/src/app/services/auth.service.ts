@@ -16,11 +16,12 @@ export class AuthService {
     private readonly TOKEN_KEY = 'auth_token';
 
     private readonly _currentUser = signal<UserResponse | null>(null);
+    private readonly _token = signal<string | null>(localStorage.getItem(this.TOKEN_KEY));
 
     readonly currentUser = this._currentUser.asReadonly();
 
     readonly isAuthenticated = computed(() => {
-        const token = this.getToken();
+        const token = this._token();
         if (!token) return false;
         return !this.isTokenExpired(token);
     });
@@ -58,15 +59,17 @@ export class AuthService {
     }
 
     getToken(): string | null {
-        return localStorage.getItem(this.TOKEN_KEY);
+        return this._token();
     }
 
     private setToken(token: string): void {
         localStorage.setItem(this.TOKEN_KEY, token);
+        this._token.set(token);
     }
 
     private clearToken(): void {
         localStorage.removeItem(this.TOKEN_KEY);
+        this._token.set(null);
     }
 
     private isTokenExpired(token: string): boolean {

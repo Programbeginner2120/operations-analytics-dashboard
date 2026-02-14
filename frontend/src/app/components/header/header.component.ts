@@ -37,6 +37,8 @@ export class HeaderComponent {
 
     readonly numCards = computed(() => this.dashboardService.numCards());
 
+    readonly hasConnectedDataSources = computed(() => this.dashboardService.hasConnectedDataSources());
+
     navigateToLandingPage(): void {
         this.router.navigate(['/landing-page']);
     }
