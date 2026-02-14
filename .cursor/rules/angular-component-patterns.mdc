@@ -1,0 +1,127 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Angular Component Patterns (Signals-Based)
+
+This project uses Angular 20+. Always use the modern signal-based APIs. Never use legacy decorator-based patterns.
+
+## Dependency Injection
+
+Use the `inject()` function instead of constructor injection.
+
+```typescript
+// BAD - constructor injection
+constructor(private themeService: ThemeService, private router: Router) {}
+
+// GOOD - inject() function
+readonly themeService = inject(ThemeService);
+readonly router = inject(Router);
+```
+
+## Component Inputs
+
+Use `input()` / `input.required()` signal functions instead of the `@Input()` decorator.
+
+```typescript
+// BAD - @Input decorator
+@Input() label: string = '';
+@Input({ required: true }) options: SelectOption[] = [];
+
+// GOOD - input signal functions
+label = input<string>('');
+options = input.required<SelectOption[]>();
+```
+
+## Component Outputs
+
+Use the `output()` function instead of the `@Output()` decorator with `EventEmitter`.
+
+```typescript
+// BAD - @Output decorator with EventEmitter
+@Output() close = new EventEmitter<void>();
+@Output() selectionChange = new EventEmitter<string>();
+
+// GOOD - output function
+close = output<void>();
+selectionChange = output<string>();
+```
+
+## Two-Way Binding
+
+Use `model()` instead of an `@Input()` + `@Output()` pair.
+
+```typescript
+// BAD - manual two-way binding
+@Input() value: string = '';
+@Output() valueChange = new EventEmitter<string>();
+
+// GOOD - model signal
+value = model<string>('');
+```
+
+## Reactive State & Derived Values
+
+Use `signal()` for local mutable state, `computed()` for derived values, and `effect()` for side effects. Never use `get` accessors for derived reactive state.
+
+```typescript
+// BAD - getter that reads signals (not tracked properly, re-evaluates every CD cycle)
+get displayText(): string {
+  return this.selectedOption()?.label || this.placeholder();
+}
+
+// GOOD - computed signal
+readonly displayText = computed(() => {
+  return this.selectedOption()?.label || this.placeholder();
+});
+
+// GOOD - local mutable state
+isOpen = signal<boolean>(false);
+
+// GOOD - side effect reacting to signal changes
+constructor() {
+  effect(() => {
+    if (this.disabled() && this.isOpen()) {
+      this.closeDropdown();
+    }
+  });
+}
+```
+
+## Standalone Components
+
+All components should be standalone (the default in Angular 20). Do not set `standalone: true` explicitly as it is now the default -- just omit it. Import dependencies directly in the component's `imports` array.
+
+## Lifecycle Hooks
+
+Prefer `afterNextRender` / `afterRender` over `ngAfterViewInit` when performing DOM-related setup.
+
+```typescript
+// BAD
+ngAfterViewInit() {
+  this.setupChart();
+}
+
+// GOOD
+constructor() {
+  afterNextRender(() => {
+    this.setupChart();
+  });
+}
+```
+
+## ViewChild / ContentChild
+
+Use the signal-based query APIs.
+
+```typescript
+// BAD - decorator-based
+@ViewChild('chart') chartRef!: ElementRef;
+
+// GOOD - signal query
+chartRef = viewChild<ElementRef>('chart');
+chartRefRequired = viewChild.required<ElementRef>('chart');
+children = viewChildren(ChildComponent);
+contentChild = contentChild<ElementRef>('slot');
+```
