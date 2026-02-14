@@ -126,6 +126,7 @@ frontend/frontend/bazel-out/
 # Environment-specific configuration
 # ============================================
 backend/src/main/resources/application-local.yaml
+backend/src/main/resources/generator.properties
 
 # ============================================
 # Documentation

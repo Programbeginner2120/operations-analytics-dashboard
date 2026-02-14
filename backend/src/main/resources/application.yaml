@@ -9,6 +9,17 @@ spring:
   liquibase:
     change-log: classpath:db/liquibase.xml
 
+# MyBatis Configuration
+mybatis:
+  mapper-locations:
+    - classpath:db/mapper/generated/**/*.xml
+    - classpath:db/mapper/custom/**/*.xml
+  type-aliases-package: com.killeen.dashboard.db.model.generated
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+
 # Plaid API Configuration
 plaid:
   client-id: ${PLAID_CLIENT_ID}

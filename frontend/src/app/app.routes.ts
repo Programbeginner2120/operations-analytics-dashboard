@@ -18,8 +18,8 @@ export const routes: Routes = [
         path: 'manage-sources',
         loadComponent: () => import('./components/manage-sources/manage-sources-layout/manage-sources-layout.component').then(m => m.ManageSourcesLayoutComponent)
     },
-    // {
-    //     path: 'manage-sources/plaid',
-    //     loadComponent: () => import('./components/manage-sources/plaid/plaid-layout/plaid-layout.component').then(m => m.PlaidLayoutComponent)
-    // }
+    {
+        path: 'manage-sources/plaid',
+        loadComponent: () => import('./components/manage-sources/plaid/plaid-layout/plaid-layout.component').then(m => m.PlaidLayoutComponent)
+    }
 ];

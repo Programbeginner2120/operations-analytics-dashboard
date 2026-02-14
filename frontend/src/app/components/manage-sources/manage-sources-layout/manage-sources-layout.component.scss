@@ -2,10 +2,18 @@
     display: block;
     height: 100%;
     width: 100%;
+    overflow: auto;
+}
+
+.manage-sources-layout {
+    padding: var(--space-8);
+}
+
+app-header {
+    margin-bottom: 6.25vh;
 }
 
 .manage-sources-layout-content {
-    margin: 12.5vh 32px 0 32px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -29,6 +37,7 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    margin-bottom: 100px;
 }
 
 .manage-sources-layout-content-source {
