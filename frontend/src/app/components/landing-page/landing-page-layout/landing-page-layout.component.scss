@@ -7,10 +7,11 @@
 .landing-page-layout {
     text-align: center;
     height: 100%;
+    padding: var(--space-8);
 }
 
 .landing-page-layout-content {
-    margin-top: 12.5vh; // this is hacky, but it works for now
+    margin-top: 6.25vh; // this is hacky, but it works for now
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -12,6 +12,7 @@
     flex-direction: column;
     gap: 16px;
     align-items: center;
+    padding: var(--space-8);
 }
 
 .dashboard-layout-header {
@@ -22,7 +23,7 @@
 }
 
 .dashboard-layout-content {
-    width: 90%;
+    width: 100%;
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(3, 1fr);

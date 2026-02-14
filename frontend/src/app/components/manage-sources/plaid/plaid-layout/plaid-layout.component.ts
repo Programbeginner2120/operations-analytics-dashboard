@@ -4,11 +4,12 @@ import { PlaidService } from '../../../../services/plaid.service';
 import { PlaidItem } from '../../../../interfaces/plaid.interface';
 import { NgxPlaidLinkService, PlaidConfig, PlaidLinkHandler } from 'ngx-plaid-link';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { HeaderComponent } from '../../../header/header.component';
 
 @Component({
   selector: 'app-plaid-layout',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, HeaderComponent],
   templateUrl: './plaid-layout.component.html',
   styleUrls: ['./plaid-layout.component.scss']
 })
