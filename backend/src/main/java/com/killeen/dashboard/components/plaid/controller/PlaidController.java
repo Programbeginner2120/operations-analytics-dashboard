@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +39,9 @@ public class PlaidController {
 
     @PostMapping("/link-token")
     public ResponseEntity<LinkTokenResponse> createLinkToken() {
-        log.info("Received request to create link token");
-        String linkToken = plaidService.createLinkToken("default-user");
+        Long userId = getAuthenticatedUserId();
+        log.info("Received request to create link token for user: {}", userId);
+        String linkToken = plaidService.createLinkToken(userId);
         LinkTokenResponse response = LinkTokenResponse.builder()
             .linkToken(linkToken)
             .build();
@@ -47,22 +50,25 @@ public class PlaidController {
 
     @PostMapping("/exchange-token")
     public ResponseEntity<PlaidItem> exchangePublicToken(@RequestBody ExchangeTokenRequest request) {
-        log.info("Received request to exchange public token");
-        PlaidItem item = plaidService.exchangePublicToken(request.getPublicToken());
+        Long userId = getAuthenticatedUserId();
+        log.info("Received request to exchange public token for user: {}", userId);
+        PlaidItem item = plaidService.exchangePublicToken(request.getPublicToken(), userId);
         return ResponseEntity.ok(item);
     }
 
     @GetMapping("/items")
     public ResponseEntity<List<PlaidItem>> getConnectedItems() {
-        log.info("Fetching all connected items");
-        List<PlaidItem> items = plaidService.getAllItems();
+        Long userId = getAuthenticatedUserId();
+        log.info("Fetching connected items for user: {}", userId);
+        List<PlaidItem> items = plaidService.getAllItems(userId);
         return ResponseEntity.ok(items);
     }
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable String itemId) {
-        log.info("Received request to delete item: {}", itemId);
-        plaidService.deleteItem(itemId);
+        Long userId = getAuthenticatedUserId();
+        log.info("Received request to delete item: {} for user: {}", itemId, userId);
+        plaidService.deleteItem(itemId, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -72,12 +78,13 @@ public class PlaidController {
         @RequestParam("startDate") LocalDateTime startDate, 
         @RequestParam("endDate") LocalDateTime endDate
     ) {
+        Long userId = getAuthenticatedUserId();
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
             .metric(PlaidMetric.ACCOUNT_BALANCE)
             .build();
-        return this.plaidService.fetchData(query)
+        return this.plaidService.fetchData(query, userId)
             .stream()
             .map(dp -> (DataPoint<AccountBase>) dp)
             .collect(Collectors.toList());
@@ -89,15 +96,21 @@ public class PlaidController {
         @RequestParam("startDate") LocalDateTime startDate, 
         @RequestParam("endDate") LocalDateTime endDate
     ) {
+        Long userId = getAuthenticatedUserId();
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
             .metric(PlaidMetric.TRANSACTIONS)
             .build();
-        return this.plaidService.fetchData(query)
+        return this.plaidService.fetchData(query, userId)
             .stream()
             .map(dp -> (DataPoint<Transaction>) dp)
             .collect(Collectors.toList());
+    }
+
+    private Long getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Long) authentication.getPrincipal();
     }
     
 }

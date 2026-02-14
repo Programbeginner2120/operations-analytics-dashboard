@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, Signal } from "@angular/core";
 import { ThemeService } from "../../services/theme.service";
 import { DashboardService } from "../../services/dashboard.service";
-import { ArrowLeft, LucideAngularModule } from "lucide-angular";
+import { AuthService } from "../../services/auth.service";
+import { ArrowLeft, LogOut, LucideAngularModule } from "lucide-angular";
 import { LayoutGrid, Moon, Plus, Sun } from "lucide-angular";
 import { Theme } from "../../interfaces/theme.interface";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -23,18 +24,24 @@ export class HeaderComponent {
     readonly sun = Sun;
     readonly plus = Plus;
     readonly arrowLeft = ArrowLeft;
+    readonly logOut = LogOut;
 
     readonly themeService = inject(ThemeService);
     readonly dashboardService = inject(DashboardService);
+    readonly authService = inject(AuthService);
     readonly router = inject(Router);
 
     readonly theme: Signal<Theme> = computed(() => this.themeService.theme());
 
-    get numCards(): number {
-        return this.dashboardService.numCards();
-    }
+    readonly currentUser = computed(() => this.authService.currentUser());
+
+    readonly numCards = computed(() => this.dashboardService.numCards());
 
     navigateToLandingPage(): void {
         this.router.navigate(['/landing-page']);
+    }
+
+    logout(): void {
+        this.authService.logout();
     }
 }

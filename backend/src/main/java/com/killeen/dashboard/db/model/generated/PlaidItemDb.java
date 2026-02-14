@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 public class PlaidItemDb {
     private Long id;
 
+    private Long userId;
+
     private String itemId;
 
     private String accessToken;
@@ -23,6 +25,14 @@ public class PlaidItemDb {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getItemId() {
