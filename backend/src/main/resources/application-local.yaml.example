@@ -18,6 +18,10 @@ spring:
     username: YOUR_DB_USERNAME
     password: YOUR_DB_PASSWORD
 
+# JWT Configuration
+jwt:
+  secret: YOUR_JWT_SECRET_KEY_MIN_32_CHARS_LONG
+
 # Plaid API Configuration
 plaid:
   client-id: YOUR_PLAID_CLIENT_ID

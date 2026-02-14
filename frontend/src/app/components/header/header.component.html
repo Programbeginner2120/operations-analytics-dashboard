@@ -7,11 +7,14 @@
         <div class="header-info">
             <h4 class="header-title">Operations Dashboard</h4>
             @if (showDashboardSpecificContent()) {
-                <div class="header-subtitle">{{ numCards }} active panels - Real-time analytics</div>
+                <div class="header-subtitle">{{ numCards() }} active panels - Real-time analytics</div>
             }
         </div>
     </div>
     <div class="right-section">
+        @if (currentUser()) {
+            <span class="user-display-name">{{ currentUser()?.displayName || currentUser()?.email }}</span>
+        }
         <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
             @if (theme() === 'light') {
                 <lucide-icon class="theme-toggle-icon" [img]="sun" [size]="20"></lucide-icon>
@@ -20,10 +23,13 @@
             }
         </button>
         @if (showDashboardSpecificContent()) {
-        <button class="add-panel-button" (click)="dashboardService.addCard()">
+            <button class="add-panel-button" (click)="dashboardService.addCard()">
                 <lucide-icon [img]="plus" [size]="20"></lucide-icon>
                 Add Panel
             </button>
         }
+        <button class="logout-button" (click)="logout()" title="Log out">
+            <lucide-icon [img]="logOut" [size]="18"></lucide-icon>
+        </button>
     </div>
 </div>

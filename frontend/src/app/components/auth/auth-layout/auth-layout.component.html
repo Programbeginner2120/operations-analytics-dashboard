@@ -1,0 +1,60 @@
+<div class="auth-layout">
+    <div class="auth-layout-header">
+        <lucide-icon class="auth-layout-header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
+        <h4 class="auth-layout-header-title">Operations Dashboard</h4>
+        <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
+            @if (theme() === 'light') {
+                <lucide-icon class="theme-toggle-icon" [img]="sun" [size]="20"></lucide-icon>
+            } @else {
+                <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
+            }
+        </button>
+    </div>
+    <div class="auth-layout-content">
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h2 class="auth-card-title">{{ formTitle() }}</h2>
+                <p class="auth-card-subtitle">{{ formSubtitle() }}</p>
+            </div>
+            <form class="auth-card-form" (submit)="$event.preventDefault(); onSubmit()">
+                @if (!isLoginMode()) {
+                    <app-input
+                        [label]="'Display Name'"
+                        [type]="'text'"
+                        [placeholder]="'Enter your name'"
+                        [autocomplete]="'name'"
+                        [(value)]="displayName"
+                    ></app-input>
+                }
+                <app-input
+                    [label]="'Email'"
+                    [type]="'email'"
+                    [placeholder]="'Enter your email'"
+                    [required]="true"
+                    [autocomplete]="'email'"
+                    [(value)]="email"
+                ></app-input>
+                <app-input
+                    [label]="'Password'"
+                    [type]="'password'"
+                    [placeholder]="'Enter your password'"
+                    [required]="true"
+                    [autocomplete]="isLoginMode() ? 'current-password' : 'new-password'"
+                    [(value)]="password"
+                ></app-input>
+                @if (errorMessage()) {
+                    <div class="auth-card-error">{{ errorMessage() }}</div>
+                }
+                <app-button
+                    [type]="'submit'"
+                    [fullWidth]="true"
+                    [loading]="isLoading()"
+                    [disabled]="isLoading()"
+                >{{ submitLabel() }}</app-button>
+            </form>
+            <div class="auth-card-footer">
+                <button class="auth-card-toggle" (click)="toggleMode()">{{ toggleLabel() }}</button>
+            </div>
+        </div>
+    </div>
+</div>

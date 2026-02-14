@@ -20,6 +20,11 @@ mybatis:
     default-fetch-size: 100
     default-statement-timeout: 30
 
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000  # 24 hours in milliseconds
+
 # Plaid API Configuration
 plaid:
   client-id: ${PLAID_CLIENT_ID}

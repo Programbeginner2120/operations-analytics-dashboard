@@ -1,0 +1,108 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Angular Template Syntax (Modern Control Flow)
+
+This project uses Angular 20+. Always use the built-in control flow blocks. Never use structural directives from CommonModule.
+
+## Conditional Rendering
+
+Use `@if` / `@else if` / `@else` instead of `*ngIf`.
+
+```html
+<!-- BAD - structural directive -->
+<div *ngIf="isOpen()">Content</div>
+<div *ngIf="items().length > 0; else emptyState">Has items</div>
+<ng-template #emptyState><p>No items</p></ng-template>
+
+<!-- GOOD - built-in control flow -->
+@if (isOpen()) {
+  <div>Content</div>
+}
+
+@if (items().length > 0) {
+  <div>Has items</div>
+} @else {
+  <p>No items</p>
+}
+```
+
+## Loops
+
+Use `@for` with a required `track` expression instead of `*ngFor`.
+
+```html
+<!-- BAD - structural directive -->
+<div *ngFor="let item of items(); trackBy: trackById">
+  {{ item.name }}
+</div>
+
+<!-- GOOD - built-in control flow with @empty -->
+@for (item of items(); track item.id) {
+  <div>{{ item.name }}</div>
+} @empty {
+  <p>No items found.</p>
+}
+```
+
+## Switch Statements
+
+Use `@switch` / `@case` / `@default` instead of `[ngSwitch]`.
+
+```html
+<!-- BAD - directive-based -->
+<div [ngSwitch]="status()">
+  <span *ngSwitchCase="'active'">Active</span>
+  <span *ngSwitchCase="'inactive'">Inactive</span>
+  <span *ngSwitchDefault>Unknown</span>
+</div>
+
+<!-- GOOD - built-in control flow -->
+@switch (status()) {
+  @case ('active') { <span>Active</span> }
+  @case ('inactive') { <span>Inactive</span> }
+  @default { <span>Unknown</span> }
+}
+```
+
+## Deferred Loading
+
+Use `@defer` for lazy-loading heavy components.
+
+```html
+@defer (on viewport) {
+  <app-heavy-chart [data]="chartData()" />
+} @placeholder {
+  <div class="skeleton-loader"></div>
+} @loading (minimum 200ms) {
+  <app-spinner />
+}
+```
+
+## Class & Style Bindings
+
+Use `[class.name]` for single classes instead of importing `NgClass`. Reserve `[ngClass]` only for complex dynamic class maps.
+
+```html
+<!-- BAD - importing NgClass for a single conditional class -->
+<div [ngClass]="{'dark-mode': theme() === 'dark'}">...</div>
+
+<!-- GOOD - direct class binding -->
+<div [class.dark-mode]="theme() === 'dark'">...</div>
+
+<!-- OK - ngClass for many dynamic classes (but prefer [class.x] when possible) -->
+<div [ngClass]="dynamicClassMap()">...</div>
+```
+
+## Do Not Import These From CommonModule
+
+The built-in control flow replaces these directives entirely -- do not import them:
+
+- `NgIf` / `*ngIf`
+- `NgFor` / `*ngFor`
+- `NgSwitch` / `*ngSwitch` / `*ngSwitchCase` / `*ngSwitchDefault`
+- `NgClass` (for simple cases, use `[class.x]` binding instead)
+
+If a component only used `CommonModule` for the above directives, remove the import entirely.

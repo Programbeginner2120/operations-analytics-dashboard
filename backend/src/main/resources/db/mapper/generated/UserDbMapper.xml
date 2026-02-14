@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.killeen.dashboard.db.mapper.generated.PlaidItemDbMapper">
-  <resultMap id="BaseResultMap" type="com.killeen.dashboard.db.model.generated.PlaidItemDb">
+<mapper namespace="com.killeen.dashboard.db.mapper.generated.UserDbMapper">
+  <resultMap id="BaseResultMap" type="com.killeen.dashboard.db.model.generated.UserDb">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="item_id" jdbcType="VARCHAR" property="itemId" />
-    <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
-    <result column="institution_id" jdbcType="VARCHAR" property="institutionId" />
-    <result column="institution_name" jdbcType="VARCHAR" property="institutionName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="password_hash" jdbcType="VARCHAR" property="passwordHash" />
+    <result column="display_name" jdbcType="VARCHAR" property="displayName" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
-    <result column="user_id" jdbcType="BIGINT" property="userId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,16 +68,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, item_id, access_token, institution_id, institution_name, created_at, updated_at, 
-    user_id
+    id, email, password_hash, display_name, created_at, updated_at
   </sql>
-  <select id="selectByExample" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDbExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.killeen.dashboard.db.model.generated.UserDbExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from plaid_items
+    from users
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -90,41 +87,36 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from plaid_items
+    from users
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from plaid_items
+    delete from users
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDbExample">
-    delete from plaid_items
+  <delete id="deleteByExample" parameterType="com.killeen.dashboard.db.model.generated.UserDbExample">
+    delete from users
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDb" useGeneratedKeys="true">
-    insert into plaid_items (item_id, access_token, institution_id, 
-      institution_name, created_at, updated_at, 
-      user_id)
-    values (#{itemId,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}, #{institutionId,jdbcType=VARCHAR}, 
-      #{institutionName,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, 
-      #{userId,jdbcType=BIGINT})
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.UserDb" useGeneratedKeys="true">
+    insert into users (email, password_hash, display_name, 
+      created_at, updated_at)
+    values (#{email,jdbcType=VARCHAR}, #{passwordHash,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDb" useGeneratedKeys="true">
-    insert into plaid_items
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.UserDb" useGeneratedKeys="true">
+    insert into users
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="itemId != null">
-        item_id,
+      <if test="email != null">
+        email,
       </if>
-      <if test="accessToken != null">
-        access_token,
+      <if test="passwordHash != null">
+        password_hash,
       </if>
-      <if test="institutionId != null">
-        institution_id,
-      </if>
-      <if test="institutionName != null">
-        institution_name,
+      <if test="displayName != null">
+        display_name,
       </if>
       <if test="createdAt != null">
         created_at,
@@ -132,22 +124,16 @@
       <if test="updatedAt != null">
         updated_at,
       </if>
-      <if test="userId != null">
-        user_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="itemId != null">
-        #{itemId,jdbcType=VARCHAR},
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
-      <if test="accessToken != null">
-        #{accessToken,jdbcType=VARCHAR},
+      <if test="passwordHash != null">
+        #{passwordHash,jdbcType=VARCHAR},
       </if>
-      <if test="institutionId != null">
-        #{institutionId,jdbcType=VARCHAR},
-      </if>
-      <if test="institutionName != null">
-        #{institutionName,jdbcType=VARCHAR},
+      <if test="displayName != null">
+        #{displayName,jdbcType=VARCHAR},
       </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=TIMESTAMP},
@@ -155,34 +141,28 @@
       <if test="updatedAt != null">
         #{updatedAt,jdbcType=TIMESTAMP},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDbExample" resultType="java.lang.Long">
-    select count(*) from plaid_items
+  <select id="countByExample" parameterType="com.killeen.dashboard.db.model.generated.UserDbExample" resultType="java.lang.Long">
+    select count(*) from users
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update plaid_items
+    update users
     <set>
       <if test="row.id != null">
         id = #{row.id,jdbcType=BIGINT},
       </if>
-      <if test="row.itemId != null">
-        item_id = #{row.itemId,jdbcType=VARCHAR},
+      <if test="row.email != null">
+        email = #{row.email,jdbcType=VARCHAR},
       </if>
-      <if test="row.accessToken != null">
-        access_token = #{row.accessToken,jdbcType=VARCHAR},
+      <if test="row.passwordHash != null">
+        password_hash = #{row.passwordHash,jdbcType=VARCHAR},
       </if>
-      <if test="row.institutionId != null">
-        institution_id = #{row.institutionId,jdbcType=VARCHAR},
-      </if>
-      <if test="row.institutionName != null">
-        institution_name = #{row.institutionName,jdbcType=VARCHAR},
+      <if test="row.displayName != null">
+        display_name = #{row.displayName,jdbcType=VARCHAR},
       </if>
       <if test="row.createdAt != null">
         created_at = #{row.createdAt,jdbcType=TIMESTAMP},
@@ -190,42 +170,34 @@
       <if test="row.updatedAt != null">
         updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
       </if>
-      <if test="row.userId != null">
-        user_id = #{row.userId,jdbcType=BIGINT},
-      </if>
     </set>
     <if test="example != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update plaid_items
+    update users
     set id = #{row.id,jdbcType=BIGINT},
-      item_id = #{row.itemId,jdbcType=VARCHAR},
-      access_token = #{row.accessToken,jdbcType=VARCHAR},
-      institution_id = #{row.institutionId,jdbcType=VARCHAR},
-      institution_name = #{row.institutionName,jdbcType=VARCHAR},
+      email = #{row.email,jdbcType=VARCHAR},
+      password_hash = #{row.passwordHash,jdbcType=VARCHAR},
+      display_name = #{row.displayName,jdbcType=VARCHAR},
       created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
-      user_id = #{row.userId,jdbcType=BIGINT}
+      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP}
     <if test="example != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDb">
-    update plaid_items
+  <update id="updateByPrimaryKeySelective" parameterType="com.killeen.dashboard.db.model.generated.UserDb">
+    update users
     <set>
-      <if test="itemId != null">
-        item_id = #{itemId,jdbcType=VARCHAR},
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
       </if>
-      <if test="accessToken != null">
-        access_token = #{accessToken,jdbcType=VARCHAR},
+      <if test="passwordHash != null">
+        password_hash = #{passwordHash,jdbcType=VARCHAR},
       </if>
-      <if test="institutionId != null">
-        institution_id = #{institutionId,jdbcType=VARCHAR},
-      </if>
-      <if test="institutionName != null">
-        institution_name = #{institutionName,jdbcType=VARCHAR},
+      <if test="displayName != null">
+        display_name = #{displayName,jdbcType=VARCHAR},
       </if>
       <if test="createdAt != null">
         created_at = #{createdAt,jdbcType=TIMESTAMP},
@@ -233,21 +205,16 @@
       <if test="updatedAt != null">
         updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.killeen.dashboard.db.model.generated.PlaidItemDb">
-    update plaid_items
-    set item_id = #{itemId,jdbcType=VARCHAR},
-      access_token = #{accessToken,jdbcType=VARCHAR},
-      institution_id = #{institutionId,jdbcType=VARCHAR},
-      institution_name = #{institutionName,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="com.killeen.dashboard.db.model.generated.UserDb">
+    update users
+    set email = #{email,jdbcType=VARCHAR},
+      password_hash = #{passwordHash,jdbcType=VARCHAR},
+      display_name = #{displayName,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
-      user_id = #{userId,jdbcType=BIGINT}
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

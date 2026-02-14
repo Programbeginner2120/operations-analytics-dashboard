@@ -1,4 +1,4 @@
-package com.killeen.dashboard.components.plaid.model;
+package com.killeen.dashboard.components.user.model;
 
 import java.time.LocalDateTime;
 
@@ -7,20 +7,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/* 
-    Entity representing a connected Plaid institution.
-*/
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlaidItem {
+public class User {
     private Long id;
-    private Long userId;
-    private String itemId;
-    private String accessToken;
-    private String institutionId;
-    private String institutionName;
+    private String email;
+    private String passwordHash;
+    private String displayName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

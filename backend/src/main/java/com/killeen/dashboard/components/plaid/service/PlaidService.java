@@ -44,12 +44,12 @@ public class PlaidService {
     private final PlaidApi plaidClient;
     private final PlaidItemRepository plaidItemRepository;
 
-    public String createLinkToken(String userId) {
+    public String createLinkToken(Long userId) {
         try {
             log.info("Creating link token for user: {}", userId);
             
             LinkTokenCreateRequestUser user = new LinkTokenCreateRequestUser()
-                .clientUserId(userId != null ? userId : "default-user");
+                .clientUserId(String.valueOf(userId));
             
             LinkTokenCreateRequest request = new LinkTokenCreateRequest()
                 .user(user)
@@ -77,9 +77,9 @@ public class PlaidService {
         }
     }
 
-    public PlaidItem exchangePublicToken(String publicToken) {
+    public PlaidItem exchangePublicToken(String publicToken, Long userId) {
         try {
-            log.info("Exchanging public token");
+            log.info("Exchanging public token for user: {}", userId);
             
             ItemPublicTokenExchangeRequest exchangeRequest = 
                 new ItemPublicTokenExchangeRequest()
@@ -107,6 +107,7 @@ public class PlaidService {
             
             LocalDateTime now = LocalDateTime.now();
             PlaidItem plaidItem = PlaidItem.builder()
+                .userId(userId)
                 .itemId(itemId)
                 .accessToken(accessToken)
                 .institutionId(institutionId)
@@ -126,27 +127,27 @@ public class PlaidService {
         }
     }
 
-    public List<PlaidItem> getAllItems() {
-        log.debug("Fetching all connected Plaid items");
-        return plaidItemRepository.findAll();
+    public List<PlaidItem> getAllItems(Long userId) {
+        log.debug("Fetching connected Plaid items for user: {}", userId);
+        return plaidItemRepository.findByUserId(userId);
     }
 
-    public void deleteItem(String itemId) {
-        log.info("Deleting Plaid item: {}", itemId);
-        int deleted = plaidItemRepository.deleteByItemId(itemId);
+    public void deleteItem(String itemId, Long userId) {
+        log.info("Deleting Plaid item: {} for user: {}", itemId, userId);
+        int deleted = plaidItemRepository.deleteByItemIdAndUserId(itemId, userId);
         if (deleted == 0) {
-            log.warn("No item found with itemId: {}", itemId);
+            log.warn("No item found with itemId: {} for user: {}", itemId, userId);
             throw new RuntimeException("Item not found: " + itemId);
         }
         log.info("Successfully deleted item: {}", itemId);
     }
 
-    public List<DataPoint<?>> fetchData(DataQuery query) {
-        List<PlaidItem> items = plaidItemRepository.findAll();
+    public List<DataPoint<?>> fetchData(DataQuery query, Long userId) {
+        List<PlaidItem> items = plaidItemRepository.findByUserId(userId);
         
         if (items.isEmpty() && "sandbox".equals(plaidProperties.getEnvironment())) {
-            log.info("No items connected, using sandbox auto-generated token");
-            return fetchDataWithSandboxToken(query);
+            log.info("No items connected for user {}, using sandbox auto-generated token", userId);
+            return fetchDataWithSandboxToken(query, userId);
         }
         
         List<DataPoint<?>> allData = new ArrayList<>();
@@ -175,12 +176,13 @@ public class PlaidService {
         }
     }
 
-    private List<DataPoint<?>> fetchDataWithSandboxToken(DataQuery query) {
+    private List<DataPoint<?>> fetchDataWithSandboxToken(DataQuery query, Long userId) {
         try {
             String sandboxToken = createSandboxAccessToken();
 
             LocalDateTime now = LocalDateTime.now();
             PlaidItem sandboxItem = PlaidItem.builder()
+                .userId(userId)
                 .itemId("sandbox-item")
                 .accessToken(sandboxToken)
                 .institutionId("ins_109508")
