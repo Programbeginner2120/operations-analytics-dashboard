@@ -45,6 +45,12 @@
     justify-content: center;
     align-items: center;
     background-color: var(--color-primary);
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: auto; // keep hover for the title tooltip
+    }
 }
 
 .user-display-name {

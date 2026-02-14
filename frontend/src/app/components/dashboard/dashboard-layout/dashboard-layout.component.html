@@ -1,8 +1,17 @@
 <div class="dashboard-layout">
     <app-header [showDashboardSpecificContent]="true"></app-header>
-    <div class="dashboard-layout-content">
-        @for (card of cards(); track card.id) {
-            <app-dashboard-card [card]="card"></app-dashboard-card>
-        }
-    </div>
+    @if (!hasConnectedDataSources()) {
+        <div class="empty-state">
+            <p class="empty-state-title">No data sources connected</p>
+            <p class="empty-state-subtitle">
+                Go to <a routerLink="/manage-sources">Manage Sources</a> to link an account before adding panels.
+            </p>
+        </div>
+    } @else {
+        <div class="dashboard-layout-content">
+            @for (card of cards(); track card.id) {
+                <app-dashboard-card [card]="card"></app-dashboard-card>
+            }
+        </div>
+    }
 </div>

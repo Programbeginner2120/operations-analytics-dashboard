@@ -1,7 +1,6 @@
 import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
 import { DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
 import { PlaidService } from "./plaid.service";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { BarChartData, DataPoint, PieChartData } from "../interfaces/data.interface";
 import { PlaidAccount, PlaidDataTransformConfig, PlaidTransaction } from "../interfaces/plaid.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
@@ -14,12 +13,31 @@ import { catchError, of } from "rxjs";
 export class DashboardService {
     private readonly registry = inject(DataSourceRegistryService);
     private readonly plaidStrategy = inject(PlaidDataSourceStrategyService);
+    private readonly plaidService = inject(PlaidService);
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
+
+    /** null = still loading, true/false = resolved */
+    readonly hasConnectedDataSources = signal<boolean | null>(null);
 
     constructor() {
         // Register all available strategies
         this.registry.register(this.plaidStrategy);
+
+        // Check if the user has any connected data sources
+        this.refreshDataSourceStatus();
+    }
+
+    /**
+     * Re-check whether the user has any connected data sources.
+     * Called on construction and each time the dashboard route is activated.
+     */
+    refreshDataSourceStatus(): void {
+        this.plaidService.getConnectedItems().pipe(
+            catchError(() => of([]))
+        ).subscribe(items => {
+            this.hasConnectedDataSources.set(items.length > 0);
+        });
     }
 
     get cards(): Signal<DashboardCard[]> {
@@ -32,6 +50,8 @@ export class DashboardService {
     * Add a new card with default configuration
     */
    addCard(): void {
+    if (this.hasConnectedDataSources() !== true) return;
+
     const newId: number = this.numCards() + 1;
     
     const newCard: DashboardCard = {
