@@ -70,18 +70,11 @@
       <!-- <columnOverride column="item_id" property="itemId" javaType="java.lang.String"/> -->
     </table>
 
-    <!-- Add more tables as needed -->
-    <!-- Example:
-    <table tableName="another_table" 
-           domainObjectName="AnotherEntity"
-           enableCountByExample="false"
-           enableUpdateByExample="false"
-           enableDeleteByExample="false"
-           enableSelectByExample="false"
-           selectByExampleQueryId="false">
+    <!-- Users Table -->
+    <table tableName="users" 
+           domainObjectName="UserDb">
       <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
     </table>
-    -->
 
   </context>
 </generatorConfiguration>

@@ -17,6 +17,8 @@ public class PlaidItemDb {
 
     private LocalDateTime updatedAt;
 
+    private Long userId;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +73,13 @@ public class PlaidItemDb {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
