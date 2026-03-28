@@ -37,6 +37,9 @@ export class BarChartComponent {
         ],
         chart: {
           type: "bar",
+          toolbar: {
+            show: false
+          },
           height: 300,
           width: '100%',
           foreColor: isDark ? '#CBD5E1' : '#1F2937',
