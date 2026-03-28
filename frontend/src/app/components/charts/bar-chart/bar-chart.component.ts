@@ -37,6 +37,7 @@ export class BarChartComponent {
         chart: {
           type: "bar",
           height: 300,
+          width: '100%',
           foreColor: isDark ? '#CBD5E1' : '#1F2937',
           background: 'transparent'
         },

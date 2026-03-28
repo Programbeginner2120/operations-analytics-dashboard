@@ -92,6 +92,10 @@
     border-radius: 8px;
 }
 
+app-bar-chart, app-pie-chart {
+    width: 100%;
+}
+
 @keyframes skeleton-loading {
     0% {
         background-position: 200% 0;

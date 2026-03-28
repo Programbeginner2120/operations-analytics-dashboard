@@ -33,6 +33,7 @@ export class PieChartComponent {
             chart: {
                 type: 'pie',
                 height: 315,
+                width: '100%',
                 foreColor: isDark ? '#CBD5E1' : '#1F2937',
                 background: 'transparent'
             },
