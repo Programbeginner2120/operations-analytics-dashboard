@@ -30,7 +30,7 @@ export interface PlaidTransaction {
   iso_currency_code: string | null;
 }
 
-export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance';
+export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance' | 'topMerchantsBySpend';
 
 export interface PlaidDataTransformConfig extends DataTransformConfig {
   method: PlaidTransformMethod;

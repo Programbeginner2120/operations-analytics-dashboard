@@ -56,6 +56,16 @@
                 [(value)]="editableVisualizationType"
                 placeholder="Select a visualization type">
             </app-select>
+
+            <!-- Bar Chart Metric Select - only shown when Bar Chart is selected -->
+            @if (editableVisualizationType() === DashboardVisualizationType.BAR_CHART) {
+                <app-select
+                    label="Bar Chart Metric"
+                    [options]="barChartMetricOptions"
+                    [(value)]="editableBarChartMetric"
+                    placeholder="Select a metric">
+                </app-select>
+            }
         </form>
     </div>
 
