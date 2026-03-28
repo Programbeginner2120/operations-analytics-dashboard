@@ -84,22 +84,23 @@ export class BarChartComponent {
           }
         },
         dataLabels: {
-          enabled: true,
-          formatter: this.data().formatter ?? ((value: number) => value),
-          style: {
-            fontSize: '8px',
-            fontWeight: 'bold',
-            colors: [isDark ? '#F8FAFC' : '#1F2937']
-          },
-          offsetY: this.data().horizontal ? 0 : -20,
-          background: {
-            enabled: true,
-            foreColor: isDark ? '#1E293B' : '#FFFFFF',
-            padding: 2,
-            borderRadius: 2,
-            borderWidth: 1,
-            borderColor: isDark ? '#475569' : '#E5E7EB'
-          }
+          enabled: false,
+          // TODO: Add back if we want labels on the bars
+          // formatter: this.data().formatter ?? ((value: number) => value),
+          // style: {
+          //   fontSize: '8px',
+          //   fontWeight: 'bold',
+          //   colors: [isDark ? '#F8FAFC' : '#1F2937']
+          // },
+          // offsetY: this.data().horizontal ? 0 : -20,
+          // background: {
+          //   enabled: true,
+          //   foreColor: isDark ? '#1E293B' : '#FFFFFF',
+          //   padding: 2,
+          //   borderRadius: 2,
+          //   borderWidth: 1,
+          //   borderColor: isDark ? '#475569' : '#E5E7EB'
+          // }
         },
         tooltip: {
           theme: isDark ? 'light' : 'light',
