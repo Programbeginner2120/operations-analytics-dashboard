@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -142,8 +145,23 @@ public class PlaidService {
         log.info("Successfully deleted item: {}", itemId);
     }
 
+    public List<String> fetchInstitutionIds(Long userId) {
+        return this.getAllItems(userId)
+            .stream()
+            .map(item -> item.getInstitutionId())
+            .collect(Collectors.toList());
+    }
+
     public List<DataPoint<?>> fetchData(DataQuery query, Long userId) {
-        List<PlaidItem> items = plaidItemRepository.findByUserId(userId);
+        log.info("Retrieving institution id from filters...");
+        String institutionId = Optional.ofNullable(query.getFilters())
+            .map(f -> f.get("institution_id"))
+            .orElse(null);
+
+        List<PlaidItem> items = plaidItemRepository.findByUserId(userId)
+            .stream()
+            .filter(item -> institutionId == null || institutionId.equals(item.getInstitutionId()))
+            .collect(Collectors.toList());
         
         List<DataPoint<?>> allData = new ArrayList<>();
         for (PlaidItem item : items) {

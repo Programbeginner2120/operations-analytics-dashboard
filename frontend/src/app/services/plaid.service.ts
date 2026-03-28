@@ -13,6 +13,10 @@ export class PlaidService {
 
     private readonly API_URL = '/plaid';
 
+    loadInstitutionIds(): Observable<String[]> {
+        return this.http.get<String[]>(`${this.API_URL}/institution-ids`);
+    }
+
     loadAccountBalances(startDate: Date, endDate: Date): Observable<DataPoint<PlaidAccount>[]> {
         return this.http.get<DataPoint<PlaidAccount>[]>(`${this.API_URL}/account-balances`, {
             params: {
