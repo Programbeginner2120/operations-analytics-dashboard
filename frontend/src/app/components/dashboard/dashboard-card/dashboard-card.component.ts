@@ -9,7 +9,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
-import { PlaidAccount, PlaidTransaction } from "../../../interfaces/plaid.interface";
+import { PlaidAccount, PlaidDataTransformConfig, PlaidTransaction, PlaidTransformMethod } from "../../../interfaces/plaid.interface";
 import { BarChartData, DataPoint, PieChartData } from "../../../interfaces/data.interface";
 
 @Component({
@@ -33,6 +33,7 @@ export class DashboardCardComponent {
     readonly editableTitle = signal<string>('');
     readonly editableDataSourceType = signal<DashboardDataSourceType | null>(null);
     readonly editableVisualizationType = signal<DashboardVisualizationType | null>(null);
+    readonly editableBarChartMetric = signal<PlaidTransformMethod>('transactionsByDate');
     
     // Local modal state specific to this card instance
     readonly isModalOpen = signal<boolean>(false);
@@ -45,6 +46,11 @@ export class DashboardCardComponent {
     readonly visualizationOptions: SelectOption[] = [
         { value: DashboardVisualizationType.BAR_CHART, label: 'Bar Chart' },
         { value: DashboardVisualizationType.PIE_CHART, label: 'Pie Chart' }
+    ];
+
+    readonly barChartMetricOptions: SelectOption[] = [
+        { value: 'transactionsByDate', label: 'Transactions by Date' },
+        { value: 'topMerchantsBySpend', label: 'Top Merchants by Spend' }
     ];
 
     /**
@@ -75,6 +81,11 @@ export class DashboardCardComponent {
         this.editableTitle.set(this.card().title);
         this.editableDataSourceType.set(this.card().dataSourceType);
         this.editableVisualizationType.set(this.card().visualizationType);
+
+        if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
+            const config = this.card().transformConfig as PlaidDataTransformConfig;
+            this.editableBarChartMetric.set(config?.method as PlaidTransformMethod ?? 'transactionsByDate');
+        }
         
         // Open this specific card's modal
         this.isModalOpen.set(true);
@@ -90,15 +101,17 @@ export class DashboardCardComponent {
             visualizationType: this.editableVisualizationType() ?? undefined
         };
         
-        // Update transformConfig.method when visualization type changes
+        // Always persist the transform method based on viz type + metric selection
         const newVizType = this.editableVisualizationType();
-        if (newVizType && newVizType !== this.card().visualizationType) {
-            // Map visualization type to appropriate transform method for Plaid
-            const transformMethod = newVizType === DashboardVisualizationType.BAR_CHART 
-                ? 'transactionsByDate' 
-                : 'accountsByBalance';
-            
-            updates.transformConfig = { method: transformMethod };
+        if (newVizType === DashboardVisualizationType.BAR_CHART) {
+            const metric = this.editableBarChartMetric();
+            updates.transformConfig = { method: metric } as PlaidDataTransformConfig;
+            if (metric === 'topMerchantsBySpend') {
+                const endDate = new Date();
+                updates.queryConfig = { startDate: new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000), endDate };
+            }
+        } else if (newVizType === DashboardVisualizationType.PIE_CHART) {
+            updates.transformConfig = { method: 'accountsByBalance' } as PlaidDataTransformConfig;
         }
         
         // Update card with edited values

@@ -33,4 +33,29 @@ export class PlaidTransactionTransformerService {
             formatter: (value: number) => "$" + value.toFixed(2)
         };
     }
+
+    topMerchantsBySpend(transactions: PlaidTransaction[]): BarChartData {
+        const spendByMerchant = new Map<string, number>();
+
+        transactions
+            .filter(t => t.amount > 0)
+            .forEach(t => {
+                const merchant = t.merchant_name ?? t.name;
+                spendByMerchant.set(merchant, (spendByMerchant.get(merchant) ?? 0) + t.amount);
+            });
+
+        const top10 = [...spendByMerchant.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+
+        return {
+            title: 'Top 10 Merchants by Spend',
+            xAxisData: top10.map(([merchant]) => merchant),
+            xAxisLabel: 'Spend',
+            yAxisData: top10.map(([, spend]) => spend),
+            yAxisLabel: 'Merchant',
+            horizontal: true,
+            formatter: (value: number) => "$" + value.toFixed(2)
+        };
+    }
 }

@@ -50,6 +50,17 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                         return throwError(() => new Error('Failed to fetch accounts: ' + error.message));
                     })
                 );
+            case 'topMerchantsBySpend':
+                return this.plaidService.loadTransactions(startDate, endDate).pipe(
+                    map(datapoints => {
+                        const transactions = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidTransaction>(dp));
+                        return this.transactionTransformer.topMerchantsBySpend(transactions);
+                    }),
+                    catchError(error => {
+                        console.error('Error fetching transactions:', error);
+                        return throwError(() => new Error('Failed to fetch transactions: ' + error.message));
+                    })
+                );
             default:
                 return throwError(() => new Error(`Unsupported transform method: ${transformConfig.method}`));
             }

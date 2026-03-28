@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, Signal } from "@angular/core";
-import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexXAxis, ApexTitleSubtitle, ApexYAxis, NgApexchartsModule, ApexTheme, ApexTooltip } from "ng-apexcharts"
+import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexPlotOptions, ApexXAxis, ApexTitleSubtitle, ApexYAxis, NgApexchartsModule, ApexTheme, ApexTooltip } from "ng-apexcharts"
 import { BarChartData } from "../../../interfaces/data.interface";
 import { ThemeService } from "../../../services/theme.service";
 
@@ -10,6 +10,7 @@ export type ChartOptions = {
     yaxis: ApexYAxis;
     title: ApexTitleSubtitle;
     dataLabels: ApexDataLabels;
+    plotOptions: ApexPlotOptions;
     theme: ApexTheme;
     tooltip: ApexTooltip
 }
@@ -77,6 +78,11 @@ export class BarChartComponent {
             color: isDark ? '#F8FAFC' : '#1F2937'
           }
         },
+        plotOptions: {
+          bar: {
+            horizontal: this.data().horizontal ?? false
+          }
+        },
         dataLabels: {
           enabled: true,
           formatter: this.data().formatter ?? ((value: number) => value),
@@ -85,7 +91,7 @@ export class BarChartComponent {
             fontWeight: 'bold',
             colors: [isDark ? '#F8FAFC' : '#1F2937']
           },
-          offsetY: -20,
+          offsetY: this.data().horizontal ? 0 : -20,
           background: {
             enabled: true,
             foreColor: isDark ? '#1E293B' : '#FFFFFF',
