@@ -24,6 +24,7 @@ export interface DataTransformConfig {
 export interface DataQueryConfig {
     startDate: Date;
     endDate: Date;
+    institutionId?: string; // Optional institution ID for Plaid queries
 }
 
 /**

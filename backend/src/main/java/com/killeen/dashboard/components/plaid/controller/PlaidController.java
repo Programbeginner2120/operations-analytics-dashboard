@@ -1,7 +1,9 @@
 package com.killeen.dashboard.components.plaid.controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -76,12 +78,18 @@ public class PlaidController {
     @GetMapping("/account-balances")
     public List<DataPoint<AccountBase>> getAccountBalances(
         @RequestParam("startDate") LocalDateTime startDate, 
-        @RequestParam("endDate") LocalDateTime endDate
+        @RequestParam("endDate") LocalDateTime endDate,
+        @RequestParam(value = "institutionId", required = false) String institutionId
     ) {
         Long userId = getAuthenticatedUserId();
+        Map<String, String> filters = new HashMap<>();
+        if (institutionId != null) {
+            filters.put("institution_id", institutionId);
+        }
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
+            .filters(filters)
             .metric(PlaidMetric.ACCOUNT_BALANCE)
             .build();
         return this.plaidService.fetchData(query, userId)
@@ -94,12 +102,18 @@ public class PlaidController {
     @GetMapping("/transactions")
     public List<DataPoint<Transaction>> getTransactions(
         @RequestParam("startDate") LocalDateTime startDate, 
-        @RequestParam("endDate") LocalDateTime endDate
+        @RequestParam("endDate") LocalDateTime endDate,
+        @RequestParam(value = "institutionId", required = false) String institutionId
     ) {
         Long userId = getAuthenticatedUserId();
+        Map<String, String> filters = new HashMap<>();
+        if (institutionId != null) {
+            filters.put("institution_id", institutionId);
+        }
         DataQuery query = DataQuery.builder()
             .startDate(startDate)
             .endDate(endDate)
+            .filters(filters)
             .metric(PlaidMetric.TRANSACTIONS)
             .build();
         return this.plaidService.fetchData(query, userId)

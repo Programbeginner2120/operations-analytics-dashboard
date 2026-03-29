@@ -49,6 +49,14 @@
                 placeholder="Select a data source">
             </app-select>
 
+            @if (editableDataSourceType() === DashboardDataSourceType.PLAID) {
+                <app-select
+                    label="Institution ID"
+                    [options]="institutionIdOptions()"
+                    [(value)]="editableInstitutionId">
+                </app-select>
+            }
+
             <!-- Visualization Type Select - bind to editable signal -->
             <app-select
                 label="Visualization Type"
