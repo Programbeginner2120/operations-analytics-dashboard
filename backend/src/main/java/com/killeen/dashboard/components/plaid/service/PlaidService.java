@@ -145,13 +145,6 @@ public class PlaidService {
         log.info("Successfully deleted item: {}", itemId);
     }
 
-    public List<String> fetchInstitutionIds(Long userId) {
-        return this.getAllItems(userId)
-            .stream()
-            .map(item -> item.getInstitutionId())
-            .collect(Collectors.toList());
-    }
-
     public List<DataPoint<?>> fetchData(DataQuery query, Long userId) {
         log.info("Retrieving institution id from filters...");
         String institutionId = Optional.ofNullable(query.getFilters())
@@ -160,7 +153,7 @@ public class PlaidService {
 
         List<PlaidItem> items = plaidItemRepository.findByUserId(userId)
             .stream()
-            .filter(item -> institutionId == null || institutionId.equals(item.getInstitutionId()))
+            .filter(item -> "All".equals(institutionId) || institutionId.equals(item.getInstitutionId()))
             .collect(Collectors.toList());
         
         List<DataPoint<?>> allData = new ArrayList<>();

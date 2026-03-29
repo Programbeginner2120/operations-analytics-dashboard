@@ -19,6 +19,7 @@ export class DashboardService {
 
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
+    readonly connectedDataSources = signal<any[]>([]);
 
     constructor() {
         // Register all available strategies
@@ -36,6 +37,7 @@ export class DashboardService {
         this.plaidService.getConnectedItems().pipe(
             catchError(() => of([]))
         ).subscribe(items => {
+            this.connectedDataSources.set(items);
             this.hasConnectedDataSources.set(items.length > 0);
         });
     }
@@ -61,7 +63,8 @@ export class DashboardService {
         visualizationType: DashboardVisualizationType.BAR_CHART,
         queryConfig: {
             startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            endDate: new Date()
+            endDate: new Date(),
+            institutionId: 'All'
         },
         transformConfig: {
             method: 'transactionsByDate'

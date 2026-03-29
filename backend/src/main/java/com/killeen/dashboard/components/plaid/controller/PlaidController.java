@@ -74,12 +74,6 @@ public class PlaidController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/institution-ids")
-    public List<String> getInstitutionIds() {
-        Long userId = getAuthenticatedUserId();
-        return this.plaidService.fetchInstitutionIds(userId);
-    }
-
     @SuppressWarnings("unchecked")
     @GetMapping("/account-balances")
     public List<DataPoint<AccountBase>> getAccountBalances(

@@ -13,24 +13,22 @@ export class PlaidService {
 
     private readonly API_URL = '/plaid';
 
-    loadInstitutionIds(): Observable<String[]> {
-        return this.http.get<String[]>(`${this.API_URL}/institution-ids`);
-    }
-
-    loadAccountBalances(startDate: Date, endDate: Date): Observable<DataPoint<PlaidAccount>[]> {
+    loadAccountBalances(startDate: Date, endDate: Date, institutionId?: string): Observable<DataPoint<PlaidAccount>[]> {
         return this.http.get<DataPoint<PlaidAccount>[]>(`${this.API_URL}/account-balances`, {
             params: {
                 startDate: this.formatDate(startDate),
-                endDate: this.formatDate(endDate)
+                endDate: this.formatDate(endDate),
+                ...(institutionId ? { institutionId } : {})
             }
         });
     }
 
-    loadTransactions(startDate: Date, endDate: Date): Observable<DataPoint<PlaidTransaction>[]> {
+    loadTransactions(startDate: Date, endDate: Date, institutionId?: string): Observable<DataPoint<PlaidTransaction>[]> {
         return this.http.get<DataPoint<PlaidTransaction>[]>(`${this.API_URL}/transactions`, {
             params: {
                 startDate: this.formatDate(startDate),
-                endDate: this.formatDate(endDate)
+                endDate: this.formatDate(endDate),
+                ...(institutionId ? { institutionId } : {})
             }
         });
     }

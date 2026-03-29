@@ -24,12 +24,13 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
 
     fetchAndTransform(card: DashboardCard): Observable<BarChartData | PieChartData> {
         const transformConfig = card.transformConfig as PlaidDataTransformConfig;
-        const { startDate, endDate } = card.queryConfig as DataQueryConfig;
+        const { startDate, endDate, institutionId } = card.queryConfig as DataQueryConfig;
+        console.log("Institution ID in query config:", institutionId);
 
         // Route to appropriate fetch + transform pipeline based on method
         switch (transformConfig.method) {
             case 'transactionsByDate':
-                return this.plaidService.loadTransactions(startDate, endDate).pipe(
+                return this.plaidService.loadTransactions(startDate, endDate, institutionId).pipe(
                     map(datapoints => {
                         const transactions = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidTransaction>(dp));
                         return this.transactionTransformer.transactionsByDate(transactions);
@@ -40,7 +41,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                     })
                 );
             case 'accountsByBalance':
-                return this.plaidService.loadAccountBalances(startDate, endDate).pipe(
+                return this.plaidService.loadAccountBalances(startDate, endDate, institutionId).pipe(
                     map(datapoints => {
                         const accounts = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidAccount>(dp));
                         return this.accountTransformer.accountsByBalance(accounts);

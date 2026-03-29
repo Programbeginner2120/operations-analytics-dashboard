@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
-import { DashboardCard, DashboardVisualizationType, DashboardDataSourceType } from "../../../interfaces/dashboard.interface";
+import { DashboardCard, DashboardVisualizationType, DashboardDataSourceType, DataQueryConfig } from "../../../interfaces/dashboard.interface";
 import { LucideAngularModule, Save, X, Type, Ellipsis } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
@@ -9,7 +9,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
-import { PlaidAccount, PlaidDataTransformConfig, PlaidTransaction, PlaidTransformMethod } from "../../../interfaces/plaid.interface";
+import { PlaidAccount, PlaidDataTransformConfig, PlaidItem, PlaidTransaction, PlaidTransformMethod } from "../../../interfaces/plaid.interface";
 import { BarChartData, DataPoint, PieChartData } from "../../../interfaces/data.interface";
 
 @Component({
@@ -24,6 +24,7 @@ export class DashboardCardComponent {
     readonly typeIcon = Type;
     readonly ellipsisIcon = Ellipsis;
 
+    readonly DashboardDataSourceType = DashboardDataSourceType;
     readonly DashboardVisualizationType = DashboardVisualizationType;
 
     card = input.required<DashboardCard>();
@@ -34,6 +35,7 @@ export class DashboardCardComponent {
     readonly editableDataSourceType = signal<DashboardDataSourceType | null>(null);
     readonly editableVisualizationType = signal<DashboardVisualizationType | null>(null);
     readonly editableBarChartMetric = signal<PlaidTransformMethod>('transactionsByDate');
+    readonly editableInstitutionId = signal<string>('All');
     
     // Local modal state specific to this card instance
     readonly isModalOpen = signal<boolean>(false);
@@ -52,6 +54,17 @@ export class DashboardCardComponent {
         { value: 'transactionsByDate', label: 'Transactions by Date' },
         { value: 'topMerchantsBySpend', label: 'Top Merchants by Spend' }
     ];
+
+    readonly institutionIdOptions = computed(() => {
+        const institutionIds = this.dashboardService.connectedDataSources().map(item => (item as PlaidItem).institutionId) as string[];
+        let institutionIdOptions: SelectOption[] = [
+            { value: 'All', label: 'All'}
+        ];
+        for (let institutionId of institutionIds) {
+            institutionIdOptions.push({ value: institutionId, label: institutionId });
+        }
+        return institutionIdOptions;
+    });
 
     /**
      * Bar chart data - only returns data when visualization type is BAR_CHART
@@ -112,6 +125,14 @@ export class DashboardCardComponent {
             }
         } else if (newVizType === DashboardVisualizationType.PIE_CHART) {
             updates.transformConfig = { method: 'accountsByBalance' } as PlaidDataTransformConfig;
+        }
+
+        if ("All" !== this.editableInstitutionId()) {
+            updates.queryConfig = {
+                startDate: this.card().queryConfig?.startDate ?? new Date(),
+                endDate: this.card().queryConfig?.endDate ?? new Date(),
+                institutionId: this.editableInstitutionId()
+            } as DataQueryConfig;
         }
         
         // Update card with edited values
