@@ -36,6 +36,38 @@ Before you begin, ensure you have the following installed on your system:
 - **TypeScript**: 5.9.2
 - **RxJS**: 7.8.0
 
+## Screenshots
+
+### Authentication
+
+| Sign In | Create Account |
+|---|---|
+| ![Sign In](product-information/product-pictures/sign-in-page-dark-mode.png) | ![Create Account](product-information/product-pictures/register-page-dark-mode.png) |
+
+### Landing Page
+
+| Dark Mode | Light Mode |
+|---|---|
+| ![Landing Page Dark](product-information/product-pictures/landing-page-dark-mode.png) | ![Landing Page Light](product-information/product-pictures/landing-page-light-mode.png) |
+
+### Analytics Dashboard
+
+| Dark Mode | Light Mode |
+|---|---|
+| ![Dashboard Dark](product-information/product-pictures/operations-analytics-dashboard-dark-mode.png) | ![Dashboard Light](product-information/product-pictures/operations-analytics-dashboard-light-mode.png) |
+
+### Configuring a Dashboard Card
+
+![Edit Card Modal](product-information/product-pictures/edit-card-modal-dark-mode.png)
+
+### Managing Data Sources
+
+| Data Sources | Plaid Connections | Connect via Plaid |
+|---|---|---|
+| ![Manage Data Sources](product-information/product-pictures/manage-data-sources-dark-mode.png) | ![Manage Plaid](product-information/product-pictures/manage-plaid-data-sources-dark-mode.png) | ![Connect Plaid](product-information/product-pictures/connect-plaid-dark-mode.png) |
+
+---
+
 ## Getting Started
 
 ### Backend Setup
