@@ -149,7 +149,7 @@ public class PlaidService {
         log.info("Retrieving institution id from filters...");
         String institutionId = Optional.ofNullable(query.getFilters())
             .map(f -> f.get("institution_id"))
-            .orElse(null);
+            .orElse("All");
 
         List<PlaidItem> items = plaidItemRepository.findByUserId(userId)
             .stream()

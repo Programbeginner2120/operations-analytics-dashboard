@@ -52,7 +52,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                     })
                 );
             case 'topMerchantsBySpend':
-                return this.plaidService.loadTransactions(startDate, endDate).pipe(
+                return this.plaidService.loadTransactions(startDate, endDate, institutionId).pipe(
                     map(datapoints => {
                         const transactions = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidTransaction>(dp));
                         return this.transactionTransformer.topMerchantsBySpend(transactions);
