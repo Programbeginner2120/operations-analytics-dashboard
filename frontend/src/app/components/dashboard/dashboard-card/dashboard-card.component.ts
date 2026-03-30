@@ -2,6 +2,7 @@ import { Component, ComponentRef, computed, effect, inject, input, signal, viewC
 import { DashboardCard, DashboardVisualizationType, DashboardDataSourceType } from "../../../interfaces/dashboard.interface";
 import { LucideAngularModule, Save, X, Type, Ellipsis } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
+import { StackedBarChartComponent } from "../../charts/stacked-bar-chart/stacked-bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
 import { PieChartComponent } from "../../charts/pie-chart/pie-chart.component";
 import { ModalComponent } from "../../../shared/components/modal/modal.component";
@@ -9,7 +10,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
-import { BarChartData, PieChartData } from "../../../interfaces/data.interface";
+import { BarChartData, PieChartData, StackedBarChartData } from "../../../interfaces/data.interface";
 import { DataSourceRegistryService } from "../../../services/data-source-registry.service";
 import { DataSourceConfigComponent, DataSourceConfigOutput } from "../../../interfaces/data-source-config.interface";
 
@@ -17,7 +18,7 @@ import { DataSourceConfigComponent, DataSourceConfigOutput } from "../../../inte
     selector: 'app-dashboard-card',
     templateUrl: './dashboard-card.component.html',
     styleUrls: ['./dashboard-card.component.scss'],
-    imports: [LucideAngularModule, BarChartComponent, PieChartComponent, ModalComponent, ButtonComponent, InputComponent, SelectComponent]
+    imports: [LucideAngularModule, BarChartComponent, StackedBarChartComponent, PieChartComponent, ModalComponent, ButtonComponent, InputComponent, SelectComponent]
 })
 export class DashboardCardComponent {
     readonly saveIcon = Save;
@@ -55,6 +56,7 @@ export class DashboardCardComponent {
 
     readonly visualizationOptions: SelectOption[] = [
         { value: DashboardVisualizationType.BAR_CHART, label: 'Bar Chart' },
+        { value: DashboardVisualizationType.STACKED_BAR_CHART, label: 'Stacked Bar Chart' },
         { value: DashboardVisualizationType.PIE_CHART, label: 'Pie Chart' }
     ];
 
@@ -64,6 +66,13 @@ export class DashboardCardComponent {
     readonly barChartData = computed(() => {
         if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
             return this.card().transformedData as BarChartData | undefined;
+        }
+        return undefined;
+    });
+
+    readonly stackedBarChartData = computed(() => {
+        if (this.card().visualizationType === DashboardVisualizationType.STACKED_BAR_CHART) {
+            return this.card().transformedData as StackedBarChartData | undefined;
         }
         return undefined;
     });

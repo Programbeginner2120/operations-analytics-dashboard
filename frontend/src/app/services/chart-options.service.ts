@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ApexTooltip } from 'ng-apexcharts';
 import { BarChartOptions, PieChartOptions } from '../interfaces/chart-options.interface';
-import { BarChartData, PieChartData } from '../interfaces/data.interface';
+import { BarChartData, PieChartData, StackedBarChartData } from '../interfaces/data.interface';
 import { ThemeService } from './theme.service';
 
 const DARK_FORE_COLOR = '#CBD5E1';
@@ -25,6 +25,48 @@ export class ChartOptionsService {
             series: [{ name: data.title, data: data.yAxisData }],
             chart: {
                 type: 'bar',
+                toolbar: { show: false },
+                height: 300,
+                width: '100%',
+                foreColor,
+                background: 'transparent',
+            },
+            theme: { mode: isDark ? 'dark' : 'light' },
+            xaxis: {
+                categories: data.xAxisData,
+                title: {
+                    text: data.xAxisLabel,
+                    style: { color: foreColor },
+                },
+                labels: { style: { colors: labelColor } },
+            },
+            yaxis: {
+                title: {
+                    text: data.yAxisLabel,
+                    style: { color: foreColor },
+                },
+                labels: { style: { colors: labelColor } },
+            },
+            title: {
+                text: data.title,
+                style: { color: isDark ? DARK_TITLE_COLOR : LIGHT_TITLE_COLOR },
+            },
+            plotOptions: { bar: { horizontal: data.horizontal ?? false } },
+            dataLabels: { enabled: false },
+            tooltip: this.buildTooltip(isDark, data.formatter),
+        };
+    }
+
+    buildStackedBarChartOptions(data: StackedBarChartData): BarChartOptions {
+        const isDark = this.themeService.theme() === 'dark';
+        const foreColor = isDark ? DARK_FORE_COLOR : LIGHT_FORE_COLOR;
+        const labelColor = isDark ? DARK_LABEL_COLOR : LIGHT_LABEL_COLOR;
+
+        return {
+            series: data.series,
+            chart: {
+                type: 'bar',
+                stacked: true,
                 toolbar: { show: false },
                 height: 300,
                 width: '100%',
