@@ -49,14 +49,6 @@
                 placeholder="Select a data source">
             </app-select>
 
-            @if (editableDataSourceType() === DashboardDataSourceType.PLAID) {
-                <app-select
-                    label="Institution ID"
-                    [options]="institutionIdOptions()"
-                    [(value)]="editableInstitutionId">
-                </app-select>
-            }
-
             <!-- Visualization Type Select - bind to editable signal -->
             <app-select
                 label="Visualization Type"
@@ -65,15 +57,8 @@
                 placeholder="Select a visualization type">
             </app-select>
 
-            <!-- Bar Chart Metric Select - only shown when Bar Chart is selected -->
-            @if (editableVisualizationType() === DashboardVisualizationType.BAR_CHART) {
-                <app-select
-                    label="Bar Chart Metric"
-                    [options]="barChartMetricOptions"
-                    [(value)]="editableBarChartMetric"
-                    placeholder="Select a metric">
-                </app-select>
-            }
+            <!-- Data-source-specific config loaded dynamically by DashboardCardComponent -->
+            <ng-container #configContainer></ng-container>
         </form>
     </div>
 

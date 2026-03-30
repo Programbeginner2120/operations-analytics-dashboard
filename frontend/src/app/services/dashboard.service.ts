@@ -1,11 +1,8 @@
 import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
-import { DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
-import { PlaidService } from "./plaid.service";
-import { BarChartData, DataPoint, PieChartData } from "../interfaces/data.interface";
-import { PlaidAccount, PlaidDataTransformConfig, PlaidTransaction } from "../interfaces/plaid.interface";
+import { ConnectedDataSource, DashboardCard } from "../interfaces/dashboard.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
-import { catchError, of } from "rxjs";
+import { catchError, forkJoin, of } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -13,13 +10,12 @@ import { catchError, of } from "rxjs";
 export class DashboardService {
     private readonly registry = inject(DataSourceRegistryService);
     private readonly plaidStrategy = inject(PlaidDataSourceStrategyService);
-    private readonly plaidService = inject(PlaidService);
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
 
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
-    readonly connectedDataSources = signal<any[]>([]);
+    readonly connectedDataSources = signal<ConnectedDataSource[]>([]);
 
     constructor() {
         // Register all available strategies
@@ -31,14 +27,25 @@ export class DashboardService {
 
     /**
      * Re-check whether the user has any connected data sources.
+     * Delegates to each registered strategy's getConnectedSources().
      * Called on construction and each time the dashboard route is activated.
      */
     refreshDataSourceStatus(): void {
-        this.plaidService.getConnectedItems().pipe(
-            catchError(() => of([]))
-        ).subscribe(items => {
-            this.connectedDataSources.set(items);
-            this.hasConnectedDataSources.set(items.length > 0);
+        const sourceTypes = this.registry.getRegisteredSourceTypes();
+        if (sourceTypes.length === 0) {
+            this.connectedDataSources.set([]);
+            this.hasConnectedDataSources.set(false);
+            return;
+        }
+
+        const requests = sourceTypes.map(type =>
+            this.registry.getStrategy(type).getConnectedSources().pipe(catchError(() => of([])))
+        );
+
+        forkJoin(requests).subscribe(results => {
+            const all: ConnectedDataSource[] = ([] as ConnectedDataSource[]).concat(...results);
+            this.connectedDataSources.set(all);
+            this.hasConnectedDataSources.set(all.length > 0);
         });
     }
 
@@ -49,27 +56,21 @@ export class DashboardService {
     readonly numCards = computed(() => this._cards().length);
 
    /**
-    * Add a new card with default configuration
+    * Add a new card with default configuration sourced from the first registered strategy.
     */
    addCard(): void {
     if (this.hasConnectedDataSources() !== true) return;
 
+    const sourceTypes = this.registry.getRegisteredSourceTypes();
+    if (sourceTypes.length === 0) return;
+
+    const defaultPartial = this.registry.getStrategy(sourceTypes[0]).getDefaultCard();
     const newId: number = this.numCards() + 1;
-    
+
     const newCard: DashboardCard = {
+        ...defaultPartial,
         id: newId,
-        title: 'New Transactions Bar Chart Card',
-        dataSourceType: DashboardDataSourceType.PLAID,
-        visualizationType: DashboardVisualizationType.BAR_CHART,
-        queryConfig: {
-            startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            endDate: new Date(),
-            institutionId: 'All'
-        },
-        transformConfig: {
-            method: 'transactionsByDate'
-        } as PlaidDataTransformConfig
-    };
+    } as DashboardCard;
 
     // Add card and trigger data fetch
     this._cards.update(cards => [...cards, newCard]);

@@ -24,7 +24,23 @@ export interface DataTransformConfig {
 export interface DataQueryConfig {
     startDate: Date;
     endDate: Date;
-    institutionId?: string; // Optional institution ID for Plaid queries
+}
+
+/**
+ * A connected data source as returned by a strategy's getConnectedSources().
+ * Using a local FilterOption type to avoid a potential circular dependency
+ * with shared/interfaces/select.interface.ts.
+ */
+export interface FilterOption {
+    value: string;
+    label: string;
+}
+
+export interface ConnectedDataSource {
+    sourceType: DashboardDataSourceType;
+    id: string;
+    displayName: string;
+    filterOptions: FilterOption[];
 }
 
 /**
