@@ -111,6 +111,6 @@
     .apexcharts-tooltip-title,
     .apexcharts-tooltip-text,
     .apexcharts-tooltip-y-group {
-      color: black; // Force dark text
+      color: var(--color-text-primary);
     }
   }

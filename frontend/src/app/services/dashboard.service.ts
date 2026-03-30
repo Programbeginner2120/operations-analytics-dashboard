@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
-import { ConnectedDataSource, DashboardCard } from "../interfaces/dashboard.interface";
+import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
+import { StackedBarChartData } from "../interfaces/data.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
 import { catchError, forkJoin, of } from "rxjs";
@@ -13,6 +14,30 @@ export class DashboardService {
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
 
+    // TODO: Remove — stub card for stacked bar chart visual testing
+    private readonly stubStackedBarData: StackedBarChartData = {
+        title: 'Monthly Spending by Category',
+        xAxisData: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        xAxisLabel: 'Month',
+        yAxisLabel: 'Amount ($)',
+        series: [
+            { name: 'Groceries', data: [420, 380, 510, 460, 390, 475] },
+            { name: 'Dining',    data: [210, 260, 190, 310, 280, 240] },
+            { name: 'Transport', data: [130, 150, 120, 145, 160, 135] },
+        ],
+    };
+
+    private readonly stubCard: DashboardCard = {
+        id: 999,
+        title: 'Stacked Bar — Stub',
+        dataSourceType: DashboardDataSourceType.PLAID,
+        visualizationType: DashboardVisualizationType.STACKED_BAR_CHART,
+        queryConfig: { startDate: new Date(), endDate: new Date() },
+        transformConfig: { method: '' },
+        transformedData: this.stubStackedBarData as unknown as any[],
+    };
+    // END TODO
+
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
     readonly connectedDataSources = signal<ConnectedDataSource[]>([]);
@@ -20,6 +45,10 @@ export class DashboardService {
     constructor() {
         // Register all available strategies
         this.registry.register(this.plaidStrategy);
+
+        // TODO: Remove — seed stub card for stacked bar chart visual testing
+        this._cards.set([this.stubCard]);
+        // END TODO
 
         // Check if the user has any connected data sources
         this.refreshDataSourceStatus();
