@@ -30,6 +30,8 @@ plaid:
   client-id: ${PLAID_CLIENT_ID}
   secret: ${PLAID_SECRET}
   environment: ${PLAID_ENVIRONMENT:sandbox}
+  token-encryption-key: ${PLAID_TOKEN_ENCRYPTION_KEY}
+  token-encryption-salt: ${PLAID_TOKEN_ENCRYPTION_SALT}
 
 logging:
   level:

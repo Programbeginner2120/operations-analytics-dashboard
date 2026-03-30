@@ -1,8 +1,5 @@
 package com.killeen.dashboard.components.plaid.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,11 +20,11 @@ public class PlaidConfig {
     public PlaidApi plaidApi() {
         log.info("Creating PlaidApi bean for {} environment", plaidProperties.getEnvironment());
 
-        Map<String, String> credentials = new HashMap<>();
-        credentials.put("clientId", plaidProperties.getClientId());
-        credentials.put("secret", plaidProperties.getSecret());
+        PlaidCredentials credentials = new PlaidCredentials(
+                plaidProperties.getClientId(),
+                plaidProperties.getSecret());
 
-        ApiClient apiClient = new ApiClient(credentials);
+        ApiClient apiClient = new ApiClient(credentials.toApiClientMap());
 
         switch (plaidProperties.getEnvironment()) {
             case "sandbox":
