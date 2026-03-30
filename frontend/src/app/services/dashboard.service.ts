@@ -88,12 +88,14 @@ export class DashboardService {
     * Add a new card with default configuration sourced from the first registered strategy.
     */
    addCard(): void {
-    if (this.hasConnectedDataSources() !== true) return;
-
     const sourceTypes = this.registry.getRegisteredSourceTypes();
     if (sourceTypes.length === 0) return;
 
-    const defaultPartial = this.registry.getStrategy(sourceTypes[0]).getDefaultCard();
+    const targetSourceType = sourceTypes[0];
+    const hasSourceConnected = this.connectedDataSources().some(s => s.sourceType === targetSourceType);
+    if (!hasSourceConnected) return;
+
+    const defaultPartial = this.registry.getStrategy(targetSourceType).getDefaultCard();
     const newId: number = this.numCards() + 1;
 
     const newCard: DashboardCard = {

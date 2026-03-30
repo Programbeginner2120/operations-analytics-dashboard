@@ -118,7 +118,7 @@ export class DashboardCardComponent {
 
             componentRef.setInput('queryConfig', card.queryConfig);
             componentRef.setInput('transformConfig', card.transformConfig);
-            componentRef.setInput('connectedSources', this.dashboardService.connectedDataSources());
+            componentRef.setInput('connectedSources', this.dashboardService.connectedDataSources().filter(s => s.sourceType === card.dataSourceType));
             componentRef.setInput('visualizationType', this.editableVisualizationType() ?? card.visualizationType);
 
             componentRef.instance.configChange.subscribe(cfg => {
