@@ -4,6 +4,7 @@ export enum DashboardDataSourceType {
 
 export enum DashboardVisualizationType {
     BAR_CHART = 'BAR_CHART',
+    STACKED_BAR_CHART = 'STACKED_BAR_CHART',
     PIE_CHART = 'PIE_CHART',
 }
 

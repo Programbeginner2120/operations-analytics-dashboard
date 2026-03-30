@@ -6,14 +6,21 @@ export interface DataPoint<T> {
     sourceType: string;
 }
 
-export interface BarChartData {
+interface BaseBarChartData {
     title: string;
     xAxisData: string[];
     xAxisLabel: string;
-    yAxisData: number[];
     yAxisLabel: string;
     horizontal?: boolean;
     formatter?: (value: number) => string;
+}
+
+export interface BarChartData extends BaseBarChartData {
+    yAxisData: number[];
+}
+
+export interface StackedBarChartData extends BaseBarChartData {
+    series: { name: string; data: number[] }[];
 }
 
 export interface PieChartData {
