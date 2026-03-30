@@ -27,4 +27,6 @@ plaid:
   client-id: YOUR_PLAID_CLIENT_ID
   secret: YOUR_PLAID_SECRET
   environment: sandbox  # Options: sandbox, development, production
+  token-encryption-key: YOUR_PLAID_TOKEN_ENCRYPTION_KEY  # Min 32 characters recommended
+  token-encryption-salt: YOUR_PLAID_TOKEN_ENCRYPTION_SALT  # Hex string e.g. deadbeef01234567
 

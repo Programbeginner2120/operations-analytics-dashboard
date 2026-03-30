@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.killeen.dashboard.components.datapoint.model.DataPoint;
 import com.killeen.dashboard.components.dataquery.model.DataQuery;
@@ -124,6 +126,9 @@ public class PlaidController {
 
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof Long)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or missing authentication");
+        }
         return (Long) authentication.getPrincipal();
     }
     

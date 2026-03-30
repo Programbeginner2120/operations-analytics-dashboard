@@ -1,6 +1,5 @@
 package com.killeen.dashboard.components.plaid.model;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -10,6 +9,7 @@ import com.killeen.dashboard.components.datasource.enums.ConnectionStatus;
 import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnection;
 import com.killeen.dashboard.components.datasource.model.DataSourceConnector;
+import com.killeen.dashboard.components.plaid.config.PlaidCredentials;
 import com.killeen.dashboard.components.plaid.config.PlaidProperties;
 import com.plaid.client.request.PlaidApi;
 
@@ -86,14 +86,14 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
     public DataSourceConfig createDataSourceConfig() {
         log.debug("Creating DataSourceConfig from PlaidProperties");
         
-        Map<String, String> credentials = new HashMap<>();
-        credentials.put("clientId", plaidProperties.getClientId());
-        credentials.put("secret", plaidProperties.getSecret());
+        PlaidCredentials credentials = new PlaidCredentials(
+                plaidProperties.getClientId(),
+                plaidProperties.getSecret());
         
         return DataSourceConfig.builder()
             .sourceType(SourceTypes.PLAID)
             .displayName("Plaid Data Source Configuration")
-            .credentials(credentials)
+            .credentials(credentials.toApiClientMap())
             .build();
     }
     

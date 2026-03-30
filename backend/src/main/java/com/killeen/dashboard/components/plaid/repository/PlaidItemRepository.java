@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.killeen.dashboard.components.plaid.converter.PlaidItemConverter;
+import com.killeen.dashboard.components.plaid.converter.PlaidItemEncryptingConverter;
 import com.killeen.dashboard.components.plaid.model.PlaidItem;
 import com.killeen.dashboard.db.mapper.generated.PlaidItemDbMapper;
 import com.killeen.dashboard.db.model.generated.PlaidItemDb;
@@ -18,11 +18,11 @@ import lombok.RequiredArgsConstructor;
 public class PlaidItemRepository {
 
     private final PlaidItemDbMapper plaidItemDbMapper;
-    private final PlaidItemConverter plaidItemConverter;
+    private final PlaidItemEncryptingConverter plaidItemEncryptingConverter;
 
     @Transactional
     public PlaidItem save(PlaidItem item) {
-        PlaidItemDb dbModel = plaidItemConverter.toDb(item);
+        PlaidItemDb dbModel = plaidItemEncryptingConverter.toDb(item);
         plaidItemDbMapper.insert(dbModel);
         item.setId(dbModel.getId());
         return item;
@@ -30,14 +30,16 @@ public class PlaidItemRepository {
 
     public List<PlaidItem> findAll() {
         List<PlaidItemDb> dbModels = plaidItemDbMapper.selectByExample(new PlaidItemDbExample());
-        return plaidItemConverter.toDtoList(dbModels);
+        List<PlaidItem> items = plaidItemEncryptingConverter.toDtoList(dbModels);
+        return items;
     }
 
     public List<PlaidItem> findByUserId(Long userId) {
         PlaidItemDbExample example = new PlaidItemDbExample();
         example.createCriteria().andUserIdEqualTo(userId);
         List<PlaidItemDb> dbModels = plaidItemDbMapper.selectByExample(example);
-        return plaidItemConverter.toDtoList(dbModels);
+        List<PlaidItem> items = plaidItemEncryptingConverter.toDtoList(dbModels);
+        return items;
     }
 
     @Transactional
