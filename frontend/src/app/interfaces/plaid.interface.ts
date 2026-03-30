@@ -1,4 +1,11 @@
-import { DataTransformConfig } from "./dashboard.interface";
+import { DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
+
+/**
+ * Plaid-specific query config — extends the base with the institution filter
+ */
+export interface PlaidDataQueryConfig extends DataQueryConfig {
+    institutionId?: string;
+}
 
 // Minimal Account Interface
 export interface PlaidAccountBalance {

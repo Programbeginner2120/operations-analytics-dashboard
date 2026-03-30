@@ -1,5 +1,5 @@
-import { Component, computed, inject, input, signal } from "@angular/core";
-import { DashboardCard, DashboardVisualizationType, DashboardDataSourceType, DataQueryConfig } from "../../../interfaces/dashboard.interface";
+import { Component, ComponentRef, computed, effect, inject, input, signal, viewChild, ViewContainerRef } from "@angular/core";
+import { DashboardCard, DashboardVisualizationType, DashboardDataSourceType } from "../../../interfaces/dashboard.interface";
 import { LucideAngularModule, Save, X, Type, Ellipsis } from "lucide-angular";
 import { BarChartComponent } from "../../charts/bar-chart/bar-chart.component";
 import { DashboardService } from "../../../services/dashboard.service";
@@ -9,8 +9,9 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectOption } from "../../../shared/interfaces/select.interface";
-import { PlaidAccount, PlaidDataTransformConfig, PlaidItem, PlaidTransaction, PlaidTransformMethod } from "../../../interfaces/plaid.interface";
-import { BarChartData, DataPoint, PieChartData } from "../../../interfaces/data.interface";
+import { BarChartData, PieChartData } from "../../../interfaces/data.interface";
+import { DataSourceRegistryService } from "../../../services/data-source-registry.service";
+import { DataSourceConfigComponent, DataSourceConfigOutput } from "../../../interfaces/data-source-config.interface";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -24,21 +25,28 @@ export class DashboardCardComponent {
     readonly typeIcon = Type;
     readonly ellipsisIcon = Ellipsis;
 
-    readonly DashboardDataSourceType = DashboardDataSourceType;
     readonly DashboardVisualizationType = DashboardVisualizationType;
 
     card = input.required<DashboardCard>();
     readonly dashboardService = inject(DashboardService);
+    private readonly registry = inject(DataSourceRegistryService);
 
-    // Local editable state - writable signals for form fields
+    // Local editable state for the config modal
     readonly editableTitle = signal<string>('');
     readonly editableDataSourceType = signal<DashboardDataSourceType | null>(null);
     readonly editableVisualizationType = signal<DashboardVisualizationType | null>(null);
-    readonly editableBarChartMetric = signal<PlaidTransformMethod>('transactionsByDate');
-    readonly editableInstitutionId = signal<string>('All');
-    
-    // Local modal state specific to this card instance
+
+    // Modal open state
     readonly isModalOpen = signal<boolean>(false);
+
+    // Draft config emitted by the dynamically loaded data-source config sub-component
+    readonly draftConfig = signal<DataSourceConfigOutput | null>(null);
+
+    // Reference to the host for the dynamically loaded config component
+    readonly configContainer = viewChild('configContainer', { read: ViewContainerRef });
+
+    // Mutable reference to the active config component — not reactive state
+    private activeConfigRef: ComponentRef<DataSourceConfigComponent> | null = null;
 
     // Select options
     readonly dataSourceOptions: SelectOption[] = [
@@ -49,22 +57,6 @@ export class DashboardCardComponent {
         { value: DashboardVisualizationType.BAR_CHART, label: 'Bar Chart' },
         { value: DashboardVisualizationType.PIE_CHART, label: 'Pie Chart' }
     ];
-
-    readonly barChartMetricOptions: SelectOption[] = [
-        { value: 'transactionsByDate', label: 'Transactions by Date' },
-        { value: 'topMerchantsBySpend', label: 'Top Merchants by Spend' }
-    ];
-
-    readonly institutionIdOptions = computed(() => {
-        const institutionIds = this.dashboardService.connectedDataSources().map(item => (item as PlaidItem).institutionId) as string[];
-        let institutionIdOptions: SelectOption[] = [
-            { value: 'All', label: 'All'}
-        ];
-        for (let institutionId of institutionIds) {
-            institutionIdOptions.push({ value: institutionId, label: institutionId });
-        }
-        return institutionIdOptions;
-    });
 
     /**
      * Bar chart data - only returns data when visualization type is BAR_CHART
@@ -86,61 +78,80 @@ export class DashboardCardComponent {
         return undefined;
     });
 
+    constructor() {
+        // Dynamically load the data-source config sub-component when the modal opens.
+        // The effect tracks isModalOpen(), configContainer(), and editableVisualizationType()
+        // so it re-runs whenever any of them change.
+        effect(() => {
+            if (!this.isModalOpen()) {
+                this.activeConfigRef?.destroy();
+                this.activeConfigRef = null;
+                return;
+            }
+
+            const vcr = this.configContainer();
+            if (!vcr) return;
+
+            // If the component is already loaded, keep it in sync with the viz type selector.
+            if (this.activeConfigRef) {
+                const vizType = this.editableVisualizationType();
+                if (vizType) {
+                    this.activeConfigRef.setInput('visualizationType', vizType);
+                }
+                return;
+            }
+
+            // First open: create the config sub-component for the card's data source type.
+            vcr.clear();
+            const card = this.card();
+            const strategy = this.registry.getStrategy(card.dataSourceType);
+            const componentRef = vcr.createComponent(strategy.getConfigComponent());
+
+            componentRef.setInput('queryConfig', card.queryConfig);
+            componentRef.setInput('transformConfig', card.transformConfig);
+            componentRef.setInput('connectedSources', this.dashboardService.connectedDataSources());
+            componentRef.setInput('visualizationType', this.editableVisualizationType() ?? card.visualizationType);
+
+            componentRef.instance.configChange.subscribe(cfg => {
+                this.draftConfig.set(cfg);
+            });
+
+            this.activeConfigRef = componentRef;
+        });
+    }
+
     /**
      * Opens the configuration modal and initializes editable fields
      */
     openConfigModal(): void {
-        // Initialize editable fields with current card values
         this.editableTitle.set(this.card().title);
         this.editableDataSourceType.set(this.card().dataSourceType);
         this.editableVisualizationType.set(this.card().visualizationType);
-
-        if (this.card().visualizationType === DashboardVisualizationType.BAR_CHART) {
-            const config = this.card().transformConfig as PlaidDataTransformConfig;
-            this.editableBarChartMetric.set(config?.method as PlaidTransformMethod ?? 'transactionsByDate');
-        }
-        
-        // Open this specific card's modal
+        // Seed draftConfig with the card's current config so saveConfig() is safe
+        // even if the user makes no changes inside the sub-component.
+        this.draftConfig.set({
+            queryConfig: this.card().queryConfig,
+            transformConfig: this.card().transformConfig
+        });
         this.isModalOpen.set(true);
     }
 
     /**
-     * Saves the card configuration
+     * Saves the card configuration.
+     * Generic fields (title, source type, viz type) come from local signals.
+     * Data-source-specific config (queryConfig, transformConfig) comes from draftConfig,
+     * which is kept up to date by the dynamically loaded config sub-component.
      */
     saveConfig(): void {
+        const draft = this.draftConfig();
         const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
             dataSourceType: this.editableDataSourceType() ?? undefined,
-            visualizationType: this.editableVisualizationType() ?? undefined
+            visualizationType: this.editableVisualizationType() ?? undefined,
+            ...(draft ? { queryConfig: draft.queryConfig, transformConfig: draft.transformConfig } : {})
         };
-        
-        // Always persist the transform method based on viz type + metric selection
-        const newVizType = this.editableVisualizationType();
-        if (newVizType === DashboardVisualizationType.BAR_CHART) {
-            const metric = this.editableBarChartMetric();
-            updates.transformConfig = { method: metric } as PlaidDataTransformConfig;
-            if (metric === 'topMerchantsBySpend') {
-                const endDate = new Date();
-                updates.queryConfig = { startDate: new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000), endDate };
-            }
-        } else if (newVizType === DashboardVisualizationType.PIE_CHART) {
-            updates.transformConfig = { method: 'accountsByBalance' } as PlaidDataTransformConfig;
-        }
 
-        if ("All" !== this.editableInstitutionId()) {
-            updates.queryConfig = {
-                startDate: this.card().queryConfig?.startDate ?? new Date(),
-                endDate: this.card().queryConfig?.endDate ?? new Date(),
-                institutionId: this.editableInstitutionId()
-            } as DataQueryConfig;
-        }
-        
-        // Update card with edited values
-        console.log('Saving card configuration...', updates);
-        
-        // Call service to update card with edited values
         this.dashboardService.updateCard(this.card().id, updates as DashboardCard);
-        
         this.closeModal();
     }
 

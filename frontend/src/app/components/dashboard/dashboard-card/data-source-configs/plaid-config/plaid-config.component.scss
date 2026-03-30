@@ -1,0 +1,5 @@
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); // 20px gap between form fields
+}

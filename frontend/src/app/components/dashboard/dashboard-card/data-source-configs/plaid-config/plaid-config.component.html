@@ -1,0 +1,16 @@
+<form class="config-form">
+    <app-select
+        label="Institution"
+        [options]="institutionIdOptions()"
+        [(value)]="editableInstitutionId">
+    </app-select>
+
+    @if (visualizationType() === DashboardVisualizationType.BAR_CHART) {
+        <app-select
+            label="Bar Chart Metric"
+            [options]="barChartMetricOptions"
+            [(value)]="editableBarChartMetric"
+            placeholder="Select a metric">
+        </app-select>
+    }
+</form>
