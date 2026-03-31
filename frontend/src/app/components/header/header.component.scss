@@ -56,6 +56,21 @@
     }
 }
 
+.reset-dashboard-button {
+    border-radius: 10px;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightgray;
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: auto; // keep hover for the title tooltip
+    }
+}
+
 .user-display-name {
     font-size: 13px;
     color: var(--color-text-secondary);

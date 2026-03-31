@@ -1,9 +1,12 @@
-import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { computed, effect, inject, Injectable, OnInit, signal, Signal, WritableSignal } from "@angular/core";
 import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
 import { StackedBarChartData } from "../interfaces/data.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
-import { catchError, forkJoin, of } from "rxjs";
+import { catchError, concat, forkJoin, Observable, of, tap } from "rxjs";
+import { AuthService } from "./auth.service";
+import { toObservable } from "@angular/core/rxjs-interop";
+import { UserResponse } from "../interfaces/auth.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -11,47 +14,64 @@ import { catchError, forkJoin, of } from "rxjs";
 export class DashboardService {
     private readonly registry = inject(DataSourceRegistryService);
     private readonly plaidStrategy = inject(PlaidDataSourceStrategyService);
+    private readonly authService = inject(AuthService);
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
-
-    // TODO: Remove — stub card for stacked bar chart visual testing
-    // private readonly stubStackedBarData: StackedBarChartData = {
-    //     title: 'Monthly Spending by Category',
-    //     xAxisData: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    //     xAxisLabel: 'Month',
-    //     yAxisLabel: 'Amount ($)',
-    //     series: [
-    //         { name: 'Groceries', data: [420, 380, 510, 460, 390, 475] },
-    //         { name: 'Dining',    data: [210, 260, 190, 310, 280, 240] },
-    //         { name: 'Transport', data: [130, 150, 120, 145, 160, 135] },
-    //     ],
-    // };
-
-    // private readonly stubCard: DashboardCard = {
-    //     id: 999,
-    //     title: 'Stacked Bar — Stub',
-    //     dataSourceType: DashboardDataSourceType.PLAID,
-    //     visualizationType: DashboardVisualizationType.STACKED_BAR_CHART,
-    //     queryConfig: { startDate: new Date(), endDate: new Date() },
-    //     transformConfig: { method: '' },
-    //     transformedData: this.stubStackedBarData as unknown as any[],
-    // };
-    // END TODO
+    dashboardReset: WritableSignal<boolean> = signal(false);
 
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
     readonly connectedDataSources = signal<ConnectedDataSource[]>([]);
 
+    readonly currentUser = toObservable(this.authService.currentUser);
+
     constructor() {
         // Register all available strategies
         this.registry.register(this.plaidStrategy);
 
-        // TODO: Remove — seed stub card for stacked bar chart visual testing
-        // this._cards.set([this.stubCard]);
-        // END TODO
-
         // Check if the user has any connected data sources
         this.refreshDataSourceStatus();
+
+        // Should only run on page load, meant to initialize the card layout
+        effect(() =>{
+            const hasConnectedDataSources = this.hasConnectedDataSources();
+
+            if (!hasConnectedDataSources) {
+                return;
+            }
+
+            this.populateCards();
+        });
+
+        // Every time a cards is updated, re-initialize the local storage entry
+        effect(() => {
+            console.log("CARD EFFECT RUNNING");
+            const cards = this._cards();
+
+            if ((!cards || cards.length === 0) && !this.dashboardReset()) {
+                return;
+            }
+
+            this.currentUser.subscribe(user => {
+                if (!user) {
+                    return;
+                }
+
+                localStorage.setItem(`${user!.email}-cards`, JSON.stringify(cards));
+                this.dashboardReset.set(false); // setting dashboard reset to false regardless of state
+            });
+        }, {allowSignalWrites: true});
+    }
+
+    populateCards() {
+        this.currentUser.subscribe(user => {
+            if (!user) {
+                return;
+            }
+
+            const retrievedCards = JSON.parse(localStorage.getItem(`${user!.email}-cards`) || '[]') as DashboardCard[];
+            this._cards.update(_ => retrievedCards);
+        });
     }
 
     /**
@@ -64,7 +84,6 @@ export class DashboardService {
         if (sourceTypes.length === 0) {
             this.connectedDataSources.set([]);
             this.hasConnectedDataSources.set(false);
-            return;
         }
 
         const requests = sourceTypes.map(type =>
@@ -176,6 +195,11 @@ export class DashboardService {
     */
    refreshAllCards(): void {
     this._cards().forEach(card => this.refreshCardData(card.id));
+   }
+
+   resetDashboard(): void {
+    this.dashboardReset.set(true);
+    this._cards.update(cards => []);
    }
 
 }
