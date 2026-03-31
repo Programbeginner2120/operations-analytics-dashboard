@@ -1,12 +1,9 @@
-import { computed, effect, inject, Injectable, OnInit, signal, Signal, WritableSignal } from "@angular/core";
-import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
-import { StackedBarChartData } from "../interfaces/data.interface";
+import { computed, effect, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { ConnectedDataSource, DashboardCard } from "../interfaces/dashboard.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
-import { catchError, concat, forkJoin, Observable, of, tap } from "rxjs";
+import { catchError, forkJoin, of } from "rxjs";
 import { AuthService } from "./auth.service";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { UserResponse } from "../interfaces/auth.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -17,13 +14,10 @@ export class DashboardService {
     private readonly authService = inject(AuthService);
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
-    dashboardReset: WritableSignal<boolean> = signal(false);
 
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
     readonly connectedDataSources = signal<ConnectedDataSource[]>([]);
-
-    readonly currentUser = toObservable(this.authService.currentUser);
 
     constructor() {
         // Register all available strategies
@@ -43,35 +37,28 @@ export class DashboardService {
             this.populateCards();
         });
 
-        // Every time a cards is updated, re-initialize the local storage entry
+        // Persist cards to localStorage whenever cards or the current user changes.
+        // Both are signal dependencies — no subscriptions needed.
+        // The cards.length === 0 guard prevents overwriting saved state during startup
+        // before populateCards() has had a chance to run.
         effect(() => {
-            console.log("CARD EFFECT RUNNING");
             const cards = this._cards();
+            const user = this.authService.currentUser();
 
-            if ((!cards || cards.length === 0) && !this.dashboardReset()) {
+            if (!user || cards.length === 0) {
                 return;
             }
 
-            this.currentUser.subscribe(user => {
-                if (!user) {
-                    return;
-                }
-
-                localStorage.setItem(`${user!.email}-cards`, JSON.stringify(cards));
-                this.dashboardReset.set(false); // setting dashboard reset to false regardless of state
-            });
-        }, {allowSignalWrites: true});
+            localStorage.setItem(`${user.email}-cards`, JSON.stringify(cards));
+        });
     }
 
-    populateCards() {
-        this.currentUser.subscribe(user => {
-            if (!user) {
-                return;
-            }
+    populateCards(): void {
+        const user = this.authService.currentUser();
+        if (!user) return;
 
-            const retrievedCards = JSON.parse(localStorage.getItem(`${user!.email}-cards`) || '[]') as DashboardCard[];
-            this._cards.update(_ => retrievedCards);
-        });
+        const retrievedCards = JSON.parse(localStorage.getItem(`${user.email}-cards`) || '[]') as DashboardCard[];
+        this._cards.set(retrievedCards);
     }
 
     /**
@@ -198,8 +185,13 @@ export class DashboardService {
    }
 
    resetDashboard(): void {
-    this.dashboardReset.set(true);
-    this._cards.update(cards => []);
+    // Write empty state directly — the persist effect skips cards.length === 0
+    // to protect against overwriting on startup, so we persist explicitly here.
+    const user = this.authService.currentUser();
+    if (user) {
+        localStorage.setItem(`${user.email}-cards`, JSON.stringify([]));
+    }
+    this._cards.set([]);
    }
 
 }
