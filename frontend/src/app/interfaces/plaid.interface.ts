@@ -1,4 +1,5 @@
 import { DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
+import { DataSourceConfigSelections } from "./data-source.interface";
 
 /**
  * Plaid-specific query config — extends the base with the institution filter
@@ -7,15 +8,22 @@ export interface PlaidDataQueryConfig extends DataQueryConfig {
     institutionId?: string;
 }
 
+/**
+ * Plaid-specific data source config selections - extends the base with the institution filter
+ */
+export interface PlaidDataSourceConfigSelections extends DataSourceConfigSelections {
+  institutionId: string;
+}
+
 // Minimal Account Interface
 export interface PlaidAccountBalance {
   current: number | null;
   available: number | null;
-  iso_currency_code: string | null;
+  isoCurrencyCode: string | null;
 }
 
 export interface PlaidAccount {
-  account_id: string;
+  accountId: string;
   name: string;
   type: string;
   subtype: string | null;
@@ -25,19 +33,26 @@ export interface PlaidAccount {
 
 // Minimal Transaction Interface
 export interface PlaidTransaction {
-  transaction_id: string;
-  account_id: string;
+  transactionId: string;
+  accountId: string;
   amount: number;
   date: string;
   name: string;
-  merchant_name: string | null;
+  merchantName: string | null;
   category: string[] | null;
   pending: boolean;
-  payment_channel: string;
-  iso_currency_code: string | null;
+  paymentChannel: string;
+  isoCurrencyCode: string | null;
+  personalFinanceCategory?: PlaidPersonalFinanceCategory;
 }
 
-export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance' | 'topMerchantsBySpend';
+export interface PlaidPersonalFinanceCategory {
+  confidenceLevel: string;
+  detailed: string;
+  primary: string;
+}
+
+export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance' | 'topMerchantsBySpend' | 'yearlySpendByMonthAndCategory';
 
 export interface PlaidDataTransformConfig extends DataTransformConfig {
   method: PlaidTransformMethod;

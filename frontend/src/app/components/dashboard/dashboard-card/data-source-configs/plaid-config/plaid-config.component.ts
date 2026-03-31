@@ -1,7 +1,7 @@
-import { Component, computed, effect, input, OnInit, output, signal } from "@angular/core";
+import { Component, computed, effect, input, linkedSignal, OnInit, output, signal } from "@angular/core";
 import { ConnectedDataSource, DashboardVisualizationType } from "../../../../../interfaces/dashboard.interface";
-import { PlaidDataQueryConfig, PlaidDataTransformConfig, PlaidTransformMethod } from "../../../../../interfaces/plaid.interface";
-import { DataSourceConfigComponent, DataSourceConfigOutput } from "../../../../../interfaces/data-source-config.interface";
+import { PlaidDataQueryConfig, PlaidDataSourceConfigSelections, PlaidDataTransformConfig, PlaidTransformMethod } from "../../../../../interfaces/plaid.interface";
+import { DataSourceConfigComponent, DataSourceConfigSelections } from "../../../../../interfaces/data-source.interface";
 import { SelectComponent } from "../../../../../shared/components/select/select.component";
 import { SelectOption } from "../../../../../shared/interfaces/select.interface";
 
@@ -19,10 +19,20 @@ export class PlaidConfigComponent implements DataSourceConfigComponent, OnInit {
     connectedSources = input.required<ConnectedDataSource[]>();
     visualizationType = input.required<DashboardVisualizationType>();
 
-    configChange = output<DataSourceConfigOutput>();
+    configChange = output<DataSourceConfigSelections>();
 
     editableInstitutionId = signal<string>('All');
-    editableBarChartMetric = signal<PlaidTransformMethod>('transactionsByDate');
+    editableMetric = linkedSignal<string | number | null>(() => {
+        const visualizationType = this.visualizationType();
+        if (visualizationType === DashboardVisualizationType.BAR_CHART) {
+            return this.barChartMetricOptions[0].value;
+        } else if (visualizationType === DashboardVisualizationType.PIE_CHART) {
+            return this.pieChartMetricOptions[0].value;
+        } else if (visualizationType === DashboardVisualizationType.STACKED_BAR_CHART) {
+            return this.stackedBarChartMetricOptions[0].value;
+        }
+        return null;
+    });
 
     readonly institutionIdOptions = computed<SelectOption[]>(() => {
         const sources = this.connectedSources();
@@ -35,36 +45,25 @@ export class PlaidConfigComponent implements DataSourceConfigComponent, OnInit {
         { value: 'topMerchantsBySpend', label: 'Top Merchants by Spend' }
     ];
 
+    readonly pieChartMetricOptions: SelectOption[] = [
+        { value: 'accountsByBalance', label: 'Accounts By Balance' }
+    ];
+
+    readonly stackedBarChartMetricOptions: SelectOption[] = [
+        { value: 'yearlySpendByMonthAndCategory', label: 'Yearly Spend by Month and Category' }
+    ];
+
     constructor() {
         effect(() => {
             const institutionId = this.editableInstitutionId();
-            const metric = this.editableBarChartMetric();
-            const vizType = this.visualizationType();
-            const baseQC = this.queryConfig();
+            const metric = this.editableMetric();
 
-            const queryConfig: PlaidDataQueryConfig = metric === 'topMerchantsBySpend'
-                ? {
-                    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-                    endDate: new Date(),
-                    ...(institutionId !== 'All' ? { institutionId } : {})
-                }
-                : {
-                    startDate: baseQC.startDate,
-                    endDate: baseQC.endDate,
-                    ...(institutionId !== 'All' ? { institutionId } : {})
-                };
-
-            const transformConfig: PlaidDataTransformConfig =
-                vizType === DashboardVisualizationType.BAR_CHART
-                    ? { method: metric }
-                    : { method: 'accountsByBalance' };
-
-            this.configChange.emit({ queryConfig, transformConfig });
+            this.configChange.emit({ metric, institutionId } as PlaidDataSourceConfigSelections);
         });
     }
 
     ngOnInit(): void {
         this.editableInstitutionId.set(this.queryConfig().institutionId ?? 'All');
-        this.editableBarChartMetric.set(this.transformConfig().method as PlaidTransformMethod ?? 'transactionsByDate');
+        this.editableMetric.set(this.transformConfig().method as PlaidTransformMethod);
     }
 }

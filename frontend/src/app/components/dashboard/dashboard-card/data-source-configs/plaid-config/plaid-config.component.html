@@ -9,7 +9,23 @@
         <app-select
             label="Bar Chart Metric"
             [options]="barChartMetricOptions"
-            [(value)]="editableBarChartMetric"
+            [(value)]="editableMetric"
+            placeholder="Select a metric">
+        </app-select>
+    }
+    @else if (visualizationType() === DashboardVisualizationType.PIE_CHART) {
+        <app-select
+            label="Pie Chart Metric"
+            [options]="pieChartMetricOptions"
+            [(value)]="editableMetric"
+            placeholder="Select a metric">
+        </app-select>
+    }
+    @else if (visualizationType() === DashboardVisualizationType.STACKED_BAR_CHART) {
+        <app-select
+            label="Stacked Bar Chart Metric",
+            [options]="stackedBarChartMetricOptions"
+            [(value)]="editableMetric"
             placeholder="Select a metric">
         </app-select>
     }
