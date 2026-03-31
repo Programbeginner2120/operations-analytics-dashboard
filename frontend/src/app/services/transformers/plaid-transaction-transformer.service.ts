@@ -6,6 +6,7 @@ import { BarChartData } from "../../interfaces/data.interface";
     providedIn: 'root'
 })
 export class PlaidTransactionTransformerService {
+
     /**
      * Transforms PlaidTransaction[] to bar chart grouped by date
      * Acceps unwrapped transaction objects only
@@ -34,6 +35,12 @@ export class PlaidTransactionTransformerService {
         };
     }
 
+    /**
+     * Transforms PlaidTransaction[] to bar chart grouped by merchant
+     * Accepts unwrapped transaction objects only
+     * @param transactions - The transactions to transform
+     * @returns - The transformed data
+     */
     topMerchantsBySpend(transactions: PlaidTransaction[]): BarChartData {
         const spendByMerchant = new Map<string, number>();
 

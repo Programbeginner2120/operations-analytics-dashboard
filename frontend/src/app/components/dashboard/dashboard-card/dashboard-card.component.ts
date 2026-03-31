@@ -12,7 +12,7 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 import { SelectOption } from "../../../shared/interfaces/select.interface";
 import { BarChartData, PieChartData, StackedBarChartData } from "../../../interfaces/data.interface";
 import { DataSourceRegistryService } from "../../../services/data-source-registry.service";
-import { DataSourceConfigComponent, DataSourceConfigOutput } from "../../../interfaces/data-source-config.interface";
+import { DataSourceConfigComponent, DataSourceConfigSelections } from "../../../interfaces/data-source.interface";
 
 @Component({
     selector: 'app-dashboard-card',
@@ -41,7 +41,7 @@ export class DashboardCardComponent {
     readonly isModalOpen = signal<boolean>(false);
 
     // Draft config emitted by the dynamically loaded data-source config sub-component
-    readonly draftConfig = signal<DataSourceConfigOutput | null>(null);
+    readonly draftConfig = signal<DataSourceConfigSelections | null>(null);
 
     // Reference to the host for the dynamically loaded config component
     readonly configContainer = viewChild('configContainer', { read: ViewContainerRef });
@@ -119,7 +119,6 @@ export class DashboardCardComponent {
             componentRef.setInput('queryConfig', card.queryConfig);
             componentRef.setInput('transformConfig', card.transformConfig);
             componentRef.setInput('connectedSources', this.dashboardService.connectedDataSources().filter(s => s.sourceType === card.dataSourceType));
-            componentRef.setInput('visualizationType', this.editableVisualizationType() ?? card.visualizationType);
 
             componentRef.instance.configChange.subscribe(cfg => {
                 this.draftConfig.set(cfg);
@@ -138,10 +137,7 @@ export class DashboardCardComponent {
         this.editableVisualizationType.set(this.card().visualizationType);
         // Seed draftConfig with the card's current config so saveConfig() is safe
         // even if the user makes no changes inside the sub-component.
-        this.draftConfig.set({
-            queryConfig: this.card().queryConfig,
-            transformConfig: this.card().transformConfig
-        });
+        this.draftConfig.set(this.registry.getStrategy(this.card().dataSourceType).extractSelections(this.card()));
         this.isModalOpen.set(true);
     }
 
@@ -152,12 +148,11 @@ export class DashboardCardComponent {
      * which is kept up to date by the dynamically loaded config sub-component.
      */
     saveConfig(): void {
-        const draft = this.draftConfig();
         const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
             dataSourceType: this.editableDataSourceType() ?? undefined,
             visualizationType: this.editableVisualizationType() ?? undefined,
-            ...(draft ? { queryConfig: draft.queryConfig, transformConfig: draft.transformConfig } : {})
+            ...(this.draftConfig() ? this.registry.getStrategy(this.card().dataSourceType).resolveConfig(this.draftConfig()!) : {})
         };
 
         this.dashboardService.updateCard(this.card().id, updates as DashboardCard);

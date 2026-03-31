@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { Type } from "@angular/core";
-import { ConnectedDataSource, DashboardCard } from "./dashboard.interface";
-import { DataSourceConfigComponent } from "./data-source-config.interface";
+import { ConnectedDataSource, DashboardCard, DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
+import { DataSourceConfigComponent, DataSourceConfigSelections } from "./data-source.interface";
 
 /**
  * Strategy interface for data source implementations
@@ -37,4 +37,17 @@ export interface DataSourceStrategy {
      * DashboardCardComponent dynamically loads this component inside its modal.
      */
     getConfigComponent(): Type<DataSourceConfigComponent>;
+
+    /**
+     * Resolves input taken into the data source specific configuration
+     * @param selections - input into the data source configuration
+     * @returns - output of the data source configuration
+     */
+    resolveConfig(selections: DataSourceConfigSelections): { queryConfig: DataQueryConfig, transformConfig: DataTransformConfig };
+
+    /**
+     * Extracts user selections from a card's existing config.
+     * Used to seed the draft state when opening the config modal.
+     */
+    extractSelections(card: DashboardCard): DataSourceConfigSelections;
 }

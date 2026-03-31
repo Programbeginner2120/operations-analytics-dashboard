@@ -4,11 +4,11 @@ import { PlaidService } from "../plaid.service";
 import { DataService } from "../data.service";
 import { PlaidTransactionTransformerService } from "../transformers/plaid-transaction-transformer.service";
 import { PlaidAccountTransformerService } from "../transformers/plaid-account-transformer.service";
-import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../../interfaces/dashboard.interface";
+import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType, DataQueryConfig, DataTransformConfig } from "../../interfaces/dashboard.interface";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { BarChartData, PieChartData } from "../../interfaces/data.interface";
-import { PlaidAccount, PlaidDataQueryConfig, PlaidDataTransformConfig, PlaidTransaction } from "../../interfaces/plaid.interface";
-import { DataSourceConfigComponent } from "../../interfaces/data-source-config.interface";
+import { PlaidAccount, PlaidDataQueryConfig, PlaidDataSourceConfigSelections, PlaidDataTransformConfig, PlaidTransaction } from "../../interfaces/plaid.interface";
+import { DataSourceConfigComponent, DataSourceConfigSelections } from "../../interfaces/data-source.interface";
 import { PlaidConfigComponent } from "../../components/dashboard/dashboard-card/data-source-configs/plaid-config/plaid-config.component";
 
 @Injectable({
@@ -107,5 +107,59 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
             default:
                 return throwError(() => new Error(`Unsupported transform method: ${transformConfig.method}`));
             }
+    }
+
+    resolveConfig(selections: DataSourceConfigSelections): { queryConfig: DataQueryConfig, transformConfig: DataTransformConfig } {
+        const { metric, institutionId } = selections as PlaidDataSourceConfigSelections;
+
+        let queryConfig: PlaidDataQueryConfig, transformConfig: PlaidDataTransformConfig;
+        switch (metric) {
+            case 'accountsByBalance':
+                queryConfig = {
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    ...(institutionId != 'All' ? { institutionId}: {})
+                };
+                transformConfig = {
+                    method: metric
+                };
+                break;
+            case 'transactionsByDate':
+                queryConfig = {
+                    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                    endDate: new Date(),
+                    ...(institutionId != 'All' ? { institutionId}: {})
+                };
+                transformConfig = {
+                    method: metric
+                };
+                break;
+            case 'topMerchantsBySpend':
+                queryConfig = {
+                    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                    endDate: new Date(),
+                    ...(institutionId != 'All' ? { institutionId}: {})
+                };
+                transformConfig = {
+                    method: metric
+                };
+                break;
+            default:
+                throw new Error("Unknown metric sent to resolveConfig");
+        }
+
+        return {
+            queryConfig,
+            transformConfig
+        };
+    }
+
+    extractSelections(card: DashboardCard): PlaidDataSourceConfigSelections {
+        const qc = card.queryConfig as PlaidDataQueryConfig;
+        const tc = card.transformConfig as PlaidDataTransformConfig;
+        return {
+            metric: tc.method,
+            institutionId: qc.institutionId ?? 'All'
+        };
     }
 }

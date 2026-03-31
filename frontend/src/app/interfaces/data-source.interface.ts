@@ -1,9 +1,8 @@
 import { OutputEmitterRef } from "@angular/core";
-import { DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
+import { DashboardVisualizationType, DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
 
-export interface DataSourceConfigOutput {
-    queryConfig: DataQueryConfig;
-    transformConfig: DataTransformConfig;
+export interface DataSourceConfigSelections {
+    metric: string;
 }
 
 /**
@@ -11,5 +10,5 @@ export interface DataSourceConfigOutput {
  * DashboardCardComponent discovers and instantiates these via the strategy pattern.
  */
 export interface DataSourceConfigComponent {
-    configChange: OutputEmitterRef<DataSourceConfigOutput>;
+    configChange: OutputEmitterRef<DataSourceConfigSelections>;
 }
