@@ -119,6 +119,7 @@ export class DashboardCardComponent {
             componentRef.setInput('queryConfig', card.queryConfig);
             componentRef.setInput('transformConfig', card.transformConfig);
             componentRef.setInput('connectedSources', this.dashboardService.connectedDataSources().filter(s => s.sourceType === card.dataSourceType));
+            componentRef.setInput('visualizationType', this.editableVisualizationType());
 
             componentRef.instance.configChange.subscribe(cfg => {
                 this.draftConfig.set(cfg);
@@ -148,6 +149,7 @@ export class DashboardCardComponent {
      * which is kept up to date by the dynamically loaded config sub-component.
      */
     saveConfig(): void {
+        console.log("ENTERING SAVE CONFIG");
         const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
             dataSourceType: this.editableDataSourceType() ?? undefined,

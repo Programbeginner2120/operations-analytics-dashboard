@@ -67,7 +67,6 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
     fetchAndTransform(card: DashboardCard): Observable<BarChartData | PieChartData> {
         const transformConfig = card.transformConfig as PlaidDataTransformConfig;
         const { startDate, endDate, institutionId } = card.queryConfig as PlaidDataQueryConfig;
-        console.log("Institution ID in query config:", institutionId);
 
         // Route to appropriate fetch + transform pipeline based on method
         switch (transformConfig.method) {
@@ -123,6 +122,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                 transformConfig = {
                     method: metric
                 };
+                console.log("QUERY CONFIG: ", queryConfig, "TRANSFORM CONFIG: ", transformConfig);
                 break;
             case 'transactionsByDate':
                 queryConfig = {
@@ -159,6 +159,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
         const tc = card.transformConfig as PlaidDataTransformConfig;
         return {
             metric: tc.method,
+            visualizationType: card.visualizationType,
             institutionId: qc.institutionId ?? 'All'
         };
     }

@@ -3,6 +3,7 @@ import { DashboardVisualizationType, DataQueryConfig, DataTransformConfig } from
 
 export interface DataSourceConfigSelections {
     metric: string;
+    visualizationType: DashboardVisualizationType;
 }
 
 /**
