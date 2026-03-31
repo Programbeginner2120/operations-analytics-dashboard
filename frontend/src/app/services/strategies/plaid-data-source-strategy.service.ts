@@ -6,7 +6,7 @@ import { PlaidTransactionTransformerService } from "../transformers/plaid-transa
 import { PlaidAccountTransformerService } from "../transformers/plaid-account-transformer.service";
 import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType, DataQueryConfig, DataTransformConfig } from "../../interfaces/dashboard.interface";
 import { catchError, map, Observable, throwError } from "rxjs";
-import { BarChartData, PieChartData } from "../../interfaces/data.interface";
+import { BarChartData, PieChartData, StackedBarChartData } from "../../interfaces/data.interface";
 import { PlaidAccount, PlaidDataQueryConfig, PlaidDataSourceConfigSelections, PlaidDataTransformConfig, PlaidTransaction } from "../../interfaces/plaid.interface";
 import { DataSourceConfigComponent, DataSourceConfigSelections } from "../../interfaces/data-source.interface";
 import { PlaidConfigComponent } from "../../components/dashboard/dashboard-card/data-source-configs/plaid-config/plaid-config.component";
@@ -64,7 +64,7 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
         return PlaidConfigComponent;
     }
 
-    fetchAndTransform(card: DashboardCard): Observable<BarChartData | PieChartData> {
+    fetchAndTransform(card: DashboardCard): Observable<BarChartData | PieChartData | StackedBarChartData> {
         const transformConfig = card.transformConfig as PlaidDataTransformConfig;
         const { startDate, endDate, institutionId } = card.queryConfig as PlaidDataQueryConfig;
 
@@ -103,6 +103,17 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                         return throwError(() => new Error('Failed to fetch transactions: ' + error.message));
                     })
                 );
+            case 'yearlySpendByMonthAndCategory':
+                return this.plaidService.loadTransactions(startDate, endDate, institutionId).pipe(
+                    map(datapoints => {
+                        const transactions = datapoints.map(dp => this.dataService.unwrapDataPoint<PlaidTransaction>(dp));
+                        return this.transactionTransformer.yearlySpendByMonthAndCategory(transactions);
+                    }),
+                    catchError(error => {
+                        console.error('Error fetching transactions:', error);
+                        return throwError(() => new Error('Failed to fetch transactions: ', error.message));
+                    })
+                );
             default:
                 return throwError(() => new Error(`Unsupported transform method: ${transformConfig.method}`));
             }
@@ -122,7 +133,6 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
                 transformConfig = {
                     method: metric
                 };
-                console.log("QUERY CONFIG: ", queryConfig, "TRANSFORM CONFIG: ", transformConfig);
                 break;
             case 'transactionsByDate':
                 queryConfig = {
@@ -137,6 +147,17 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
             case 'topMerchantsBySpend':
                 queryConfig = {
                     startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                    endDate: new Date(),
+                    ...(institutionId != 'All' ? { institutionId}: {})
+                };
+                transformConfig = {
+                    method: metric
+                };
+                break;
+            case 'yearlySpendByMonthAndCategory':
+                const currentYear = new Date().getFullYear();
+                queryConfig = {
+                    startDate: new Date(Date.parse(`${currentYear}-01-01`)),
                     endDate: new Date(),
                     ...(institutionId != 'All' ? { institutionId}: {})
                 };

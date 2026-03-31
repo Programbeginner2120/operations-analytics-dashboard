@@ -19,11 +19,11 @@ export interface PlaidDataSourceConfigSelections extends DataSourceConfigSelecti
 export interface PlaidAccountBalance {
   current: number | null;
   available: number | null;
-  iso_currency_code: string | null;
+  isoCurrencyCode: string | null;
 }
 
 export interface PlaidAccount {
-  account_id: string;
+  accountId: string;
   name: string;
   type: string;
   subtype: string | null;
@@ -33,19 +33,26 @@ export interface PlaidAccount {
 
 // Minimal Transaction Interface
 export interface PlaidTransaction {
-  transaction_id: string;
-  account_id: string;
+  transactionId: string;
+  accountId: string;
   amount: number;
   date: string;
   name: string;
-  merchant_name: string | null;
+  merchantName: string | null;
   category: string[] | null;
   pending: boolean;
-  payment_channel: string;
-  iso_currency_code: string | null;
+  paymentChannel: string;
+  isoCurrencyCode: string | null;
+  personalFinanceCategory?: PlaidPersonalFinanceCategory;
 }
 
-export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance' | 'topMerchantsBySpend';
+export interface PlaidPersonalFinanceCategory {
+  confidenceLevel: string;
+  detailed: string;
+  primary: string;
+}
+
+export type PlaidTransformMethod = 'transactionsByDate' | 'accountsByBalance' | 'topMerchantsBySpend' | 'yearlySpendByMonthAndCategory';
 
 export interface PlaidDataTransformConfig extends DataTransformConfig {
   method: PlaidTransformMethod;

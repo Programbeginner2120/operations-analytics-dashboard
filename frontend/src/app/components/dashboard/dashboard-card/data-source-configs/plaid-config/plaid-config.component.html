@@ -21,4 +21,12 @@
             placeholder="Select a metric">
         </app-select>
     }
+    @else if (visualizationType() === DashboardVisualizationType.STACKED_BAR_CHART) {
+        <app-select
+            label="Stacked Bar Chart Metric",
+            [options]="stackedBarChartMetricOptions"
+            [(value)]="editableMetric"
+            placeholder="Select a metric">
+        </app-select>
+    }
 </form>

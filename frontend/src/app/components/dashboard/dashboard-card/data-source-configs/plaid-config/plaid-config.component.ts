@@ -28,6 +28,8 @@ export class PlaidConfigComponent implements DataSourceConfigComponent, OnInit {
             return this.barChartMetricOptions[0].value;
         } else if (visualizationType === DashboardVisualizationType.PIE_CHART) {
             return this.pieChartMetricOptions[0].value;
+        } else if (visualizationType === DashboardVisualizationType.STACKED_BAR_CHART) {
+            return this.stackedBarChartMetricOptions[0].value;
         }
         return null;
     });
@@ -45,6 +47,10 @@ export class PlaidConfigComponent implements DataSourceConfigComponent, OnInit {
 
     readonly pieChartMetricOptions: SelectOption[] = [
         { value: 'accountsByBalance', label: 'Accounts By Balance' }
+    ];
+
+    readonly stackedBarChartMetricOptions: SelectOption[] = [
+        { value: 'yearlySpendByMonthAndCategory', label: 'Yearly Spend by Month and Category' }
     ];
 
     constructor() {

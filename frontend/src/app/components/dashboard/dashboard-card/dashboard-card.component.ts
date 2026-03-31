@@ -149,7 +149,6 @@ export class DashboardCardComponent {
      * which is kept up to date by the dynamically loaded config sub-component.
      */
     saveConfig(): void {
-        console.log("ENTERING SAVE CONFIG");
         const updates: Partial<DashboardCard> = {
             title: this.editableTitle(),
             dataSourceType: this.editableDataSourceType() ?? undefined,
