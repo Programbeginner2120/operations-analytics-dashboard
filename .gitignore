@@ -132,3 +132,6 @@ backend/src/main/resources/generator.properties
 # Documentation
 # ============================================
 HELP.md
+
+# env files
+*.env
