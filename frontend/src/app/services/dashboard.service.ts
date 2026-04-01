@@ -28,7 +28,6 @@ export class DashboardService {
 
         // Should only run on page load, meant to initialize the card layout
         effect(() =>{
-            console.log("POPULATE CARDS EFFECT RUNNING");
             const hasConnectedDataSources = this.hasConnectedDataSources();
 
             if (!hasConnectedDataSources) {
@@ -44,7 +43,6 @@ export class DashboardService {
         // The cards.length === 0 guard prevents overwriting saved state during startup
         // before populateCards() has had a chance to run.
         effect(() => {
-            console.log("SET ITEM EFFECT RUNNING");
             const cards = this._cards();
             const user = this.authService.currentUser();
 
