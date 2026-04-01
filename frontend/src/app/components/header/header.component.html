@@ -30,6 +30,15 @@
                 <lucide-icon [img]="plus" [size]="20"></lucide-icon>
                 Add Panel
             </button>
+            @if (numCards() !== 0) {
+                <button
+                    class="reset-dashboard-button"
+                    [title]="'Clear Dashboard'"
+                    (click)="dashboardService.resetDashboard()">
+                    <lucide-icon [img]="minus" [size]="20"></lucide-icon>
+                    Clear Dashboard
+                </button>
+            }
         }
         <button class="logout-button" (click)="logout()" title="Log out">
             <lucide-icon [img]="logOut" [size]="18"></lucide-icon>

@@ -2,7 +2,7 @@ import { Component, computed, inject, input, Signal } from "@angular/core";
 import { ThemeService } from "../../services/theme.service";
 import { DashboardService } from "../../services/dashboard.service";
 import { AuthService } from "../../services/auth.service";
-import { ArrowLeft, LogOut, LucideAngularModule } from "lucide-angular";
+import { ArrowLeft, LogOut, LucideAngularModule, Minus } from "lucide-angular";
 import { LayoutGrid, Moon, Plus, Sun } from "lucide-angular";
 import { Theme } from "../../interfaces/theme.interface";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -23,6 +23,7 @@ export class HeaderComponent {
     readonly moon = Moon;
     readonly sun = Sun;
     readonly plus = Plus;
+    readonly minus = Minus;
     readonly arrowLeft = ArrowLeft;
     readonly logOut = LogOut;
 

@@ -1,9 +1,9 @@
-import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
-import { ConnectedDataSource, DashboardCard, DashboardDataSourceType, DashboardVisualizationType } from "../interfaces/dashboard.interface";
-import { StackedBarChartData } from "../interfaces/data.interface";
+import { computed, effect, inject, Injectable, signal, Signal, untracked, WritableSignal } from "@angular/core";
+import { ConnectedDataSource, DashboardCard } from "../interfaces/dashboard.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
 import { catchError, forkJoin, of } from "rxjs";
+import { AuthService } from "./auth.service";
 
 @Injectable({
     providedIn: 'root'
@@ -11,32 +11,9 @@ import { catchError, forkJoin, of } from "rxjs";
 export class DashboardService {
     private readonly registry = inject(DataSourceRegistryService);
     private readonly plaidStrategy = inject(PlaidDataSourceStrategyService);
+    private readonly authService = inject(AuthService);
 
     private readonly _cards: WritableSignal<DashboardCard[]> = signal([]);
-
-    // TODO: Remove — stub card for stacked bar chart visual testing
-    // private readonly stubStackedBarData: StackedBarChartData = {
-    //     title: 'Monthly Spending by Category',
-    //     xAxisData: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    //     xAxisLabel: 'Month',
-    //     yAxisLabel: 'Amount ($)',
-    //     series: [
-    //         { name: 'Groceries', data: [420, 380, 510, 460, 390, 475] },
-    //         { name: 'Dining',    data: [210, 260, 190, 310, 280, 240] },
-    //         { name: 'Transport', data: [130, 150, 120, 145, 160, 135] },
-    //     ],
-    // };
-
-    // private readonly stubCard: DashboardCard = {
-    //     id: 999,
-    //     title: 'Stacked Bar — Stub',
-    //     dataSourceType: DashboardDataSourceType.PLAID,
-    //     visualizationType: DashboardVisualizationType.STACKED_BAR_CHART,
-    //     queryConfig: { startDate: new Date(), endDate: new Date() },
-    //     transformConfig: { method: '' },
-    //     transformedData: this.stubStackedBarData as unknown as any[],
-    // };
-    // END TODO
 
     /** null = still loading, true/false = resolved */
     readonly hasConnectedDataSources = signal<boolean | null>(null);
@@ -46,12 +23,58 @@ export class DashboardService {
         // Register all available strategies
         this.registry.register(this.plaidStrategy);
 
-        // TODO: Remove — seed stub card for stacked bar chart visual testing
-        // this._cards.set([this.stubCard]);
-        // END TODO
-
         // Check if the user has any connected data sources
         this.refreshDataSourceStatus();
+
+        // Should only run on page load, meant to initialize the card layout
+        effect(() =>{
+            console.log("POPULATE CARDS EFFECT RUNNING");
+            const hasConnectedDataSources = this.hasConnectedDataSources();
+
+            if (!hasConnectedDataSources) {
+                return;
+            }
+
+            // Necessary as this._cards is a dependency of the call, making it a dependency of this effect block!
+            untracked(() => this.populateCards());
+        });
+
+        // Persist cards to localStorage whenever cards or the current user changes.
+        // Both are signal dependencies — no subscriptions needed.
+        // The cards.length === 0 guard prevents overwriting saved state during startup
+        // before populateCards() has had a chance to run.
+        effect(() => {
+            console.log("SET ITEM EFFECT RUNNING");
+            const cards = this._cards();
+            const user = this.authService.currentUser();
+
+            if (!user || cards.length === 0) {
+                return;
+            }
+
+            localStorage.setItem(`${user.email}-cards`, JSON.stringify(cards));
+        });
+    }
+
+    populateCards(): void {
+        const user = this.authService.currentUser();
+        if (!user) return;
+
+        const retrievedCards = (JSON.parse(localStorage.getItem(`${user.email}-cards`) || '[]') as DashboardCard[])
+            .map(card => ({
+                ...card,
+                transformedData: undefined,
+                queryConfig: card.queryConfig
+                    ? {
+                        ...card.queryConfig,
+                        startDate: new Date(card.queryConfig.startDate),
+                        endDate: new Date(card.queryConfig.endDate),
+                    }
+                    : card.queryConfig,
+            }));
+
+        this._cards.set(retrievedCards);
+        this.refreshAllCards();
     }
 
     /**
@@ -64,7 +87,6 @@ export class DashboardService {
         if (sourceTypes.length === 0) {
             this.connectedDataSources.set([]);
             this.hasConnectedDataSources.set(false);
-            return;
         }
 
         const requests = sourceTypes.map(type =>
@@ -176,6 +198,16 @@ export class DashboardService {
     */
    refreshAllCards(): void {
     this._cards().forEach(card => this.refreshCardData(card.id));
+   }
+
+   resetDashboard(): void {
+    // Write empty state directly — the persist effect skips cards.length === 0
+    // to protect against overwriting on startup, so we persist explicitly here.
+    const user = this.authService.currentUser();
+    if (user) {
+        localStorage.setItem(`${user.email}-cards`, JSON.stringify([]));
+    }
+    this._cards.set([]);
    }
 
 }
