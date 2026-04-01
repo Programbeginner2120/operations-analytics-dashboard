@@ -13,6 +13,9 @@ import com.killeen.dashboard.config.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Locale;
+import org.springframework.context.MessageSource;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -21,12 +24,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final MessageSource messageSource;
 
     public User register(String email, String password, String displayName) {
         log.info("Registering new user with email: {}", email);
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("An account with this email already exists");
+            throw new IllegalArgumentException(messageSource.getMessage("user.email.already.exists", null, Locale.getDefault()));
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -47,10 +51,10 @@ public class UserService {
         log.info("Authenticating user with email: {}", email);
 
         User user = userRepository.findByEmail(email.toLowerCase().trim())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+                .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("user.credentials.invalid", null, Locale.getDefault())));
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Invalid email or password");
+            throw new IllegalArgumentException(messageSource.getMessage("user.credentials.invalid", null, Locale.getDefault()));
         }
 
         String token = jwtService.generateToken(user);
@@ -64,6 +68,6 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("user.not.found", null, Locale.getDefault())));
     }
 }

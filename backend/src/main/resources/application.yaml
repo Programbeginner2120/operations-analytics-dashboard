@@ -1,4 +1,6 @@
 spring:
+  messages:
+    basename: exception
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/operations-analytics-dashboard}
     username: ${DB_USERNAME:postgres}
