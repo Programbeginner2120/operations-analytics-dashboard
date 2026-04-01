@@ -76,5 +76,14 @@
       <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
     </table>
 
+    <!-- Email Tokens Table-->
+    <table
+      tableName="email_tokens"
+      domainObjectName="EmailTokenDb">
+
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+
+    </table>
+
   </context>
 </generatorConfiguration>
