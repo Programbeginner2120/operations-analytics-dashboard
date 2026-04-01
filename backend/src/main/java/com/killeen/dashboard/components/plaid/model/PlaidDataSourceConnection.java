@@ -28,8 +28,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import retrofit2.Response;
 
-import java.util.Locale;
-import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
 
 @Slf4j
 @Data
@@ -38,7 +37,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
     private PlaidApi plaidClient;
     private DataSourceConfig config;
-    private MessageSource messageSource;
+    private Environment env;
     @Builder.Default
     private boolean connected = true;
 
@@ -52,7 +51,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
     @Override
     public List<DataPoint<?>> fetchData(DataQuery query) {
         if (!isConnected()) {
-            throw new DataSourceException(messageSource.getMessage("plaid.connection.not.connected", null, Locale.getDefault()));
+            throw new DataSourceException(env.getProperty("plaid.connection.not.connected"));
         }
 
         List<DataPoint<?>> results = new ArrayList<>();
@@ -144,7 +143,7 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
                 return new ArrayList<>(fetchTransactions(query));
             default:
                 throw new UnsupportedOperationException(
-                    messageSource.getMessage("plaid.metric.not.implemented", new Object[]{metric}, Locale.getDefault())
+                    String.format(env.getProperty("plaid.metric.not.implemented"), metric)
                 );
         }
     }
@@ -166,13 +165,13 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
             if (!response.isSuccessful()) {
                 log.error("Failed to fetch account balances: {}", response.code());
-                throw new DataSourceException(messageSource.getMessage("plaid.account.balances.fetch.failed", new Object[]{response.code()}, Locale.getDefault()));
+                throw new DataSourceException(String.format(env.getProperty("plaid.account.balances.fetch.failed"), response.code()));
             }
 
             return mapAccountsToDataPoints(response.body(), query);
         } catch (IOException e) {
             log.error("Error fetching account balances", e);
-            throw new DataSourceException(messageSource.getMessage("plaid.account.balances.fetch.error", null, Locale.getDefault()), e);
+            throw new DataSourceException(env.getProperty("plaid.account.balances.fetch.error"), e);
         }
     }
 
@@ -195,13 +194,13 @@ public class PlaidDataSourceConnection implements DataSourceConnection {
 
             if (!response.isSuccessful()) {
                 log.error("Failed to fetch transactions: {}", response.code());
-                throw new DataSourceException(messageSource.getMessage("plaid.transactions.fetch.failed", new Object[]{response.code()}, Locale.getDefault()));
+                throw new DataSourceException(String.format(env.getProperty("plaid.transactions.fetch.failed"), response.code()));
             }
 
             return mapTransactionsToDataPoints(response.body(), query);
         } catch (IOException e) {
             log.error("Error fetching transactions", e);
-            throw new DataSourceException(messageSource.getMessage("plaid.transactions.fetch.error", null, Locale.getDefault()), e);
+            throw new DataSourceException(env.getProperty("plaid.transactions.fetch.error"), e);
         }
     }
 

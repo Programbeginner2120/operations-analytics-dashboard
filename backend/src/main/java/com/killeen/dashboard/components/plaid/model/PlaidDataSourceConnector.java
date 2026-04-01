@@ -16,7 +16,7 @@ import com.plaid.client.request.PlaidApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
 
 @Slf4j
 @Component
@@ -25,7 +25,7 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
 
     private final PlaidProperties plaidProperties;
     private final PlaidApi plaidApi;
-    private final MessageSource messageSource;
+    private final Environment env;
 
     @Override
     public String getSourceType() {
@@ -75,7 +75,7 @@ public class PlaidDataSourceConnector implements DataSourceConnector {
         PlaidDataSourceConnection connection = PlaidDataSourceConnection.builder()
             .plaidClient(plaidApi)
             .config(config)
-            .messageSource(messageSource)
+            .env(env)
             .build();
         
         log.info("Plaid data source connection created successfully for: {}", config.getDisplayName());
