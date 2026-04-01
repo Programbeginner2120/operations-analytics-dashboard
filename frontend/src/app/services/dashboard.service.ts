@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal, Signal, untracked, WritableSignal } from "@angular/core";
 import { ConnectedDataSource, DashboardCard } from "../interfaces/dashboard.interface";
 import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
@@ -28,13 +28,15 @@ export class DashboardService {
 
         // Should only run on page load, meant to initialize the card layout
         effect(() =>{
+            console.log("POPULATE CARDS EFFECT RUNNING");
             const hasConnectedDataSources = this.hasConnectedDataSources();
 
             if (!hasConnectedDataSources) {
                 return;
             }
 
-            this.populateCards();
+            // Necessary as this._cards is a dependency of the call, making it a dependency of this effect block!
+            untracked(() => this.populateCards());
         });
 
         // Persist cards to localStorage whenever cards or the current user changes.
@@ -42,6 +44,7 @@ export class DashboardService {
         // The cards.length === 0 guard prevents overwriting saved state during startup
         // before populateCards() has had a chance to run.
         effect(() => {
+            console.log("SET ITEM EFFECT RUNNING");
             const cards = this._cards();
             const user = this.authService.currentUser();
 
@@ -57,8 +60,21 @@ export class DashboardService {
         const user = this.authService.currentUser();
         if (!user) return;
 
-        const retrievedCards = JSON.parse(localStorage.getItem(`${user.email}-cards`) || '[]') as DashboardCard[];
+        const retrievedCards = (JSON.parse(localStorage.getItem(`${user.email}-cards`) || '[]') as DashboardCard[])
+            .map(card => ({
+                ...card,
+                transformedData: undefined,
+                queryConfig: card.queryConfig
+                    ? {
+                        ...card.queryConfig,
+                        startDate: new Date(card.queryConfig.startDate),
+                        endDate: new Date(card.queryConfig.endDate),
+                    }
+                    : card.queryConfig,
+            }));
+
         this._cards.set(retrievedCards);
+        this.refreshAllCards();
     }
 
     /**
