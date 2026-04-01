@@ -15,6 +15,8 @@ public class UserDb {
 
     private LocalDateTime updatedAt;
 
+    private Boolean emailVerified;
+
     public Long getId() {
         return id;
     }
@@ -61,5 +63,13 @@ public class UserDb {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }
