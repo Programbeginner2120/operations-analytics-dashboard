@@ -14,6 +14,7 @@ export class RegisterComponent {
     private readonly authService = inject(AuthService);
 
     navigateToSignIn = output<void>();
+    navigateToForgotPassword = output<void>();
 
     readonly isLoading = signal<boolean>(false);
     readonly errorMessage = signal<string | undefined>(undefined);
@@ -24,11 +25,14 @@ export class RegisterComponent {
 
     readonly formTitle = computed(() => 'Create Account');
     readonly formSubtitle = computed(() =>
-        'Create an account to get started.'
+        'Create an account to get started'
     );
     readonly submitLabel = computed(() => 'Create Account');
-    readonly toggleLabel = computed(() =>
+    readonly signUpNavigationLabel = computed(() =>
         "Already have an account? Sign in"
+    );
+    readonly forgotPasswordNavigationLabel = computed(() => 
+        "Forgot your password? Click here to reset it"
     );
 
     handleRegister(): void {

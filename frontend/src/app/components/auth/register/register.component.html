@@ -38,6 +38,7 @@
         >{{ submitLabel() }}</app-button>
     </form>
     <div class="auth-card-footer">
-        <button class="auth-card-toggle" (click)="navigateToSignIn.emit()">{{ toggleLabel() }}</button>
+        <button class="auth-card-toggle" (click)="navigateToSignIn.emit()">{{ signUpNavigationLabel() }}</button>
+        <button class="auth-card-toggle" (click)="navigateToForgotPassword.emit()">{{ forgotPasswordNavigationLabel() }}</button>
     </div>
 </div>

@@ -13,7 +13,10 @@
     <div class="auth-layout-content">
         @switch (currentMode()) {
             @case ('LOGIN') {
-                <app-login (navigateToRegister)="currentMode.set('REGISTER')"></app-login>
+                <app-login
+                    (navigateToRegister)="currentMode.set('REGISTER')" 
+                    (navigateToForgotPassword)="currentMode.set('FORGOT_PASSWORD')">
+                </app-login>
             }
             @case ('REGISTER') {
                 <app-register (navigateToSignIn)="currentMode.set('LOGIN')"></app-register>
