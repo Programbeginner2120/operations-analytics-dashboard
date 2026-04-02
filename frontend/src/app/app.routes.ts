@@ -12,6 +12,11 @@ export const routes: Routes = [
         loadComponent: () => import('./components/auth/auth-layout/auth-layout.component').then(m => m.AuthLayoutComponent)
     },
     {
+        path: 'verify-email',
+        loadComponent: () => import('./components/auth/verify-email/verify-email.component')
+            .then(m => m.VerifyEmailComponent)
+    },
+    {
         path: 'landing-page',
         loadComponent: () => import('./components/landing-page/landing-page-layout/landing-page-layout.component').then(m => m.LandingPageLayoutComponent),
         canActivate: [authGuard]

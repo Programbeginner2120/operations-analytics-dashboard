@@ -1,0 +1,26 @@
+<div class="auth-card">
+    @switch(status()) {
+        @case ('verifying') {
+            <div class="auth-card-header">
+                <p>Verifying your email address...</p>
+            </div>
+        }
+        @case ('success') {
+            <div class="auth-card-header">
+                <h2>Email Verified!</h2>
+            </div>
+            <div class="auth-card-footer">
+                <p>Your email is active. <a routerLink="/login">Sign in</a></p>
+            </div>
+        }
+        @case ('error') {
+            <div class="auth-card-header">
+                <h2>Verification Failed</h2>
+            </div>
+            <div class="auth-card-footer">
+                <p>The link may have expired or already been used.</p>
+                <a routerLink="/login">Back to login</a>
+            </div>
+        }
+    }
+</div>

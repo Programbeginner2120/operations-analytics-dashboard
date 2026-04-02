@@ -45,11 +45,13 @@ export class LoginComponent {
             },
             error: (err) => {
                 this.isLoading.set(false);
-                this.errorMessage.set(
-                    err.status === 401
-                        ? 'Invalid email or password.'
-                        : 'An error occurred. Please try again.'
-                );
+                if (err.status === 403) {
+                    this.errorMessage.set(`We sent an email to ${this.email()}. Click on the link in the email to activate your account.`)
+                } else if (err.status === 401) {
+                    this.errorMessage.set('Invalid email or password.');
+                } else {
+                    this.errorMessage.set('An error occurred. Please try again.');
+                }
             }
         });
     }
