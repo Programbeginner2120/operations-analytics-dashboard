@@ -11,7 +11,7 @@
         </button>
     </div>
     <div class="auth-layout-content">
-        <div class="auth-card">
+        <!-- <div class="auth-card">
             <div class="auth-card-header">
                 <h2 class="auth-card-title">{{ formTitle() }}</h2>
                 <p class="auth-card-subtitle">{{ formSubtitle() }}</p>
@@ -55,6 +55,14 @@
             <div class="auth-card-footer">
                 <button class="auth-card-toggle" (click)="toggleMode()">{{ toggleLabel() }}</button>
             </div>
-        </div>
+        </div> -->
+        @switch (currentMode()) {
+            @case ('LOGIN') {
+                <app-login (navigateToRegister)="currentMode.set('REGISTER')"></app-login>
+            }
+            @case ('REGISTER') {
+                <app-register (navigateToSignIn)="currentMode.set('LOGIN')"></app-register>
+            }
+        }
     </div>
 </div>

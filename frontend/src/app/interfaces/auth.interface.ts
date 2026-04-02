@@ -19,3 +19,5 @@ export interface UserResponse {
     email: string;
     displayName: string | null;
 }
+
+export type AuthMode = 'LOGIN' | 'REGISTER' | 'FORGOT_PASSWORD';
