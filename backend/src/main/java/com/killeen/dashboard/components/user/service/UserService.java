@@ -10,6 +10,9 @@ import com.killeen.dashboard.components.email.model.EmailToken;
 import com.killeen.dashboard.components.email.model.EmailTokenType;
 import com.killeen.dashboard.components.email.service.EmailService;
 import com.killeen.dashboard.components.email.service.EmailTokenService;
+import com.killeen.dashboard.components.user.exception.InvalidCredentialsException;
+import com.killeen.dashboard.components.user.exception.UserAlreadyExistsException;
+import com.killeen.dashboard.components.user.exception.UserNotFoundException;
 import com.killeen.dashboard.components.user.model.LoginResponse;
 import com.killeen.dashboard.components.user.model.User;
 import com.killeen.dashboard.components.user.repository.UserRepository;
@@ -36,7 +39,7 @@ public class UserService {
         log.info("Registering new user with email: {}", email);
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException(env.getProperty("user.email.already.exists"));
+            throw new UserAlreadyExistsException(env.getProperty("user.email.already.exists"));
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -62,10 +65,10 @@ public class UserService {
         log.info("Authenticating user with email: {}", email);
 
         User user = userRepository.findByEmail(email.toLowerCase().trim())
-                .orElseThrow(() -> new IllegalArgumentException(env.getProperty("user.credentials.invalid")));
+                .orElseThrow(() -> new InvalidCredentialsException(env.getProperty("user.credentials.invalid")));
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException(env.getProperty("user.credentials.invalid"));
+            throw new InvalidCredentialsException(env.getProperty("user.credentials.invalid"));
         }
 
         if (!user.isEmailVerified()) {
@@ -89,7 +92,7 @@ public class UserService {
 
     public void resendVerification(String email) {
         User user = userRepository.findByEmail(email.toLowerCase().trim())
-            .orElseThrow(() -> new IllegalArgumentException(env.getProperty("email.no.account.found.with.email")));
+            .orElseThrow(() -> new UserNotFoundException(env.getProperty("email.no.account.found.with.email")));
 
         if (user.isEmailVerified()) {
             return;
@@ -117,6 +120,6 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(env.getProperty("user.not.found")));
+                .orElseThrow(() -> new UserNotFoundException(env.getProperty("user.not.found")));
     }
 }

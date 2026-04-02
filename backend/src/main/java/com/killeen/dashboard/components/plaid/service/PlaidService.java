@@ -14,6 +14,8 @@ import com.killeen.dashboard.components.datapoint.model.DataPoint;
 import com.killeen.dashboard.components.dataquery.model.DataQuery;
 import com.killeen.dashboard.components.datasource.exception.DataSourceException;
 import com.killeen.dashboard.components.datasource.model.DataSourceConfig;
+import com.killeen.dashboard.components.plaid.exception.PlaidItemNotFoundException;
+import com.killeen.dashboard.components.plaid.exception.PlaidOperationException;
 import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnection;
 import com.killeen.dashboard.components.plaid.model.PlaidDataSourceConnector;
 import com.killeen.dashboard.components.plaid.model.PlaidItem;
@@ -67,7 +69,7 @@ public class PlaidService {
             
             if (!response.isSuccessful()) {
                 log.error("Failed to create link token: {} {}", response.code(), response.message());
-                throw new RuntimeException(String.format(env.getProperty("plaid.link.token.create.failed"), response.code()));
+                throw new PlaidOperationException(String.format(env.getProperty("plaid.link.token.create.failed"), response.code()));
             }
             
             String linkToken = response.body().getLinkToken();
@@ -76,7 +78,7 @@ public class PlaidService {
             
         } catch (IOException e) {
             log.error("Error creating link token", e);
-            throw new RuntimeException(env.getProperty("plaid.link.token.create.error"), e);
+            throw new PlaidOperationException(env.getProperty("plaid.link.token.create.error"), e);
         }
     }
 
@@ -93,7 +95,7 @@ public class PlaidService {
             
             if (!exchangeResponse.isSuccessful()) {
                 log.error("Failed to exchange public token: {}", exchangeResponse.code());
-                throw new RuntimeException(String.format(env.getProperty("plaid.public.token.exchange.failed"), exchangeResponse.code()));
+                throw new PlaidOperationException(String.format(env.getProperty("plaid.public.token.exchange.failed"), exchangeResponse.code()));
             }
             
             String accessToken = exchangeResponse.body().getAccessToken();
@@ -126,7 +128,7 @@ public class PlaidService {
             
         } catch (IOException e) {
             log.error("Error exchanging public token", e);
-            throw new RuntimeException(env.getProperty("plaid.public.token.exchange.error"), e);
+            throw new PlaidOperationException(env.getProperty("plaid.public.token.exchange.error"), e);
         }
     }
 
@@ -140,7 +142,7 @@ public class PlaidService {
         int deleted = plaidItemRepository.deleteByItemIdAndUserId(itemId, userId);
         if (deleted == 0) {
             log.warn("No item found with itemId: {} for user: {}", itemId, userId);
-            throw new RuntimeException(String.format(env.getProperty("plaid.item.not.found"), itemId));
+            throw new PlaidItemNotFoundException(String.format(env.getProperty("plaid.item.not.found"), itemId));
         }
         log.info("Successfully deleted item: {}", itemId);
     }
@@ -178,7 +180,7 @@ public class PlaidService {
             return connection.fetchData(query);
         } catch (DataSourceException e) {
             log.error("Failed to fetch data from Plaid: {}", e.getMessage(), e);
-            throw new RuntimeException(env.getProperty("plaid.data.fetch.failed"), e);
+            throw new PlaidOperationException(env.getProperty("plaid.data.fetch.failed"), e);
         }
     }
 
@@ -201,7 +203,7 @@ public class PlaidService {
 
             return fetchDataForItem(query, sandboxToken);
         } catch (IOException e) {
-            throw new RuntimeException(env.getProperty("plaid.sandbox.data.fetch.failed"), e);
+            throw new PlaidOperationException(env.getProperty("plaid.sandbox.data.fetch.failed"), e);
         }
     }
 

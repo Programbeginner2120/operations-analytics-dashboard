@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.killeen.dashboard.components.email.exception.InvalidTokenException;
 import com.killeen.dashboard.components.email.model.EmailToken;
 import com.killeen.dashboard.components.email.model.EmailTokenType;
 import com.killeen.dashboard.components.email.repository.EmailTokenRepository;
@@ -64,18 +65,18 @@ public class EmailTokenService {
 
         // TODO: If we had millions of users, this would likely melt our servers. I wonder if there's a better way...
         EmailToken token = emailTokenRepository.findByToken(hashedToken)
-            .orElseThrow(() -> new IllegalArgumentException(env.getProperty("email.token.invalid.or.unknown")));
+            .orElseThrow(() -> new InvalidTokenException(env.getProperty("email.token.invalid.or.unknown")));
 
         if (token.getTokenType() != expectedType) {
-            throw new IllegalArgumentException(env.getProperty("email.token.invalid.token.type"));
+            throw new InvalidTokenException(env.getProperty("email.token.invalid.token.type"));
         }
 
         if (token.getUsedAt() != null) {
-            throw new IllegalArgumentException(env.getProperty("email.token.already.been.used"));
+            throw new InvalidTokenException(env.getProperty("email.token.already.been.used"));
         }
 
         if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException(env.getProperty("email.token.has.expired"));
+            throw new InvalidTokenException(env.getProperty("email.token.has.expired"));
         }
 
         emailTokenRepository.markUsed(token.getId());
