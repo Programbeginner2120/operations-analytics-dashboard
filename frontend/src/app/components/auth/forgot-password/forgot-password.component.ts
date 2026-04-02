@@ -23,7 +23,7 @@ export class ForgotPasswordComponent {
     readonly email = signal<string>('');
 
     readonly formTitle = computed(() => 'Forogt Password');
-    readonly formSubtitle = computed(() =>'Enter your email to receive an reset password link');
+    readonly formSubtitle = computed(() =>'Enter your email to receive a reset password link');
 
     readonly submitLabel = computed(() => 'Submit');
 

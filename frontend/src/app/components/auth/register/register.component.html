@@ -42,3 +42,17 @@
         <button class="auth-card-toggle" (click)="navigateToForgotPassword.emit()">{{ forgotPasswordNavigationLabel() }}</button>
     </div>
 </div>
+
+<app-modal [isOpen]="isCheckEmailModalOpen()" (close)="closeCheckEmailModal()">
+    <div class="check-email-modal-header" modal-header>
+        <h2>Check Your Email</h2>
+    </div>
+
+    <div class="check-email-modal-body" modal-body>
+        {{ `An email has been sent to ${this.email()} for account verification` }}
+    </div>
+
+    <div class="check-email-modal-footer" modal-footer>
+        <app-button [variant]="'primary'" (click)="closeCheckEmailModal()">Ok</app-button>
+    </div>
+</app-modal>

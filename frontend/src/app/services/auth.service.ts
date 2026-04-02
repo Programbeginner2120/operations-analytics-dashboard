@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, tap, catchError, of, Subject } from "rxjs";
+import { Observable, tap, catchError, of, Subject, throwError } from "rxjs";
 import { LoginRequest, LoginResponse, RegisterRequest, UserResponse } from "../interfaces/auth.interface";
 
 @Injectable({
@@ -37,8 +37,30 @@ export class AuthService {
         return this.http.post<LoginResponse>(`${this.API_URL}/login`, request).pipe(
             tap(response => {
                 this.setToken(response.token);
+            }),
+            catchError(err => {
+                if (err.status === 403 && err.error === 'EMAIL_NOT_VERIFIED') {
+                    return throwError(() => new Error('EMAIL_NOT_VERIFIED'));
+                }
+                return throwError(() => err);
             })
         );
+    }
+
+    verifyEmail(token: string): Observable<void> {
+        return this.http.post<void>(`${this.API_URL}/verify-email?token=${token}`, null);
+    }
+
+    resendVerification(email: string): Observable<void> {
+        return this.http.post<void>(`${this.API_URL}/resend-verification`, { email });
+    }
+
+    forgotPassword(email: string): Observable<void> {
+        return this.http.post<void>(`${this.API_URL}/forgot-password`, { email });
+    }
+
+    resetPassword(token: string, newPassword: string): Observable<void> {
+        return this.http.post<void>(`${this.API_URL}/reset-password`, { token, newPassword });
     }
 
     logout(): void {

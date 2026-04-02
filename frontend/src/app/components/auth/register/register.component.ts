@@ -2,12 +2,13 @@ import { Component, computed, inject, output, signal } from "@angular/core";
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../services/auth.service";
+import { ModalComponent } from "../../../shared/components/modal/modal.component";
 
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss'],
-    imports: [InputComponent, ButtonComponent]
+    imports: [InputComponent, ButtonComponent, ModalComponent]
 })
 export class RegisterComponent {
 
@@ -22,6 +23,8 @@ export class RegisterComponent {
     readonly email = signal<string>('');
     readonly password = signal<string>('');
     readonly displayName = signal<string>('');
+
+    readonly isCheckEmailModalOpen = signal<boolean>(false);
 
     readonly formTitle = computed(() => 'Create Account');
     readonly formSubtitle = computed(() =>
@@ -54,6 +57,11 @@ export class RegisterComponent {
                 );
             }
         });
+    }
+
+    closeCheckEmailModal() {
+        this.isCheckEmailModalOpen.set(false);
+        this.navigateToSignIn.emit();
     }
 
 }
