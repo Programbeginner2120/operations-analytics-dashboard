@@ -8,11 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.killeen.dashboard.components.user.model.ForgotPasswordRequest;
 import com.killeen.dashboard.components.user.model.LoginRequest;
 import com.killeen.dashboard.components.user.model.LoginResponse;
 import com.killeen.dashboard.components.user.model.RegisterRequest;
+import com.killeen.dashboard.components.user.model.ResendVerificationRequest;
+import com.killeen.dashboard.components.user.model.ResetPasswordRequest;
 import com.killeen.dashboard.components.user.model.User;
 import com.killeen.dashboard.components.user.model.UserResponse;
 import com.killeen.dashboard.components.user.service.UserService;
@@ -64,5 +68,29 @@ public class AuthController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestParam String token) {
+        userService.verifyEmail(token);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+        userService.resendVerification(request.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        userService.forgotPassword(request.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 }
