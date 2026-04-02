@@ -4,6 +4,7 @@ import { DataSourceRegistryService } from "./data-source-registry.service";
 import { PlaidDataSourceStrategyService } from "./strategies/plaid-data-source-strategy.service";
 import { catchError, forkJoin, of } from "rxjs";
 import { AuthService } from "./auth.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: 'root'
@@ -28,6 +29,12 @@ export class DashboardService {
 
         // Should only run on page load, meant to initialize the card layout
         effect(() =>{
+            const user = this.authService.currentUser(); // This will prompt the effect to run on each login
+
+            if (!user) {
+                return;
+            }
+
             const hasConnectedDataSources = this.hasConnectedDataSources();
 
             if (!hasConnectedDataSources) {
@@ -52,6 +59,10 @@ export class DashboardService {
 
             localStorage.setItem(`${user.email}-cards`, JSON.stringify(cards));
         });
+
+        this.authService.logout$
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => this.resetServiceState());
     }
 
     populateCards(): void {
@@ -205,6 +216,10 @@ export class DashboardService {
     if (user) {
         localStorage.setItem(`${user.email}-cards`, JSON.stringify([]));
     }
+    this._cards.set([]);
+   }
+
+   resetServiceState() {
     this._cards.set([]);
    }
 

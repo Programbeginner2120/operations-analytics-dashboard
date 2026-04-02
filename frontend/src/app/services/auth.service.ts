@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, tap, catchError, of } from "rxjs";
+import { Observable, tap, catchError, of, Subject } from "rxjs";
 import { LoginRequest, LoginResponse, RegisterRequest, UserResponse } from "../interfaces/auth.interface";
 
 @Injectable({
@@ -26,6 +26,9 @@ export class AuthService {
         return !this.isTokenExpired(token);
     });
 
+    private logoutSubject = new Subject<void>();
+    logout$ = this.logoutSubject.asObservable();
+
     register(request: RegisterRequest): Observable<UserResponse> {
         return this.http.post<UserResponse>(`${this.API_URL}/register`, request);
     }
@@ -39,6 +42,7 @@ export class AuthService {
     }
 
     logout(): void {
+        this.logoutSubject.next();
         this.clearToken();
         this._currentUser.set(null);
         this.router.navigate(['/login']);
