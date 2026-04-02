@@ -19,7 +19,16 @@
                 </app-login>
             }
             @case ('REGISTER') {
-                <app-register (navigateToSignIn)="currentMode.set('LOGIN')"></app-register>
+                <app-register 
+                    (navigateToSignIn)="currentMode.set('LOGIN')"
+                    (navigateToForgotPassword)="currentMode.set('FORGOT_PASSWORD')">
+                </app-register>
+            }
+            @case ('FORGOT_PASSWORD') {
+                <app-forgot-password
+                    (navigateToSignIn)="currentMode.set('LOGIN')" 
+                    (navigateToRegister)="currentMode.set('REGISTER')">
+                </app-forgot-password>
             }
         }
     </div>
