@@ -6,7 +6,7 @@ import { InputComponent } from "../../../shared/components/input/input.component
 
 @Component({
     templateUrl: './reset-password.component.html',
-    styleUrls: ['./reset-password.component.scss'],
+    styleUrls: ['./reset-password.component.scss', '../common/common-styles.scss'],
     imports: [ButtonComponent, InputComponent]
 })
 export class ResetPasswordComponent {
