@@ -66,7 +66,6 @@ export class DashboardService {
     }
 
     populateCards(): void {
-        console.log("POPULATE CARDS RUN!");
         const user = this.authService.currentUser();
         if (!user) return;
 
