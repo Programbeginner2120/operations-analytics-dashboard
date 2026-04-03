@@ -1,13 +1,13 @@
 import { Component, computed, inject, signal, WritableSignal } from "@angular/core";
 import { AuthService } from "../../../services/auth.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { InputComponent } from "../../../shared/components/input/input.component";
 
 @Component({
     templateUrl: './reset-password.component.html',
-    styleUrls: ['./reset-password.component.scss'],
-    imports: [ButtonComponent, InputComponent]
+    styleUrls: ['./reset-password.component.scss', '../common/common-styles.scss'],
+    imports: [ButtonComponent, InputComponent, RouterLink]
 })
 export class ResetPasswordComponent {
     private readonly authService = inject(AuthService);

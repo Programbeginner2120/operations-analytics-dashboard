@@ -1,58 +1,73 @@
-<div class="auth-card">
-    <div class="auth-card-header">
-        <h2 class="auth-card-title">{{ formTitle() }}</h2>
-        <p class="auth-card-subtitle">{{ formSubtitle() }}</p>
+@switch (status()) {
+    @case ('entering-email') {
+    <div class="auth-card">
+        <div class="auth-card-header">
+            <h2 class="auth-card-title">{{ formTitle() }}</h2>
+            <p class="auth-card-subtitle">{{ formSubtitle() }}</p>
+        </div>
+        <form class="auth-card-form" (submit)="$event.preventDefault(); handleRegister()">
+            <app-input
+                    [label]="'Display Name'"
+                    [type]="'text'"
+                    [placeholder]="'Enter your name'"
+                    [autocomplete]="'name'"
+                    [(value)]="displayName"
+            ></app-input>
+            <app-input
+                [label]="'Email'"
+                [type]="'email'"
+                [placeholder]="'Enter your email'"
+                [required]="true"
+                [autocomplete]="'email'"
+                [(value)]="email"
+            ></app-input>
+            <app-input
+                [label]="'Password'"
+                [type]="'password'"
+                [placeholder]="'Enter your password'"
+                [required]="true"
+                [autocomplete]="'new-password'"
+                [(value)]="password"
+            ></app-input>
+            @if (errorMessage()) {
+                <div class="auth-card-error">{{ errorMessage() }}</div>
+            }
+            <app-button
+                [type]="'submit'"
+                [fullWidth]="true"
+                [loading]="isLoading()"
+                [disabled]="isLoading()"
+            >{{ submitLabel() }}</app-button>
+        </form>
+        <div class="auth-card-footer">
+            <button class="auth-card-toggle" (click)="navigateToSignIn.emit()">{{ signUpNavigationLabel() }}</button>
+            <button class="auth-card-toggle" (click)="navigateToForgotPassword.emit()">{{ forgotPasswordNavigationLabel() }}</button>
+        </div>
     </div>
-    <form class="auth-card-form" (submit)="$event.preventDefault(); handleRegister()">
-        <app-input
-                [label]="'Display Name'"
-                [type]="'text'"
-                [placeholder]="'Enter your name'"
-                [autocomplete]="'name'"
-                [(value)]="displayName"
-        ></app-input>
-        <app-input
-            [label]="'Email'"
-            [type]="'email'"
-            [placeholder]="'Enter your email'"
-            [required]="true"
-            [autocomplete]="'email'"
-            [(value)]="email"
-        ></app-input>
-        <app-input
-            [label]="'Password'"
-            [type]="'password'"
-            [placeholder]="'Enter your password'"
-            [required]="true"
-            [autocomplete]="'new-password'"
-            [(value)]="password"
-        ></app-input>
-        @if (errorMessage()) {
-            <div class="auth-card-error">{{ errorMessage() }}</div>
-        }
-        <app-button
-            [type]="'submit'"
-            [fullWidth]="true"
-            [loading]="isLoading()"
-            [disabled]="isLoading()"
-        >{{ submitLabel() }}</app-button>
-    </form>
-    <div class="auth-card-footer">
-        <button class="auth-card-toggle" (click)="navigateToSignIn.emit()">{{ signUpNavigationLabel() }}</button>
-        <button class="auth-card-toggle" (click)="navigateToForgotPassword.emit()">{{ forgotPasswordNavigationLabel() }}</button>
+    }
+    @case ('email-entered') {
+    <div class="auth-card">
+        <div class="auth-card-header">
+            <h2 class="auth-card-title">{{ formTitle() }}</h2>
+            <p class="auth-card-subtitle">{{ formSubtitle() }}</p>
+        </div>
+        <form class="auth-card-form" (submit)="$event.preventDefault(); resendVerification()">
+            <app-button
+                [type]="'submit'"
+                [fullWidth]="true"
+                [loading]="isLoading()"
+                [disabled]="isLoading()"
+            >{{ submitLabel() }}</app-button>
+            @if (successMessage()) {
+                <div class="auth-card-success">{{ successMessage() }}</div>
+            }
+            @if (errorMessage()) {
+                <div class="auth-card-error">{{ errorMessage() }}</div>
+            }
+        </form>
+        <div class="auth-card-footer">
+            <button class="auth-card-toggle" (click)="navigateToSignIn.emit()">{{ signUpNavigationLabel() }}</button>
+        </div>
     </div>
-</div>
-
-<app-modal [isOpen]="isCheckEmailModalOpen()" (close)="closeCheckEmailModal()">
-    <div class="check-email-modal-header" modal-header>
-        <h2>Check Your Email</h2>
-    </div>
-
-    <div class="check-email-modal-body" modal-body>
-        {{ `An email has been sent to ${this.email()} for account verification` }}
-    </div>
-
-    <div class="check-email-modal-footer" modal-footer>
-        <app-button [variant]="'primary'" (click)="closeCheckEmailModal()">Ok</app-button>
-    </div>
-</app-modal>
+    }
+}
