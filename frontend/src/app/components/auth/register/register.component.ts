@@ -2,13 +2,12 @@ import { Component, computed, inject, output, signal } from "@angular/core";
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../services/auth.service";
-import { ModalComponent } from "../../../shared/components/modal/modal.component";
 
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss'],
-    imports: [InputComponent, ButtonComponent, ModalComponent]
+    imports: [InputComponent, ButtonComponent]
 })
 export class RegisterComponent {
 
@@ -18,27 +17,44 @@ export class RegisterComponent {
     navigateToForgotPassword = output<void>();
 
     readonly isLoading = signal<boolean>(false);
+    readonly successMessage = signal<string | undefined>(undefined);
     readonly errorMessage = signal<string | undefined>(undefined);
 
     readonly email = signal<string>('');
     readonly password = signal<string>('');
     readonly displayName = signal<string>('');
 
-    readonly isCheckEmailModalOpen = signal<boolean>(false);
+    readonly status = signal<'entering-email' | 'email-entered'>('entering-email');
 
-    readonly formTitle = computed(() => 'Create Account');
+    readonly formTitle = computed(() => this.status() === 'entering-email' ?
+        'Create Account' :
+        'Verification Email Sent');
     readonly formSubtitle = computed(() =>
-        'Create an account to get started'
+        this.status() === 'entering-email' ? 
+        'Create an account to get started' : 
+        `An email has been to the address ${this.email()} for verification purposes`
     );
-    readonly submitLabel = computed(() => 'Create Account');
+    readonly submitLabel = computed(() => this.status() === 'entering-email' ? 
+        'Create Account' : 
+        'Resend Verification Email'
+    );
     readonly signUpNavigationLabel = computed(() =>
-        "Already have an account? Sign in"
+        this.status() === 'entering-email' ?
+        "Already have an account? Sign in" :
+        "Back to sign in"
     );
     readonly forgotPasswordNavigationLabel = computed(() => 
         "Forgot your password? Click here to reset it"
     );
 
+    clearMessages() {
+        this.successMessage.set(undefined);
+        this.errorMessage.set(undefined);
+    }
+
     handleRegister(): void {
+        this.clearMessages();
+        this.isLoading.set(true);
         this.authService.register({
             email: this.email(),
             password: this.password(),
@@ -46,7 +62,7 @@ export class RegisterComponent {
         }).subscribe({
             next: () => {
                 this.isLoading.set(false);
-                this.navigateToSignIn.emit();
+                this.status.set('email-entered');
             },
             error: (err) => {
                 this.isLoading.set(false);
@@ -59,9 +75,23 @@ export class RegisterComponent {
         });
     }
 
-    closeCheckEmailModal() {
-        this.isCheckEmailModalOpen.set(false);
-        this.navigateToSignIn.emit();
+    resendVerification(): void {
+        this.clearMessages();
+        this.isLoading.set(true);
+        this.authService.resendVerification(this.email()).subscribe({
+            next: () => {
+                this.isLoading.set(false);
+                this.successMessage.set(`Resent verification email to address ${this.email()}.`);
+            },
+            error: (err) => {
+                this.isLoading.set(false);
+                this.errorMessage.set(
+                    err.status === 404
+                        ? 'User with this email not found.'
+                        : 'Email resend failed. Please try again.'
+                );
+            }
+        })
     }
 
 }

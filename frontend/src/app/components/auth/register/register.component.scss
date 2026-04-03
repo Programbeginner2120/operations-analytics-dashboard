@@ -48,6 +48,15 @@
     border-radius: var(--radius-md);
 }
 
+.auth-card-success {
+    font-size: 13px;
+    color: lightgreen;
+    text-align: center;
+    padding: var(--space-2) var(--space-3);
+    background-color: rgba(239, 68, 68, 0.08);
+    border-radius: var(--radius-md);
+}
+
 .auth-card-footer {
     text-align: center;
     margin-top: var(--space-4);
