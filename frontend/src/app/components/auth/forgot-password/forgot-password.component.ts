@@ -30,29 +30,11 @@ export class ForgotPasswordComponent {
     readonly signInNavigationLabel = computed(() => "Back to sign in");
     readonly registerNavigationLabel = computed(() => "Back to sign up");
 
-    // handleLogin(): void {
-    //     this.authService.login({ email: this.email(), password: this.password() }).subscribe({
-    //         next: () => {
-    //             this.authService.loadCurrentUser().subscribe({
-    //                 next: () => {
-    //                     this.isLoading.set(false);
-    //                     this.router.navigate(['/landing-page']);
-    //                 }
-    //             });
-    //         },
-    //         error: (err) => {
-    //             this.isLoading.set(false);
-    //             this.errorMessage.set(
-    //                 err.status === 401
-    //                     ? 'Invalid email or password.'
-    //                     : 'An error occurred. Please try again.'
-    //             );
-    //         }
-    //     });
-    // }
-
     handleForgotPassword(): void {
-        
+        this.authService.forgotPassword(this.email()).subscribe({
+            next: () => this.navigateToSignIn.emit(),
+            error: () => console.error('Shit Crashed...')
+        });
     }
 
 }

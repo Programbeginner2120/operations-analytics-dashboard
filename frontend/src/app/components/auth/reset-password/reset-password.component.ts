@@ -23,6 +23,7 @@ export class ResetPasswordComponent {
     
     constructor() {
         const token = this.route.snapshot.queryParamMap.get('token') ?? '';
+        this.token.set(token);
 
         if (!token) {
             this.status.set('token-error');
