@@ -175,6 +175,10 @@ export class PlaidDataSourceStrategyService implements DataSourceStrategy {
         };
     }
 
+    hydrateConfig(metric: string, visualizationType: DashboardVisualizationType): { queryConfig: DataQueryConfig; transformConfig: DataTransformConfig; } {
+        return this.resolveConfig({ metric, visualizationType } as DataSourceConfigSelections);
+    }
+
     extractSelections(card: DashboardCard): PlaidDataSourceConfigSelections {
         const qc = card.queryConfig as PlaidDataQueryConfig;
         const tc = card.transformConfig as PlaidDataTransformConfig;

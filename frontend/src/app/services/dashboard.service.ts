@@ -66,21 +66,20 @@ export class DashboardService {
     }
 
     populateCards(): void {
+        console.log("POPULATE CARDS RUN!");
         const user = this.authService.currentUser();
         if (!user) return;
 
         const retrievedCards = (JSON.parse(localStorage.getItem(`${user.email}-cards`) || '[]') as DashboardCard[])
-            .map(card => ({
-                ...card,
-                transformedData: undefined,
-                queryConfig: card.queryConfig
-                    ? {
-                        ...card.queryConfig,
-                        startDate: new Date(card.queryConfig.startDate),
-                        endDate: new Date(card.queryConfig.endDate),
-                    }
-                    : card.queryConfig,
-            }));
+            .map(card => {
+                const { queryConfig, transformConfig } = this.registry.getStrategy(card.dataSourceType).hydrateConfig(card.transformConfig.method, card.visualizationType);
+                return {
+                    ...card,
+                    transformedData: undefined,
+                    transformConfig: transformConfig,
+                    queryConfig: queryConfig
+                };
+            })
 
         this._cards.set(retrievedCards);
         this.refreshAllCards();

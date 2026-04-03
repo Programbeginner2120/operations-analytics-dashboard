@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { Type } from "@angular/core";
-import { ConnectedDataSource, DashboardCard, DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
+import { ConnectedDataSource, DashboardCard, DashboardVisualizationType, DataQueryConfig, DataTransformConfig } from "./dashboard.interface";
 import { DataSourceConfigComponent, DataSourceConfigSelections } from "./data-source.interface";
 
 /**
@@ -44,6 +44,13 @@ export interface DataSourceStrategy {
      * @returns - output of the data source configuration
      */
     resolveConfig(selections: DataSourceConfigSelections): { queryConfig: DataQueryConfig, transformConfig: DataTransformConfig };
+
+    /**
+     * Hydrates query config and transform config given the metric name and the visualization type
+     * @param metric 
+     * @param visualizationType 
+     */
+    hydrateConfig(metric: string, visualizationType: DashboardVisualizationType): { queryConfig: DataQueryConfig, transformConfig: DataTransformConfig };
 
     /**
      * Extracts user selections from a card's existing config.
