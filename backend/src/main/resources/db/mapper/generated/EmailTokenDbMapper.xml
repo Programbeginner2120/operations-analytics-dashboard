@@ -5,7 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="token" jdbcType="VARCHAR" property="token" />
-    <result column="token_type" jdbcType="VARCHAR" property="tokenType" />
+    <result column="token_type" jdbcType="VARCHAR" property="tokenType" typeHandler="com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="expires_at" jdbcType="TIMESTAMP" property="expiresAt" />
     <result column="used_at" jdbcType="TIMESTAMP" property="usedAt" />
@@ -30,6 +30,25 @@
                   and ${criterion.condition}
                   <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.tokenTypeCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler} and #{criterion.secondValue,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
                   </foreach>
                 </when>
               </choose>
@@ -59,6 +78,25 @@
                   and ${criterion.condition}
                   <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.tokenTypeCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler} and #{criterion.secondValue,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}
                   </foreach>
                 </when>
               </choose>
@@ -105,7 +143,7 @@
     insert into email_tokens (user_id, token, token_type, 
       created_at, expires_at, used_at
       )
-    values (#{userId,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR}, #{tokenType,jdbcType=VARCHAR}, 
+    values (#{userId,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR}, #{tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler}, 
       #{createdAt,jdbcType=TIMESTAMP}, #{expiresAt,jdbcType=TIMESTAMP}, #{usedAt,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -139,7 +177,7 @@
         #{token,jdbcType=VARCHAR},
       </if>
       <if test="tokenType != null">
-        #{tokenType,jdbcType=VARCHAR},
+        #{tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler},
       </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=TIMESTAMP},
@@ -171,7 +209,7 @@
         token = #{row.token,jdbcType=VARCHAR},
       </if>
       <if test="row.tokenType != null">
-        token_type = #{row.tokenType,jdbcType=VARCHAR},
+        token_type = #{row.tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler},
       </if>
       <if test="row.createdAt != null">
         created_at = #{row.createdAt,jdbcType=TIMESTAMP},
@@ -192,7 +230,7 @@
     set id = #{row.id,jdbcType=BIGINT},
       user_id = #{row.userId,jdbcType=BIGINT},
       token = #{row.token,jdbcType=VARCHAR},
-      token_type = #{row.tokenType,jdbcType=VARCHAR},
+      token_type = #{row.tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler},
       created_at = #{row.createdAt,jdbcType=TIMESTAMP},
       expires_at = #{row.expiresAt,jdbcType=TIMESTAMP},
       used_at = #{row.usedAt,jdbcType=TIMESTAMP}
@@ -210,7 +248,7 @@
         token = #{token,jdbcType=VARCHAR},
       </if>
       <if test="tokenType != null">
-        token_type = #{tokenType,jdbcType=VARCHAR},
+        token_type = #{tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler},
       </if>
       <if test="createdAt != null">
         created_at = #{createdAt,jdbcType=TIMESTAMP},
@@ -228,7 +266,7 @@
     update email_tokens
     set user_id = #{userId,jdbcType=BIGINT},
       token = #{token,jdbcType=VARCHAR},
-      token_type = #{tokenType,jdbcType=VARCHAR},
+      token_type = #{tokenType,jdbcType=VARCHAR,typeHandler=com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
       expires_at = #{expiresAt,jdbcType=TIMESTAMP},
       used_at = #{usedAt,jdbcType=TIMESTAMP}

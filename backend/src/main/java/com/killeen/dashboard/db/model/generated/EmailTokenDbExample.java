@@ -65,19 +65,50 @@ public class EmailTokenDbExample {
     }
 
     protected abstract static class GeneratedCriteria {
+        protected List<Criterion> tokenTypeCriteria;
+
+        protected List<Criterion> allCriteria;
+
         protected List<Criterion> criteria;
 
         protected GeneratedCriteria() {
             super();
             criteria = new ArrayList<>();
+            tokenTypeCriteria = new ArrayList<>();
+        }
+
+        public List<Criterion> getTokenTypeCriteria() {
+            return tokenTypeCriteria;
+        }
+
+        protected void addTokenTypeCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            tokenTypeCriteria.add(new Criterion(condition, value, "com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler"));
+            allCriteria = null;
+        }
+
+        protected void addTokenTypeCriterion(String condition, String value1, String value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            tokenTypeCriteria.add(new Criterion(condition, value1, value2, "com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler"));
+            allCriteria = null;
         }
 
         public boolean isValid() {
-            return criteria.size() > 0;
+            return criteria.size() > 0
+                || tokenTypeCriteria.size() > 0;
         }
 
         public List<Criterion> getAllCriteria() {
-            return criteria;
+            if (allCriteria == null) {
+                allCriteria = new ArrayList<>();
+                allCriteria.addAll(criteria);
+                allCriteria.addAll(tokenTypeCriteria);
+            }
+            return allCriteria;
         }
 
         public List<Criterion> getCriteria() {
@@ -89,6 +120,7 @@ public class EmailTokenDbExample {
                 throw new RuntimeException("Value for condition cannot be null");
             }
             criteria.add(new Criterion(condition));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value, String property) {
@@ -96,6 +128,7 @@ public class EmailTokenDbExample {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value1, Object value2, String property) {
@@ -103,6 +136,7 @@ public class EmailTokenDbExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+            allCriteria = null;
         }
 
         public Criteria andIdIsNull() {
@@ -306,62 +340,62 @@ public class EmailTokenDbExample {
         }
 
         public Criteria andTokenTypeEqualTo(String value) {
-            addCriterion("token_type =", value, "tokenType");
+            addTokenTypeCriterion("token_type =", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeNotEqualTo(String value) {
-            addCriterion("token_type <>", value, "tokenType");
+            addTokenTypeCriterion("token_type <>", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeGreaterThan(String value) {
-            addCriterion("token_type >", value, "tokenType");
+            addTokenTypeCriterion("token_type >", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeGreaterThanOrEqualTo(String value) {
-            addCriterion("token_type >=", value, "tokenType");
+            addTokenTypeCriterion("token_type >=", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeLessThan(String value) {
-            addCriterion("token_type <", value, "tokenType");
+            addTokenTypeCriterion("token_type <", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeLessThanOrEqualTo(String value) {
-            addCriterion("token_type <=", value, "tokenType");
+            addTokenTypeCriterion("token_type <=", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeLike(String value) {
-            addCriterion("token_type like", value, "tokenType");
+            addTokenTypeCriterion("token_type like", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeNotLike(String value) {
-            addCriterion("token_type not like", value, "tokenType");
+            addTokenTypeCriterion("token_type not like", value, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeIn(List<String> values) {
-            addCriterion("token_type in", values, "tokenType");
+            addTokenTypeCriterion("token_type in", values, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeNotIn(List<String> values) {
-            addCriterion("token_type not in", values, "tokenType");
+            addTokenTypeCriterion("token_type not in", values, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeBetween(String value1, String value2) {
-            addCriterion("token_type between", value1, value2, "tokenType");
+            addTokenTypeCriterion("token_type between", value1, value2, "tokenType");
             return (Criteria) this;
         }
 
         public Criteria andTokenTypeNotBetween(String value1, String value2) {
-            addCriterion("token_type not between", value1, value2, "tokenType");
+            addTokenTypeCriterion("token_type not between", value1, value2, "tokenType");
             return (Criteria) this;
         }
 
