@@ -1,5 +1,6 @@
 package com.killeen.dashboard.components.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,5 +46,21 @@ public class UserRepository {
             return Optional.empty();
         }
         return Optional.of(userConverter.toDto(dbModel));
+    }
+
+    public void setEmailVerified(Long userId, boolean verified) {
+        UserDb update = new UserDb();
+        update.setId(userId);
+        update.setEmailVerified(verified);
+        update.setUpdatedAt(LocalDateTime.now());
+        userDbMapper.updateByPrimaryKeySelective(update);
+    }
+
+    public void updatePassword(Long userId, String newPasswordHash) {
+        UserDb update = new UserDb();
+        update.setId(userId);
+        update.setPasswordHash(newPasswordHash);
+        update.setUpdatedAt(LocalDateTime.now());
+        userDbMapper.updateByPrimaryKeySelective(update);
     }
 }

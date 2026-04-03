@@ -76,5 +76,19 @@
       <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
     </table>
 
+    <!-- Email Tokens Table-->
+    <table
+      tableName="email_tokens"
+      domainObjectName="EmailTokenDb">
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+
+      <!-- token_type is a PostgreSQL enum; use a custom TypeHandler so MyBatis
+           calls setObject(..., Types.OTHER) instead of setString() on writes -->
+      <columnOverride column="token_type"
+                      javaType="java.lang.String"
+                      typeHandler="com.killeen.dashboard.db.typehandler.PostgresEnumTypeHandler" />
+
+    </table>
+
   </context>
 </generatorConfiguration>

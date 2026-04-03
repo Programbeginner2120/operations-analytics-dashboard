@@ -29,7 +29,14 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register", "/auth/login").permitAll()
+                .requestMatchers(
+                    "/auth/register", 
+                    "/auth/login",
+                    "/auth/verify-email",
+                    "/auth/resend-verification",
+                    "/auth/forgot-password",
+                    "/auth/reset-password"
+                ).permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
             )

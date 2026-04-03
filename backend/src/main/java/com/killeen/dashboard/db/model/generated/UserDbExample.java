@@ -494,6 +494,66 @@ public class UserDbExample {
             addCriterion("updated_at not between", value1, value2, "updatedAt");
             return (Criteria) this;
         }
+
+        public Criteria andEmailVerifiedIsNull() {
+            addCriterion("email_verified is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedIsNotNull() {
+            addCriterion("email_verified is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedEqualTo(Boolean value) {
+            addCriterion("email_verified =", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedNotEqualTo(Boolean value) {
+            addCriterion("email_verified <>", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedGreaterThan(Boolean value) {
+            addCriterion("email_verified >", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("email_verified >=", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedLessThan(Boolean value) {
+            addCriterion("email_verified <", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedLessThanOrEqualTo(Boolean value) {
+            addCriterion("email_verified <=", value, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedIn(List<Boolean> values) {
+            addCriterion("email_verified in", values, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedNotIn(List<Boolean> values) {
+            addCriterion("email_verified not in", values, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedBetween(Boolean value1, Boolean value2) {
+            addCriterion("email_verified between", value1, value2, "emailVerified");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmailVerifiedNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("email_verified not between", value1, value2, "emailVerified");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -8,6 +8,7 @@
     <result column="display_name" jdbcType="VARCHAR" property="displayName" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+    <result column="email_verified" jdbcType="BIT" property="emailVerified" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, email, password_hash, display_name, created_at, updated_at
+    id, email, password_hash, display_name, created_at, updated_at, email_verified
   </sql>
   <select id="selectByExample" parameterType="com.killeen.dashboard.db.model.generated.UserDbExample" resultMap="BaseResultMap">
     select
@@ -102,9 +103,11 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.UserDb" useGeneratedKeys="true">
     insert into users (email, password_hash, display_name, 
-      created_at, updated_at)
+      created_at, updated_at, email_verified
+      )
     values (#{email,jdbcType=VARCHAR}, #{passwordHash,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
-      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{emailVerified,jdbcType=BIT}
+      )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.killeen.dashboard.db.model.generated.UserDb" useGeneratedKeys="true">
     insert into users
@@ -124,6 +127,9 @@
       <if test="updatedAt != null">
         updated_at,
       </if>
+      <if test="emailVerified != null">
+        email_verified,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="email != null">
@@ -140,6 +146,9 @@
       </if>
       <if test="updatedAt != null">
         #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="emailVerified != null">
+        #{emailVerified,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -170,6 +179,9 @@
       <if test="row.updatedAt != null">
         updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
       </if>
+      <if test="row.emailVerified != null">
+        email_verified = #{row.emailVerified,jdbcType=BIT},
+      </if>
     </set>
     <if test="example != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -182,7 +194,8 @@
       password_hash = #{row.passwordHash,jdbcType=VARCHAR},
       display_name = #{row.displayName,jdbcType=VARCHAR},
       created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP}
+      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
+      email_verified = #{row.emailVerified,jdbcType=BIT}
     <if test="example != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -205,6 +218,9 @@
       <if test="updatedAt != null">
         updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       </if>
+      <if test="emailVerified != null">
+        email_verified = #{emailVerified,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -214,7 +230,8 @@
       password_hash = #{passwordHash,jdbcType=VARCHAR},
       display_name = #{displayName,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      email_verified = #{emailVerified,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

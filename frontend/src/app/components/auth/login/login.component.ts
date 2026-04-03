@@ -1,0 +1,59 @@
+import { Component, computed, inject, output, signal } from "@angular/core";
+import { InputComponent } from "../../../shared/components/input/input.component";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AuthService } from "../../../services/auth.service";
+import { Router } from "@angular/router";
+
+@Component({
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    imports: [InputComponent, ButtonComponent]
+})
+export class LoginComponent {
+
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
+
+    navigateToRegister = output<void>();
+    navigateToForgotPassword = output<void>();
+
+    readonly isLoading = signal<boolean>(false);
+    readonly errorMessage = signal<string | undefined>(undefined);
+
+    readonly email = signal<string>('');
+    readonly password = signal<string>('');
+
+    readonly formTitle = computed(() => 'Sign In');
+    readonly formSubtitle = computed(() =>'Sign in to access your analytics dashboard');
+
+    readonly submitLabel = computed(() => 'Sign In');
+
+    readonly registerNavigationLabel = computed(() => "Don't have an account? Sign up");
+
+    readonly forgotPasswordNavigationLabel = computed(() => "Forgot your password? Click here to reset it");
+
+    handleLogin(): void {
+        this.authService.login({ email: this.email(), password: this.password() }).subscribe({
+            next: () => {
+                this.authService.loadCurrentUser().subscribe({
+                    next: () => {
+                        this.isLoading.set(false);
+                        this.router.navigate(['/landing-page']);
+                    }
+                });
+            },
+            error: (err) => {
+                this.isLoading.set(false);
+                if (err.status === 403) {
+                    this.errorMessage.set(`We sent an email to ${this.email()}. Click on the link in the email to activate your account.`)
+                } else if (err.status === 401) {
+                    this.errorMessage.set('Invalid email or password.');
+                } else {
+                    this.errorMessage.set('An error occurred. Please try again.');
+                }
+            }
+        });
+    }
+
+}

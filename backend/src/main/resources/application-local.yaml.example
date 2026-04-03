@@ -17,6 +17,21 @@ spring:
     url: jdbc:postgresql://localhost:5432/operations-analytics-dashboard
     username: YOUR_DB_USERNAME
     password: YOUR_DB_PASSWORD
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: no-reply@example.com
+    password: change-me
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+app:
+  email:
+    from-address: no-reply@example.com
+    base-url: http://localhost:4200
+    verification-token-ttl-hours: 24
+    reset-token-ttl-hours: 1
 
 # JWT Configuration
 jwt:
