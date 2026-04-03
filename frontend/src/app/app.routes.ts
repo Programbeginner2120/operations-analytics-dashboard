@@ -17,6 +17,11 @@ export const routes: Routes = [
             .then(m => m.VerifyEmailComponent)
     },
     {
+        path: 'reset-password',
+        loadComponent: () => import('./components/auth/reset-password/reset-password.component')
+            .then(m => m.ResetPasswordComponent)
+    },
+    {
         path: 'landing-page',
         loadComponent: () => import('./components/landing-page/landing-page-layout/landing-page-layout.component').then(m => m.LandingPageLayoutComponent),
         canActivate: [authGuard]

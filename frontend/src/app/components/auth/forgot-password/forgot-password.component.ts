@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from "@angular/core";
+import { Component, computed, inject, output, signal, WritableSignal } from "@angular/core";
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../services/auth.service";
@@ -52,7 +52,7 @@ export class ForgotPasswordComponent {
     // }
 
     handleForgotPassword(): void {
-
+        
     }
 
 }
