@@ -80,11 +80,7 @@
     <table
       tableName="email_tokens"
       domainObjectName="EmailTokenDb">
-
       <generatedKey column="id" sqlStatement="JDBC" identity="true" />
-      <columnOverride column="token_type" 
-                  javaType="com.killeen.dashboard.components.email.model.EmailTokenType" 
-                  typeHandler="org.apache.ibatis.type.EnumTypeHandler" />
     </table>
 
   </context>
