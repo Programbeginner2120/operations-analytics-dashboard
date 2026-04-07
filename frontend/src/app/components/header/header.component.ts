@@ -14,7 +14,10 @@ import { HamburgerMenuComponent } from "../../shared/components/hamburger/hambur
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
-    imports: [LucideAngularModule, ButtonComponent, HamburgerMenuComponent]
+    imports: [LucideAngularModule, ButtonComponent, HamburgerMenuComponent],
+    host: {
+        '[class.is-mobile]': 'platformService.isMobile()'
+    }
 })
 export class HeaderComponent {
 

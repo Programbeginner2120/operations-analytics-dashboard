@@ -1,4 +1,4 @@
-<div class="dashboard-layout">
+<div class="dashboard-layout" [class.is-mobile]="platformService.isMobile()">
     <app-header [showDashboardSpecificContent]="true"></app-header>
     @if (!hasConnectedDataSources()) {
         <div class="empty-state">

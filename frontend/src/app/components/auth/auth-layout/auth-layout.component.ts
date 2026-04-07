@@ -6,6 +6,7 @@ import { AuthMode } from "../../../interfaces/auth.interface";
 import { LoginComponent } from "../login/login.component";
 import { RegisterComponent } from "../register/register.component";
 import { ForgotPasswordComponent } from "../forgot-password/forgot-password.component";
+import { PlatformService } from "../../../services/platform.service";
 
 @Component({
     selector: 'app-auth-layout',
@@ -20,6 +21,7 @@ export class AuthLayoutComponent {
     readonly sun = Sun;
 
     readonly themeService = inject(ThemeService);
+    readonly platformService = inject(PlatformService);
 
     readonly theme = computed<Theme>(() => this.themeService.theme());
 

@@ -6,7 +6,7 @@ import { ɵEmptyOutletComponent } from "@angular/router";
     selector: 'app-hamburger-menu',
     templateUrl: './hamburger.component.html',
     styleUrls: ['./hamburger.component.scss'],
-    imports: [LucideAngularModule, ɵEmptyOutletComponent]
+    imports: [LucideAngularModule]
 })
 export class HamburgerMenuComponent {
 

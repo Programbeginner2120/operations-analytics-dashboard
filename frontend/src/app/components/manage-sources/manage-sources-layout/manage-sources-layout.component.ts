@@ -3,6 +3,7 @@ import { HeaderComponent } from "../../header/header.component";
 import { ManageSourcesService, Source } from "../../../services/manage-sources.service";
 import { ArrowRight, LucideAngularModule } from "lucide-angular";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { PlatformService } from "../../../services/platform.service";
 
 @Component({
     selector: 'app-manage-sources-layout',
@@ -13,6 +14,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 export class ManageSourcesLayoutComponent {
 
     readonly manageSourcesService = inject(ManageSourcesService);
+    readonly platformService = inject(PlatformService);
 
     readonly rightArrow = ArrowRight;
 

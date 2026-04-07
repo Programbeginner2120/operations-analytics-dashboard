@@ -42,3 +42,9 @@
     justify-content: center;
     align-items: center;
 }
+
+// Mobile classes
+
+.auth-layout.is-mobile {
+    padding: var(--space-4);
+}

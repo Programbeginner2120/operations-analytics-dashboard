@@ -1,56 +1,58 @@
 @if (platformService.isMobile()) {
     <!-- Mobile Header -->
-     <div class="header header--mobile">
-        <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
-        <h4 class="header-title">Operations Dashboard</h4>
-     </div>
-     <div class="right-section">
-        <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
-            @if (theme() === 'light') {
-                <lucide-icon class="theme-toggle=icon" [img]="sun" [size]="20"></lucide-icon>
-            } @else {
-                <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
-            }
-        </button>
-
-        <!-- #hamburger exposes close() for use in projected conent below -->
-         <app-hamburger-menu #hamburger>
-
-            @if (currentUser()) {
-                <div class="mobile-menu-user">
-                    <span class="mobile-menu-username">
-                        {{ currentUser()?.displayName || currentUser()?.email }}
-                    </span>
-                </div>
-                <div class="mobile-menu-divider"></div>
-            }
-
-            @if (showDashboardSpecificContent()) {
-                <button
-                    class="mobile-menu-item"
-                    [disabled]="!hasConnectedDataSources()"
-                    [title]="hasConnectedDataSources() ? 'Add a new Panel' : 'Connect a data source first'"
-                    (click)="dashboardService.addCard(); hamburger.close()">
-                <lucide-icon [img]="plus" [size]="16"></lucide-icon>
-                </button>
-
-                @if (numCards() !== 0) {
-                    <button
-                        class="mobile-menu-item"
-                        (click)="dashboardService.resetDashboard(); hamburger.close()">
-                    <lucide-icon [img]="minus" [size]="16"></lucide-icon>
-                    </button>
+     <div class="header">
+        <div class="left-section">
+            <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
+            <h4 class="header-title">Operations Dashboard</h4>
+        </div>
+        <div class="right-section">
+            <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
+                @if (theme() === 'light') {
+                    <lucide-icon class="theme-toggle=icon" [img]="sun" [size]="20"></lucide-icon>
+                } @else {
+                    <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
                 }
-
-                <div class="mobile-menu-divider"></div>
-            }
-
-            <button class="mobile-menu-item mobile-menu-item--danger" (click)="logout(); hamburger.close()">
-                <lucide-icon [img]="logOut" [size]="16"></lucide-icon>
-                Log Out
             </button>
 
-         </app-hamburger-menu>
+            <!-- #hamburger exposes close() for use in projected conent below -->
+            <app-hamburger-menu #hamburger>
+
+                @if (currentUser()) {
+                    <div class="mobile-menu-user">
+                        <span class="mobile-menu-username">
+                            {{ currentUser()?.displayName || currentUser()?.email }}
+                        </span>
+                    </div>
+                    <div class="mobile-menu-divider"></div>
+                }
+
+                @if (showDashboardSpecificContent()) {
+                    <button
+                        class="mobile-menu-item"
+                        [disabled]="!hasConnectedDataSources()"
+                        [title]="hasConnectedDataSources() ? 'Add a new Panel' : 'Connect a data source first'"
+                        (click)="dashboardService.addCard(); hamburger.close()">
+                    <lucide-icon [img]="plus" [size]="16"></lucide-icon>
+                    </button>
+
+                    @if (numCards() !== 0) {
+                        <button
+                            class="mobile-menu-item"
+                            (click)="dashboardService.resetDashboard(); hamburger.close()">
+                        <lucide-icon [img]="minus" [size]="16"></lucide-icon>
+                        </button>
+                    }
+
+                    <div class="mobile-menu-divider"></div>
+                }
+
+                <button class="mobile-menu-item mobile-menu-item--danger" (click)="logout(); hamburger.close()">
+                    <lucide-icon [img]="logOut" [size]="16"></lucide-icon>
+                    Log Out
+                </button>
+
+            </app-hamburger-menu>
+        </div>
      </div>
 
 } @else {

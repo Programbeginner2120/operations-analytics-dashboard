@@ -1,6 +1,14 @@
 :host {
     display: block;
     width: 100%;
+
+    &.is-mobile {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: var(--color-bg-primary);
+        padding: var(--space-4);
+    }
 }
 
 .header {
@@ -90,12 +98,6 @@
     &:hover {
         color: var(--color-error);
     }
-}
-
-// Mobile top bar
-
-.header--mobile {
-    position: relative; // establishes stacking context so the dropdown z-index is contained
 }
 
 // - Project menu content

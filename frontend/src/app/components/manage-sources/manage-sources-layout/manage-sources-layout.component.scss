@@ -72,3 +72,12 @@ app-header {
     justify-content: flex-end;
 }
 
+// Mobile classes
+
+.manage-sources-layout.is-mobile {
+    padding: var(--space-4);
+
+    .manage-sources-layout-content-source {
+        align-items: flex-start;
+    }
+}
