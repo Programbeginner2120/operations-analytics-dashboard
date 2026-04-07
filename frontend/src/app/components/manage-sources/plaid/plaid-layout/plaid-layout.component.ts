@@ -5,6 +5,7 @@ import { PlaidItem } from '../../../../interfaces/plaid.interface';
 import { NgxPlaidLinkService, PlaidConfig, PlaidLinkHandler } from 'ngx-plaid-link';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HeaderComponent } from '../../../header/header.component';
+import { PlatformService } from '../../../../services/platform.service';
 
 @Component({
   selector: 'app-plaid-layout',
@@ -16,6 +17,7 @@ import { HeaderComponent } from '../../../header/header.component';
 export class PlaidLayoutComponent implements OnInit, OnDestroy {
   private plaidService = inject(PlaidService);
   private plaidLinkService = inject(NgxPlaidLinkService);
+  readonly platformService = inject(PlatformService);
 
   connectedItems = signal<PlaidItem[]>([]);
   loading = signal(false);

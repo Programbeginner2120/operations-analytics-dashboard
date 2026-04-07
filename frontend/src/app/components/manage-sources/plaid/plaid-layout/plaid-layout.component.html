@@ -1,5 +1,5 @@
+<app-header></app-header>
 <div class="plaid-layout">
-  <app-header></app-header>
   <div class="header">
     <h1>Manage Plaid Connections</h1>
     <p class="subtitle">Connect your financial institutions to sync transactions and balances</p>
@@ -27,7 +27,7 @@
       } @else {
         <div class="accounts-list">
           @for (item of connectedItems(); track item.id) {
-            <div class="account-card">
+            <div class="account-card" [class.is-mobile]="platformService.isMobile()">
               <div class="account-info">
                 <h3>{{ item.institutionName || 'Unknown Institution' }}</h3>
                 <p class="account-meta">

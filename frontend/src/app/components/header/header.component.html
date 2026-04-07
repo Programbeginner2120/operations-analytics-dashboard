@@ -2,6 +2,9 @@
     <!-- Mobile Header -->
      <div class="header">
         <div class="left-section">
+            @if (!onLandingPage()) {
+                <app-button class="back-button" [variant]="'secondary'" [size]="'small'" [iconBefore]="arrowLeft" (click)="navigateToLandingPage()"></app-button>
+            }
             <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
             <h4 class="header-title">Operations Dashboard</h4>
         </div>
