@@ -6,6 +6,7 @@ import { ThemeService } from "../../../services/theme.service";
 import { Theme } from "../../../interfaces/theme.interface";
 import { NgClass } from "@angular/common";
 import { Router } from "@angular/router";
+import { PlatformService } from "../../../services/platform.service";
 
 @Component({
     selector: 'app-landing-page-layout',
@@ -22,6 +23,7 @@ export class LandingPageLayoutComponent {
 
     readonly theme: Signal<Theme> = computed(() => this.themeService.theme());
 
+    readonly platformService = inject(PlatformService);
     readonly router = inject(Router);
 
     navigateToDashboard(): void {

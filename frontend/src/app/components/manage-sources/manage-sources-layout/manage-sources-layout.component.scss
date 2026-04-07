@@ -53,13 +53,14 @@ app-header {
 .manage-sources-layout-content-source-top-content {
     display: flex;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 12px;
 }
 
 .manage-sources-layout-content-source-top-content-icon {
     border-radius: 10px;
     padding: 8px;
     background-color: var(--color-primary);
+    height: fit-content;
 }
 
 .manage-sources-layout-content-source-top-content-description {
@@ -72,3 +73,12 @@ app-header {
     justify-content: flex-end;
 }
 
+// Mobile classes
+
+.manage-sources-layout.is-mobile {
+    padding: var(--space-4);
+
+    .manage-sources-layout-content-source {
+        align-items: flex-start;
+    }
+}

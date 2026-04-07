@@ -4,6 +4,7 @@ import { DashboardCard } from "../../../interfaces/dashboard.interface";
 import { DashboardService } from "../../../services/dashboard.service";
 import { HeaderComponent } from "../../header/header.component";
 import { DashboardCardComponent } from "../dashboard-card/dashboard-card.component";
+import { PlatformService } from "../../../services/platform.service";
 
 @Component({
     selector: 'app-dashboard-layout',
@@ -14,6 +15,7 @@ import { DashboardCardComponent } from "../dashboard-card/dashboard-card.compone
 export class DashboardLayoutComponent implements OnInit {
     
     readonly dashboardService = inject(DashboardService);
+    readonly platformService = inject(PlatformService);
 
     readonly hasConnectedDataSources = computed(() => this.dashboardService.hasConnectedDataSources());
 

@@ -1,0 +1,17 @@
+<button class="hamburger-btn" (click)="toggleMenu()" title="Menu">
+    @if (isMenuOpen()) {
+        <lucide-icon [img]="x" [size]="22"></lucide-icon>
+    } @else {
+        <lucide-icon [img]="menu" [size]="22"></lucide-icon>
+    }
+</button>
+
+@if (isMenuOpen()) {
+    <!--- Transparent full-screen backdrop - click to close.
+          z-index 99 sits below the dropdown (100) but above everything else. -->
+    <div class="hamburger-backdrop" (click)="close()"></div>
+
+    <div class="hamburger-dropdown">
+        <ng-content></ng-content>
+    </div>
+}

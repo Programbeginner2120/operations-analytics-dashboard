@@ -7,12 +7,17 @@ import { LayoutGrid, Moon, Plus, Sun } from "lucide-angular";
 import { Theme } from "../../interfaces/theme.interface";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Router } from "@angular/router";
+import { PlatformService } from "../../services/platform.service";
+import { HamburgerMenuComponent } from "../../shared/components/hamburger/hamburger.component";
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
-    imports: [LucideAngularModule, ButtonComponent]
+    imports: [LucideAngularModule, ButtonComponent, HamburgerMenuComponent],
+    host: {
+        '[class.is-mobile]': 'platformService.isMobile()'
+    }
 })
 export class HeaderComponent {
 
@@ -30,6 +35,7 @@ export class HeaderComponent {
     readonly themeService = inject(ThemeService);
     readonly dashboardService = inject(DashboardService);
     readonly authService = inject(AuthService);
+    readonly platformService = inject(PlatformService);
     readonly router = inject(Router);
 
     readonly theme: Signal<Theme> = computed(() => this.themeService.theme());

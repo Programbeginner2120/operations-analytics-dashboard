@@ -15,13 +15,6 @@
     padding: var(--space-8);
 }
 
-.dashboard-layout-header {
-    margin-top: 5vh;
-    width: 90%;
-    border: 1px solid black;
-    text-align: center;
-}
-
 .dashboard-layout-content {
     width: 100%;
     display: grid;
@@ -61,3 +54,12 @@
     }
 }
 
+// Mobile classes
+
+.dashboard-layout.is-mobile {
+    padding: var(--space-4);
+
+    .dashboard-layout-content {
+        grid-template-columns: 1fr; // TODO: would we not turn this into display: flex with flex-direction: column?
+    }
+}

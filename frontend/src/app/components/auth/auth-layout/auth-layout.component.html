@@ -1,4 +1,4 @@
-<div class="auth-layout">
+<div class="auth-layout" [class.is-mobile]="platformService.isMobile()">
     <div class="auth-layout-header">
         <lucide-icon class="auth-layout-header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
         <h4 class="auth-layout-header-title">Operations Dashboard</h4>

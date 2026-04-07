@@ -1,0 +1,45 @@
+:host {
+    display: block;
+    position: relative; // anchors the dropdown's position: absolute
+}
+
+.hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer; // Why do we need cursor? This is a mobile component. TODO: Take out at some point
+    color: var(--color-text-primary);
+    padding: 6px;
+    border-radius: var(--radius-md);
+
+    &.hover {
+        background-color: var(--color-border);
+    }
+}
+
+.hamburger-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+}
+
+.hamburger-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2) 0;
+    z-index: 100;
+    animation: dropdown-appear 0.15s ease;
+}
+
+@keyframes dropdown-appear {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}

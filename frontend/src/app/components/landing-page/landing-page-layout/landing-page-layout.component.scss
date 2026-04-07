@@ -4,6 +4,10 @@
     width: 100%;
 }
 
+app-header {
+    padding: 0 var(--space-4);
+}
+
 .landing-page-layout {
     text-align: center;
     height: 100%;
@@ -50,7 +54,6 @@ p {
     }
 }
 
-
 .landing-page-layout-navigation-card-subtitle {
     font-size: 12px;
 }
@@ -59,4 +62,24 @@ p {
     border-radius: 10px;
     padding: 8px;
     background-color: var(--color-primary);
+}
+
+// Mobile classes
+
+.landing-page-layout.is-mobile {
+    padding: var(--space-4);
+
+    .landing-page-layout-content {
+        gap: 32px;
+    }
+
+    .landing-page-layout-navigation-cards {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .landing-page-layout-navigation-card {
+        width: 100%;
+        max-width: 400px;
+    }
 }

@@ -1,5 +1,5 @@
-<div class="landing-page-layout">
-    <app-header [onLandingPage]="true"></app-header>
+<app-header [onLandingPage]="true"></app-header>
+<div class="landing-page-layout" [class.is-mobile]="platformService.isMobile()">
     <div class="landing-page-layout-content">
         <div class="landing-page-layout-content-description">
             <h1 class="landing-page-layout-content-description-title">Welcome to Operations Dashboard</h1>
