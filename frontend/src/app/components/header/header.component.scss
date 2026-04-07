@@ -91,3 +91,54 @@
         color: var(--color-error);
     }
 }
+
+// Mobile top bar
+
+.header--mobile {
+    position: relative; // establishes stacking context so the dropdown z-index is contained
+}
+
+// - Project menu content
+// These styles apply to content projected into <app-hamburger-menu>.
+
+.mobile-menu-username {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobile-menu-divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--space-2) 0;
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    background: transparent;
+    border: none;
+    cursor: pointer; // TODO: Likely do not need this, remove later
+    font-size: 14px;
+    color: var(--color-text-primary);
+    text-align: left;
+
+    &.hover {
+        background-color: var(--color-border);
+    }
+
+    &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    &--danger {
+        color: var(--color-error);
+    }
+}

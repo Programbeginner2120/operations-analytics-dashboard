@@ -1,47 +1,105 @@
-<div class="header">
-    <div class="left-section">
-        @if (!onLandingPage()) {
-            <app-button class="back-button" [variant]="'secondary'" [size]="'small'" [iconBefore]="arrowLeft" (click)="navigateToLandingPage()"></app-button>
-        }
+@if (platformService.isMobile()) {
+    <!-- Mobile Header -->
+     <div class="header header--mobile">
         <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
-        <div class="header-info">
-            <h4 class="header-title">Operations Dashboard</h4>
-            @if (showDashboardSpecificContent()) {
-                <div class="header-subtitle">{{ numCards() }} active panels - Real-time analytics</div>
-            }
-        </div>
-    </div>
-    <div class="right-section">
-        @if (currentUser()) {
-            <span class="user-display-name">{{ currentUser()?.displayName || currentUser()?.email }}</span>
-        }
+        <h4 class="header-title">Operations Dashboard</h4>
+     </div>
+     <div class="right-section">
         <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
             @if (theme() === 'light') {
-                <lucide-icon class="theme-toggle-icon" [img]="sun" [size]="20"></lucide-icon>
+                <lucide-icon class="theme-toggle=icon" [img]="sun" [size]="20"></lucide-icon>
             } @else {
                 <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
             }
         </button>
-        @if (showDashboardSpecificContent()) {
-            <button class="add-panel-button"
-                    [disabled]="!hasConnectedDataSources()"
-                    [title]="hasConnectedDataSources() ? 'Add a new panel' : 'Connect a data source to add panels'"
-                    (click)="dashboardService.addCard()">
-                <lucide-icon [img]="plus" [size]="20"></lucide-icon>
-                Add Panel
-            </button>
-            @if (numCards() !== 0) {
-                <button
-                    class="reset-dashboard-button"
-                    [title]="'Clear Dashboard'"
-                    (click)="dashboardService.resetDashboard()">
-                    <lucide-icon [img]="minus" [size]="20"></lucide-icon>
-                    Clear Dashboard
-                </button>
+
+        <!-- #hamburger exposes close() for use in projected conent below -->
+         <app-hamburger-menu #hamburger>
+
+            @if (currentUser()) {
+                <div class="mobile-menu-user">
+                    <span class="mobile-menu-username">
+                        {{ currentUser()?.displayName || currentUser()?.email }}
+                    </span>
+                </div>
+                <div class="mobile-menu-divider"></div>
             }
-        }
-        <button class="logout-button" (click)="logout()" title="Log out">
-            <lucide-icon [img]="logOut" [size]="18"></lucide-icon>
-        </button>
+
+            @if (showDashboardSpecificContent()) {
+                <button
+                    class="mobile-menu-item"
+                    [disabled]="!hasConnectedDataSources()"
+                    [title]="hasConnectedDataSources() ? 'Add a new Panel' : 'Connect a data source first'"
+                    (click)="dashboardService.addCard(); hamburger.close()">
+                <lucide-icon [img]="plus" [size]="16"></lucide-icon>
+                </button>
+
+                @if (numCards() !== 0) {
+                    <button
+                        class="mobile-menu-item"
+                        (click)="dashboardService.resetDashboard(); hamburger.close()">
+                    <lucide-icon [img]="minus" [size]="16"></lucide-icon>
+                    </button>
+                }
+
+                <div class="mobile-menu-divider"></div>
+            }
+
+            <button class="mobile-menu-item mobile-menu-item--danger" (click)="logout(); hamburger.close()">
+                <lucide-icon [img]="logOut" [size]="16"></lucide-icon>
+                Log Out
+            </button>
+
+         </app-hamburger-menu>
+     </div>
+
+} @else {
+    <!-- Desktop / Laptop Header -->
+    <div class="header">
+        <div class="left-section">
+            @if (!onLandingPage()) {
+                <app-button class="back-button" [variant]="'secondary'" [size]="'small'" [iconBefore]="arrowLeft" (click)="navigateToLandingPage()"></app-button>
+            }
+            <lucide-icon class="header-icon" [img]="layoutGrid" [size]="20"></lucide-icon>
+            <div class="header-info">
+                <h4 class="header-title">Operations Dashboard</h4>
+                @if (showDashboardSpecificContent()) {
+                    <div class="header-subtitle">{{ numCards() }} active panels - Real-time analytics</div>
+                }
+            </div>
+        </div>
+        <div class="right-section">
+            @if (currentUser()) {
+                <span class="user-display-name">{{ currentUser()?.displayName || currentUser()?.email }}</span>
+            }
+            <button class="theme-toggle-button" (click)="themeService.toggleTheme()">
+                @if (theme() === 'light') {
+                    <lucide-icon class="theme-toggle-icon" [img]="sun" [size]="20"></lucide-icon>
+                } @else {
+                    <lucide-icon class="theme-toggle-icon" [img]="moon" [size]="20"></lucide-icon>
+                }
+            </button>
+            @if (showDashboardSpecificContent()) {
+                <button class="add-panel-button"
+                        [disabled]="!hasConnectedDataSources()"
+                        [title]="hasConnectedDataSources() ? 'Add a new panel' : 'Connect a data source to add panels'"
+                        (click)="dashboardService.addCard()">
+                    <lucide-icon [img]="plus" [size]="20"></lucide-icon>
+                    Add Panel
+                </button>
+                @if (numCards() !== 0) {
+                    <button
+                        class="reset-dashboard-button"
+                        [title]="'Clear Dashboard'"
+                        (click)="dashboardService.resetDashboard()">
+                        <lucide-icon [img]="minus" [size]="20"></lucide-icon>
+                        Clear Dashboard
+                    </button>
+                }
+            }
+            <button class="logout-button" (click)="logout()" title="Log out">
+                <lucide-icon [img]="logOut" [size]="18"></lucide-icon>
+            </button>
+        </div>
     </div>
-</div>
+}
